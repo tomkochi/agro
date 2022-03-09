@@ -1,0 +1,49 @@
+.fieldCard {
+  box-shadow: 0px 4px 8px rgba(217, 220, 231, 0.58);
+  border-radius: 10px;
+  background: #fff;
+}
+.top {
+  padding: 13px 21px;
+  border-bottom: 1px solid #f0f3ee;
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: center;
+  h4 {
+    font-weight: 500;
+    font-size: 16px;
+    color: #193550;
+  }
+  h5 {
+    font-size: 14px;
+    color: #78828c;
+  }
+  button {
+    margin-left: 27px;
+    border: none;
+    background: none;
+    padding: 0;
+  }
+  img {
+  }
+}
+.middle {
+  .item {
+    margin: 12px 21px;
+    display: flex;
+    justify-content: space-between;
+  }
+  h4 {
+  }
+  h5 {
+  }
+}
+.bottom {
+  padding: 13px 21px;
+  h4 {
+    font-weight: 600;
+    font-size: 16px;
+    text-align: right;
+    color: #f0b734;
+  }
+}
