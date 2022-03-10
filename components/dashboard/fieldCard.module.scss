@@ -27,15 +27,16 @@
   img {
   }
 }
+.item {
+  margin: 12px 21px;
+  display: flex;
+  justify-content: space-between;
+}
 .middle {
-  .item {
-    margin: 12px 21px;
-    display: flex;
-    justify-content: space-between;
-  }
-  h4 {
-  }
+  h4,
   h5 {
+    font-size: 14px;
+    color: #78828c;
   }
 }
 .bottom {
