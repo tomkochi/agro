@@ -108,11 +108,12 @@ const Dashboard = () => {
     })
       .then((e) => {
         console.log("Success!");
-        console.log(e);
+        // console.log(e);
+        setUploadOverlay(false);
       })
       .catch((e) => {
         console.log("Error");
-        console.log(e);
+        // console.log(e);
       });
   };
 
