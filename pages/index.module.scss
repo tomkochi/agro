@@ -27,11 +27,16 @@
   width: 100%;
   max-width: 315px;
   position: relative;
+  transition: 0.2s;
   &::before {
     content: url(/images/upload-green.svg);
     position: absolute;
     left: 20px;
     top: 15px;
+  }
+  &:hover {
+    box-shadow: 4px 8px 12px rgba(217, 220, 231, 0.58);
+    transform: translate(-1px, -1px);
   }
 }
 .calendar {
