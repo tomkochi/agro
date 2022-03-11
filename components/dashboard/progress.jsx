@@ -1,6 +1,6 @@
 import style from "./progress.module.scss";
 
-const Progress = (size, done) => {
+const Progress = ({ size, done }) => {
   const calcPercent = () => {
     return `${(100 / size) * done}%`;
   };

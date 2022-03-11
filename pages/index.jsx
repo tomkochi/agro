@@ -100,7 +100,7 @@ const Dashboard = () => {
       url: "http://localhost:3000/api/file",
       data: formData,
       onUploadProgress: (e) => {
-        console.log(e.loaded);
+        setUpSize(e.loaded);
       },
       headers: {
         content_type: "miltipart/form-data",
@@ -110,6 +110,7 @@ const Dashboard = () => {
         console.log("Success!");
         // console.log(e);
         setUploadOverlay(false);
+        setUploading(true);
       })
       .catch((e) => {
         console.log("Error");
@@ -118,9 +119,16 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
-    document.addEventListener("click", documentClick);
-    return () => document.removeEventListener("click", documentClick);
-  }, []);
+    if (!uploadOverlay) fileInput.current.value = null;
+
+    if (uploadOverlay) {
+      document.addEventListener("click", documentClick);
+    } else {
+      document.removeEventListener("click", documentClick);
+    }
+
+    return () => {};
+  }, [uploadOverlay]);
 
   return (
     <Layout title="Dashboard" bg="#F3F3F3">

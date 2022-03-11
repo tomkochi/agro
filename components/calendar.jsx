@@ -19,6 +19,7 @@ const Calendar = () => {
     "December",
   ];
 
+  const [today, setToday] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [dates, setDates] = useState([]);
 
