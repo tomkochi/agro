@@ -39,7 +39,7 @@
     transform: translate(-1px, -1px);
   }
 }
-.calendar {
+.leftPanel {
   margin-top: 56px;
 }
 .header {
@@ -218,4 +218,8 @@
   box-shadow: 4px 4px 6px #c7d5c9;
   border-radius: 10px;
   border: none;
+}
+.fieldFilterWrapper {
+  position: relative;
+  margin-bottom: 17px;
 }

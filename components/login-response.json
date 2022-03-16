@@ -1,0 +1,81 @@
+{
+  "data": {
+    "authKey": "agroQ1dr$sA",
+    "user": {
+      "account": {
+        "acres": 400,
+        "croptype": [
+          {
+            "_id": "70b5f37464bf4b3a8a77148805a8b419",
+            "name": "Strawberry",
+            "order": {
+              "order": [
+                "ripe",
+                "full",
+                "mid",
+                "small",
+                "flower",
+                "damage",
+                "chlorosis",
+                "dieoff"
+              ]
+            }
+          },
+          {
+            "_id": "0baaae7916ad4bae88330efee6a5bb97",
+            "name": "Almonds",
+            "order": {
+              "order": ["nut"]
+            }
+          },
+          {
+            "_id": "45890de2e1394bc095296fc74f6b1456",
+            "name": "Table Grapes",
+            "order": {
+              "order": [
+                "bunches",
+                "ripeness",
+                "inflorescence",
+                "damage-leaf",
+                "mildew"
+              ]
+            }
+          }
+        ],
+        "fields": [
+          {
+            "_id": "2a8eda2b845e49c7b6bda7d71f89e5f3",
+            "acres": 0.0,
+            "analysis": 0.0,
+            "name": "Unknown",
+            "userid": "21d56e9bed27437285e84ea036bd38a5"
+          },
+          {
+            "_id": "851e8c94d7014a8795cc957988ce070a",
+            "acres": 0.0,
+            "analysis": 0.0,
+            "name": "Main",
+            "userid": "21d56e9bed27437285e84ea036bd38a5"
+          },
+          {
+            "_id": "7fc9cc44f5c14ea59cecb887abf360dc",
+            "acres": 0.0,
+            "analysis": 0.0,
+            "name": "Annex",
+            "userid": "21d56e9bed27437285e84ea036bd38a5"
+          }
+        ],
+        "membership": "Platinum",
+        "usedacres": 270,
+        "user": "AgroAdmin",
+        "username": "admin@agrofocal.ai",
+        "userrole": "Admin"
+      }
+    }
+  },
+  "msg": {
+    "code": 2000,
+    "msg": "OK"
+  },
+  "success": true
+}
