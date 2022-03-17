@@ -1,22 +1,26 @@
 import style from "./signin.module.scss";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import useStore from "../store";
 import axios from "axios";
 import { useRouter } from "next/router";
+import { useAuthSession } from "../utils/auth";
 
 const Signin = () => {
   const router = useRouter();
 
-  const [email, setEmail] = useState("");
-  const [password, setpassword] = useState("");
+  const user = useAuthSession();
+  if (user) router.push("/dashboard"); //do not render anything
 
-  const authkey = useStore((state) => state.authkey);
+  const authKey = useStore((state) => state.authKey);
   const busy = useStore((state) => state.busy);
-  const user = useStore((state) => state.user);
+  // const user = useStore((state) => state.user);
   const setBusy = useStore((state) => state.setBusy);
   const setAuthKey = useStore((state) => state.setAuthKey);
   const setUser = useStore((state) => state.setUser);
+
+  const [email, setEmail] = useState("");
+  const [password, setpassword] = useState("");
 
   const submit = (e) => {
     e.preventDefault();
@@ -47,6 +51,9 @@ const Signin = () => {
         }
         setUser(r.data.data.user);
         setAuthKey(r.data.data.authKey);
+        // save user info locally
+        localStorage.setItem("user", JSON.stringify(r.data.data.user));
+        localStorage.setItem("authKey", JSON.stringify(r.data.data.authKey));
         router.push("/dashboard");
       })
       .catch((e) => {
@@ -61,7 +68,7 @@ const Signin = () => {
     <div className={style.signin}>
       busy: {busy ? "Busy" : "Free"}
       <br />
-      Auth: {authkey ? authkey : "Nothing"}
+      Auth: {authKey ? authKey : "Nothing"}
       <div className={style.signinWrapper}>
         <div className={style.image}>
           <img src="/images/logo.svg" alt="" />
@@ -75,6 +82,7 @@ const Signin = () => {
             onChange={(e) => setEmail(e.target.value)}
             placeholder="Username"
             required
+            disabled={busy}
           />
           <input
             type="password"
@@ -83,8 +91,11 @@ const Signin = () => {
             onChange={(e) => setpassword(e.target.value)}
             placeholder="Password"
             required
+            disabled={busy}
           />
-          <button type="submit">Login</button>
+          <button type="submit" disabled={busy}>
+            Login
+          </button>
           <Link href="/dashboard" passHref>
             Forgot Password?
           </Link>

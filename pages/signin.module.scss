@@ -26,6 +26,9 @@
       border-radius: 10px;
       border: none;
       margin-bottom: 15px;
+      &:disabled {
+        opacity: 0.8;
+      }
       &::placeholder {
         opacity: 0.6;
       }
@@ -53,6 +56,9 @@
       box-shadow: 4px 4px 6px #c7d5c9;
       border-radius: 10px;
       margin-bottom: 35px;
+      &:disabled {
+        opacity: 0.3;
+      }
     }
     a {
       font-family: Poppins, sans-serif;

@@ -3,7 +3,7 @@ import create from "zustand";
 const useStore = create((set) => ({
   authRoutes: ["/dashboard"],
   busy: false,
-  authkey: null,
+  authKey: null,
   user: null,
   setBusy: (stat) =>
     set({
@@ -15,7 +15,7 @@ const useStore = create((set) => ({
     }),
   setAuthKey: (key) =>
     set({
-      authkey: key,
+      authKey: key,
     }),
 }));
 

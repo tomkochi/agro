@@ -4,34 +4,33 @@ import Calendar from "../components/calendar";
 import Layout from "../components/layout";
 import Image from "next/image";
 import FieldCard from "../components/dashboard/fieldCard";
-import "react-dropdown/style.css";
 import { useRef, useState, useEffect } from "react";
 import Progress from "../components/dashboard/progress";
 import useStore from "../store";
-import { useRouter } from "next/router";
+import { useAuthSession } from "../utils/auth";
 
 const Dashboard = () => {
-  const router = useRouter();
+  // getting user data
+  const user = useAuthSession();
 
-  const authkey = useStore((state) => state.authkey);
   const busy = useStore((state) => state.busy);
-  const user = useStore((state) => state.user);
+  const authkey = useStore((state) => state.authKey);
   const setBusy = useStore((state) => state.setBusy);
 
   const [file, setFile] = useState(null);
   const [uploadOverlay, setUploadOverlay] = useState(false);
 
-  const fields = user.account.croptype;
-  const crops = user.account.fields;
-
   const [fieldOpen, setFieldOpen] = useState(false);
-  const [selectedField, setSelectedField] = useState(fields[0]);
+  const [selectedField, setSelectedField] = useState(null);
+
+  const [fields, setFields] = useState([]);
+  const [crops, setCrops] = useState([]);
 
   const [cropOpen, setCropOpen] = useState(false);
-  const [selectedCrop, setSelectedCrop] = useState(crops[0]);
+  const [selectedCrop, setSelectedCrop] = useState(null);
 
   const [fieldFilterOpen, setFieldFilterOpen] = useState(false);
-  const [selectedFieldFilter, setSelectedFieldFilter] = useState(fields[0]);
+  const [selectedFieldFilter, setSelectedFieldFilter] = useState(null);
 
   const [uploading, setUploading] = useState(false);
   const [upSize, setUpSize] = useState(0);
@@ -143,14 +142,27 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
-    if (!user) {
-      router.push("/");
+    if (user) {
+      setFields(user.account.fields);
+      setCrops(user.account.croptype);
+      setSelectedField(fields[0]);
+      setSelectedCrop(crops[0]);
+      setSelectedFieldFilter(fields[0]);
     }
+    document.addEventListener("click", documentClick);
+    return () => {
+      document.removeEventListener("click", documentClick);
+    };
   }, []);
 
-  useEffect(() => {
-    if (!uploadOverlay) fileInput.current.value = null;
-  }, [uploadOverlay]);
+  // useEffect(() => {
+  //   if (!uploadOverlay) {
+  //     setFile(null);
+  //     console.log(fileInput.current);
+  //   }
+  // }, [uploadOverlay]);
+
+  if (!user) return null; //do not render anything
 
   return (
     <Layout title="Dashboard" bg="#F3F3F3">
@@ -177,7 +189,7 @@ const Dashboard = () => {
                     fieldFilterOpen ? style.open : ""
                   }`}
                 >
-                  {selectedFieldFilter.name}
+                  {selectedFieldFilter?.name}
                 </button>
                 <div
                   className={`${style.menu} ${
@@ -198,7 +210,7 @@ const Dashboard = () => {
                 </div>
                 {/* .menu */}
               </div>
-              {/* .dropdownWrapper */}
+              {/* .fieldFilterWrapper */}
             </div>
             {/* .inputGroup */}
             <Calendar />
@@ -256,7 +268,7 @@ const Dashboard = () => {
                       fieldOpen ? style.open : ""
                     }`}
                   >
-                    {selectedField.name}
+                    {selectedField?.name}
                   </button>
                   <div
                     className={`${style.menu} ${fieldOpen ? style.open : ""}`}
@@ -287,7 +299,7 @@ const Dashboard = () => {
                       cropOpen ? style.open : ""
                     }`}
                   >
-                    {selectedCrop.name}
+                    {selectedCrop?.name}
                   </button>
                   <div
                     className={`${style.menu} ${cropOpen ? style.open : ""}`}
