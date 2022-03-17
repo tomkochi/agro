@@ -6,34 +6,35 @@ import Image from "next/image";
 import FieldCard from "../components/dashboard/fieldCard";
 import { useRef, useState, useEffect } from "react";
 import Progress from "../components/dashboard/progress";
-import useStore from "../store";
-import { useAuthSession } from "../utils/auth";
+import { useRouter } from "next/router";
 
 const Dashboard = () => {
-  // getting user data
-  const user = useAuthSession();
+  const router = useRouter();
 
-  const busy = useStore((state) => state.busy);
-  const authkey = useStore((state) => state.authKey);
-  const setBusy = useStore((state) => state.setBusy);
+  const [monthData, setMonthData] = useState([]); // which all dates of this month has data
+  const [dateData, setDateData] = useState([]); // selected day's data
 
-  const [file, setFile] = useState(null);
-  const [uploadOverlay, setUploadOverlay] = useState(false);
+  const [user, setUser] = useState(null); // got while loggin g in
+  const [authKey, setAuthKey] = useState(null); // got while loggin g in
 
-  const [fieldOpen, setFieldOpen] = useState(false);
+  const [file, setFile] = useState(null); // selected file stored in here
+  const [uploadOverlay, setUploadOverlay] = useState(false); // whether to show upload overlay box after choosing the file
+
+  const [fieldOpen, setFieldOpen] = useState(false); // status of field dropdown
   const [selectedField, setSelectedField] = useState(null);
 
-  const [fields, setFields] = useState([]);
-  const [crops, setCrops] = useState([]);
+  const [fields, setFields] = useState([]); // got while logging in
+  const [crops, setCrops] = useState([]); // got while logging in
 
-  const [cropOpen, setCropOpen] = useState(false);
+  const [cropOpen, setCropOpen] = useState(false); // status of dropdown
   const [selectedCrop, setSelectedCrop] = useState(null);
 
-  const [fieldFilterOpen, setFieldFilterOpen] = useState(false);
+  const [fieldFilterOpen, setFieldFilterOpen] = useState(false); // drowdown status
   const [selectedFieldFilter, setSelectedFieldFilter] = useState(null);
 
-  const [uploading, setUploading] = useState(false);
-  const [upSize, setUpSize] = useState(0);
+  const [uploading, setUploading] = useState(false); // decides whether to show upload status indicator
+  const [upSize, setUpSize] = useState(0); // uploaded size - from upload progress
+  const [totalSize, setTotalSize] = useState(0); // size of the file from upload progress
 
   const fileInput = useRef(null);
   const fieldWrapper = useRef(null);
@@ -116,14 +117,19 @@ const Dashboard = () => {
   };
 
   const upload = (e) => {
-    var formData = new FormData();
-    formData.append("video", file);
+    let formData = new FormData();
+    formData.append("file", file);
+    formData.append("file", file);
+    formData.append("cropid", selectedCrop._id);
+    formData.append("cropname", selectedCrop.name);
+    formData.append("fieldid", selectedField._id);
     axios({
       method: "post",
-      url: "http://localhost:3000/api/file",
+      url: `${process.env.NEXT_PUBLIC_BASE_URL}inspection/upload`,
       data: formData,
       onUploadProgress: (e) => {
         setUpSize(e.loaded);
+        setTotalSize(e.total);
       },
       headers: {
         content_type: "miltipart/form-data",
@@ -132,44 +138,90 @@ const Dashboard = () => {
       .then((e) => {
         console.log("Success!");
         // console.log(e);
-        setUploadOverlay(false);
-        setUploading(true);
       })
       .catch((e) => {
-        console.log("Error");
+        console.log(e);
         // console.log(e);
+      });
+    setUploadOverlay(false);
+    setUploading(true);
+  };
+
+  const fetchDateData = (date) => {
+    axios({
+      url: `${process.env.NEXT_PUBLIC_BASE_URL}data/list`,
+      method: "post",
+      headers: {
+        "Content-Type": "application/json",
+        authKey,
+      },
+      data: {
+        date,
+        field: [],
+      },
+    })
+      .then((r) => {
+        setDateData(r.data.data);
+      })
+      .catch((e) => {
+        console.log(e);
       });
   };
 
+  const getMonthData = (date) => {
+    axios({
+      url: `${process.env.NEXT_PUBLIC_BASE_URL}data/month/list`,
+      method: "post",
+      headers: {
+        "Content-Type": "application/json",
+        authKey: "agroQ1dr$sA",
+      },
+      data: {
+        date: date,
+      },
+    })
+      .then((r) => {
+        setMonthData(r.data.data);
+      })
+      .catch((e) => alert(e));
+  };
+
   useEffect(() => {
-    if (user) {
-      setFields(user.account.fields);
-      setCrops(user.account.croptype);
-      setSelectedField(fields[0]);
-      setSelectedCrop(crops[0]);
-      setSelectedFieldFilter(fields[0]);
+    const userInfo = JSON.parse(localStorage.getItem("user"));
+    if (!userInfo) {
+      router.push("/");
+      return false;
     }
+    setUser(userInfo);
+    const key = JSON.parse(localStorage.getItem("authKey"));
+    setAuthKey(key);
+
+    setFields(userInfo.account.fields);
+    setCrops(userInfo.account.croptype);
+    setSelectedField(userInfo.account.fields[0]);
+    setSelectedCrop(userInfo.account.croptype[0]);
+    setSelectedFieldFilter(userInfo.account.fields[0]);
+
+    getMonthData(new Date().getTime());
+
     document.addEventListener("click", documentClick);
     return () => {
       document.removeEventListener("click", documentClick);
     };
   }, []);
 
-  // useEffect(() => {
-  //   if (!uploadOverlay) {
-  //     setFile(null);
-  //     console.log(fileInput.current);
-  //   }
-  // }, [uploadOverlay]);
-
-  if (!user) return null; //do not render anything
+  useEffect(() => {
+    if (!uploadOverlay) {
+      fileInput.current.value = "";
+    }
+  }, [uploadOverlay]);
 
   return (
     <Layout title="Dashboard" bg="#F3F3F3">
       <div className={style.dashboard}>
         <header>
           <div className={style.status}>
-            {uploading && <Progress size={file.size} done={upSize} />}
+            {uploading && <Progress size={totalSize} done={upSize} />}
           </div>
           <input ref={fileInput} type="file" hidden onChange={handleFile} />
           <button onClick={openFileDialog} className={style.videoButton}>
@@ -213,13 +265,13 @@ const Dashboard = () => {
               {/* .fieldFilterWrapper */}
             </div>
             {/* .inputGroup */}
-            <Calendar />
+            <Calendar monthData={monthData} fetchDateData={fetchDateData} />
           </div>
           {/* .calendar */}
           <div className={style.reports}>
             <div className={style.header}>
               <div className={style.headerLeft}>
-                <h4>3</h4>
+                <h4>{dateData.length}</h4>
                 <h5>Reports found</h5>
               </div>
               {/* .left */}
@@ -238,9 +290,9 @@ const Dashboard = () => {
             </div>
             {/* .header */}
             <div className={style.cards}>
-              <FieldCard />
-              <FieldCard />
-              <FieldCard />
+              {dateData.map((d, di) => {
+                return <FieldCard key={di} data={d} />;
+              })}
             </div>
             {/* .body */}
           </div>

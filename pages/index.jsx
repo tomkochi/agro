@@ -1,23 +1,11 @@
 import style from "./signin.module.scss";
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import useStore from "../store";
 import axios from "axios";
 import { useRouter } from "next/router";
-import { useAuthSession } from "../utils/auth";
 
 const Signin = () => {
   const router = useRouter();
-
-  const user = useAuthSession();
-  if (user) router.push("/dashboard"); //do not render anything
-
-  const authKey = useStore((state) => state.authKey);
-  const busy = useStore((state) => state.busy);
-  // const user = useStore((state) => state.user);
-  const setBusy = useStore((state) => state.setBusy);
-  const setAuthKey = useStore((state) => state.setAuthKey);
-  const setUser = useStore((state) => state.setUser);
 
   const [email, setEmail] = useState("");
   const [password, setpassword] = useState("");
@@ -32,9 +20,8 @@ const Signin = () => {
       alert("Please fill all fields");
       return;
     }
-    setBusy(true);
     axios({
-      url: process.env.NEXT_PUBLIC_BASE_URL,
+      url: `${process.env.NEXT_PUBLIC_BASE_URL}user/login`,
       method: "post",
       data: {
         email,
@@ -49,8 +36,8 @@ const Signin = () => {
           alert(r.data.msg.msg);
           return;
         }
-        setUser(r.data.data.user);
-        setAuthKey(r.data.data.authKey);
+        // setUser(r.data.data.user);
+        // setAuthKey(r.data.data.authKey);
         // save user info locally
         localStorage.setItem("user", JSON.stringify(r.data.data.user));
         localStorage.setItem("authKey", JSON.stringify(r.data.data.authKey));
@@ -59,16 +46,18 @@ const Signin = () => {
       .catch((e) => {
         alert(e);
       })
-      .finally(() => {
-        setBusy(false);
-      });
+      .finally(() => {});
   };
+
+  useEffect(() => {
+    const userInfo = JSON.parse(localStorage.getItem("user"));
+    if (userInfo) {
+      router.push("/dashboard");
+    }
+  }, []);
 
   return (
     <div className={style.signin}>
-      busy: {busy ? "Busy" : "Free"}
-      <br />
-      Auth: {authKey ? authKey : "Nothing"}
       <div className={style.signinWrapper}>
         <div className={style.image}>
           <img src="/images/logo.svg" alt="" />
@@ -82,7 +71,6 @@ const Signin = () => {
             onChange={(e) => setEmail(e.target.value)}
             placeholder="Username"
             required
-            disabled={busy}
           />
           <input
             type="password"
@@ -91,11 +79,8 @@ const Signin = () => {
             onChange={(e) => setpassword(e.target.value)}
             placeholder="Password"
             required
-            disabled={busy}
           />
-          <button type="submit" disabled={busy}>
-            Login
-          </button>
+          <button type="submit">Login</button>
           <Link href="/dashboard" passHref>
             Forgot Password?
           </Link>

@@ -2,7 +2,6 @@
   box-shadow: 0px 4px 8px rgba(217, 220, 231, 0.58);
   border-radius: 10px;
   background: #fff;
-  cursor: pointer;
   transition: 0.2s;
   &:hover {
     box-shadow: 4px 8px 12px rgba(217, 220, 231, 0.58);
@@ -11,10 +10,14 @@
 }
 .top {
   padding: 13px 21px;
-  border-bottom: 1px solid #f0f3ee;
   display: grid;
   grid-template-columns: 1fr auto auto;
   align-items: center;
+  background: none;
+  border: none;
+  border-bottom: 1px solid #f0f3ee;
+  width: 100%;
+  text-align: left;
   h4 {
     font-weight: 500;
     font-size: 16px;
@@ -43,6 +46,33 @@
   h5 {
     font-size: 14px;
     color: #78828c;
+  }
+}
+.showMore {
+  padding: 21px 21px 4px;
+  button {
+    font-weight: 400;
+    font-size: 14px;
+    color: #78828c;
+    background: none;
+    border: none;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+    padding: 6px;
+    border: 1px solid #f0f3ee;
+    border-width: 1px 0;
+    position: relative;
+    span {
+      font-weight: 400;
+      font-size: 14px;
+      color: #f0b734;
+    }
+    &:after {
+      content: url(/images/down-arrow-outline-green.svg);
+      position: absolute;
+      right: 6px;
+    }
   }
 }
 .bottom {

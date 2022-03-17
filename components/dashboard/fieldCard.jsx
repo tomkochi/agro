@@ -1,12 +1,14 @@
 import Image from "next/image";
+import { useState } from "react";
 import style from "./fieldCard.module.scss";
 
-const FieldCard = () => {
+const FieldCard = ({ data }) => {
+  const [showFullResult, setShowFullResult] = useState(false); // this decides show/hide more that 4
   return (
     <div className={style.fieldCard}>
-      <div className={style.top}>
-        <h4>Field Name</h4>
-        <h5>10 Acres</h5>
+      <button className={style.top}>
+        <h4>{data.field}</h4>
+        <h5>{data.area}</h5>
         <button>
           <Image
             src="/images/menu-three-dots.svg"
@@ -15,23 +17,41 @@ const FieldCard = () => {
             height={20}
           />
         </button>
-      </div>
+      </button>
       {/* .top */}
       <div className={style.middle}>
-        <div className={style.item}>
-          <h4>Flower</h4>
-          <h5>100</h5>
-        </div>
-        {/* .item */}
-        <div className={style.item}>
-          <h4>Damage</h4>
-          <h5>150</h5>
-        </div>
-        {/* .item */}
+        {data.result.objects.name.map((r, ri) => {
+          if (showFullResult) {
+            // show more
+            return (
+              <div key={ri} className={style.item}>
+                <h4>{r}</h4>
+                <h5>{data.result.objects.value[ri]}</h5>
+              </div>
+            );
+          } else {
+            // show maximum 4
+            if (ri < 4) {
+              return (
+                <div key={ri} className={style.item}>
+                  <h4>{r}</h4>
+                  <h5>{data.result.objects.value[ri]}</h5>
+                </div>
+              );
+            }
+          }
+        })}
+        {data.result.objects.name.length > 4 && ( // only if more than 4 items todisplay
+          <div className={style.showMore}>
+            <button onClick={() => setShowFullResult(!showFullResult)}>
+              <span>+3</span> more items
+            </button>
+          </div>
+        )}
       </div>
       {/* .middle */}
       <div className={style.bottom}>
-        <h4>250</h4>
+        <h4>{data.result.objects.value.reduce((a, b) => a + b)}</h4>
       </div>
       {/* .bottom */}
     </div>

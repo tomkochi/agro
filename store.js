@@ -1,10 +1,11 @@
 import create from "zustand";
+import userData from "./components/login-response.json";
 
 const useStore = create((set) => ({
   authRoutes: ["/dashboard"],
   busy: false,
-  authKey: null,
-  user: null,
+  authKey: userData.data.authKey,
+  user: userData.data.user,
   setBusy: (stat) =>
     set({
       busy: stat,

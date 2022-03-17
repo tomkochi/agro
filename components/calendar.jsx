@@ -3,7 +3,7 @@ import { datesGenerator, daysInMonth } from "dates-generator";
 import { useEffect, useState } from "react";
 import Image from "next/image";
 
-const Calendar = () => {
+const Calendar = ({ monthData = [], fetchDateData }) => {
   const months = [
     "January",
     "February",
@@ -19,7 +19,6 @@ const Calendar = () => {
     "December",
   ];
 
-  const [today, setToday] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [dates, setDates] = useState([]);
 
@@ -66,6 +65,12 @@ const Calendar = () => {
     setSelectedDate(new Date(`${newYear}/${newMonth}/${newDate}`));
   };
 
+  const hasData = (d) => {
+    let newM = d.month < 9 ? `0${d.month + 1}` : d.month + 1;
+    const date = `${d.year}/${newM}/${d.date}`;
+    return monthData.includes(date);
+  };
+
   useEffect(() => {
     const body = {
       month: selectedDate.getMonth(),
@@ -74,6 +79,18 @@ const Calendar = () => {
     const { dates } = datesGenerator(body);
 
     setDates([...dates]);
+
+    // check if the selected date has data
+    const date = selectedDate.getDate();
+    const month = selectedDate.getMonth();
+    const year = selectedDate.getFullYear();
+
+    let newM = month < 9 ? `0${month + 1}` : month + 1;
+
+    const newDate = `${year}/${newM}/${date}`;
+    if (monthData.includes(newDate)) {
+      fetchDateData(new Date(newDate).getTime());
+    }
   }, [selectedDate]);
 
   return (
@@ -120,13 +137,13 @@ const Calendar = () => {
                           d.date === selectedDate.getDate()
                             ? style.selected
                             : ""
-                        } ${d.date === 10 ? style.hasData : ""}`}
+                        } ${hasData(d) ? style.hasData : ""}`}
                       >
                         {d.date}
                       </button>
                     </li>
                   ) : (
-                    <div></div>
+                    <div key={di}></div>
                   );
                 })}
               </ul>

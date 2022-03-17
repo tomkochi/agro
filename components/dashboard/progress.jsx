@@ -7,7 +7,10 @@ const Progress = ({ size, done }) => {
 
   return (
     <div className={style.progress}>
-      <h4>Upload in press</h4>
+      <h4>Upload in progress</h4>
+      <h4>
+        {size} - {done}
+      </h4>
       <div className={style.barWrapper}>
         <div className={style.bg}></div>
         <div
