@@ -21,7 +21,7 @@ const Signin = () => {
       return;
     }
     axios({
-      url: `${process.env.NEXT_PUBLIC_BASE_URL}user/login`,
+      url: `${process.env.NEXT_PUBLIC_BASE_URL}/user/login`,
       method: "post",
       data: {
         email,

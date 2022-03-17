@@ -7,7 +7,7 @@ export default function Layout({ title, bg, children }) {
       <Head>
         <title>{title} - Agrofocal</title>
       </Head>
-      <Header />
+      <Header title={title} />
       <main>{children}</main>
       <style jsx>{`
         .layout {

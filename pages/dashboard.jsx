@@ -125,7 +125,7 @@ const Dashboard = () => {
     formData.append("fieldid", selectedField._id);
     axios({
       method: "post",
-      url: `${process.env.NEXT_PUBLIC_BASE_URL}inspection/upload`,
+      url: `${process.env.NEXT_PUBLIC_BASE_URL}/inspection/upload`,
       data: formData,
       onUploadProgress: (e) => {
         setUpSize(e.loaded);
@@ -149,7 +149,7 @@ const Dashboard = () => {
 
   const fetchDateData = (date) => {
     axios({
-      url: `${process.env.NEXT_PUBLIC_BASE_URL}data/list`,
+      url: `${process.env.NEXT_PUBLIC_BASE_URL}/data/list`,
       method: "post",
       headers: {
         "Content-Type": "application/json",
@@ -170,7 +170,7 @@ const Dashboard = () => {
 
   const getMonthData = (date) => {
     axios({
-      url: `${process.env.NEXT_PUBLIC_BASE_URL}data/month/list`,
+      url: `${process.env.NEXT_PUBLIC_BASE_URL}/data/month/list`,
       method: "post",
       headers: {
         "Content-Type": "application/json",

@@ -1,12 +1,24 @@
 import Image from "next/image";
 import { useState } from "react";
 import style from "./fieldCard.module.scss";
+import { useRouter } from "next/router";
 
 const FieldCard = ({ data }) => {
+  const router = useRouter();
+
   const [showFullResult, setShowFullResult] = useState(false); // this decides show/hide more that 4
+
+  const openGallery = (images) => {
+    localStorage.setItem("gallery", JSON.stringify(images));
+    router.push("/gallery");
+  };
+
   return (
     <div className={style.fieldCard}>
-      <button className={style.top}>
+      <button
+        onClick={() => openGallery(data.result.images)}
+        className={style.top}
+      >
         <h4>{data.field}</h4>
         <h5>{data.area}</h5>
         <button>
