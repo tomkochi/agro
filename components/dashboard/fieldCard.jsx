@@ -5,20 +5,18 @@ import { useRouter } from "next/router";
 
 const FieldCard = ({ data }) => {
   const router = useRouter();
-
+  console.log(data.field);
   const [showFullResult, setShowFullResult] = useState(false); // this decides show/hide more that 4
 
-  const openGallery = (images) => {
-    localStorage.setItem("gallery", JSON.stringify(images));
+  const openGallery = () => {
+    localStorage.setItem("gallery", JSON.stringify(data.result.images));
+    localStorage.setItem("field", data.field);
     router.push("/gallery");
   };
 
   return (
     <div className={style.fieldCard}>
-      <button
-        onClick={() => openGallery(data.result.images)}
-        className={style.top}
-      >
+      <button onClick={openGallery} className={style.top}>
         <h4>{data.field}</h4>
         <h5>{data.area}</h5>
         <button>
@@ -55,8 +53,17 @@ const FieldCard = ({ data }) => {
         })}
         {data.result.objects.name.length > 4 && ( // only if more than 4 items todisplay
           <div className={style.showMore}>
-            <button onClick={() => setShowFullResult(!showFullResult)}>
-              <span>+3</span> more items
+            <button
+              onClick={() => setShowFullResult(!showFullResult)}
+              className={showFullResult ? "" : style.expanded}
+            >
+              {showFullResult ? (
+                "Show less"
+              ) : (
+                <>
+                  <span>+{data.result.objects.name.length - 4}</span> more items
+                </>
+              )}
             </button>
           </div>
         )}

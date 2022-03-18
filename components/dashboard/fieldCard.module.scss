@@ -72,6 +72,10 @@
       content: url(/images/down-arrow-outline-green.svg);
       position: absolute;
       right: 6px;
+      transform: rotate(180deg);
+    }
+    &.expanded:after {
+      transform: rotate(0);
     }
   }
 }

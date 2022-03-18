@@ -22,7 +22,7 @@ const Calendar = ({ monthData = [], fetchDateData }) => {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [dates, setDates] = useState([]);
 
-  const makeNewDate = (d) => {
+  const selectNewDate = (d) => {
     setSelectedDate(new Date(`${d.year}/${d.month + 1}/${d.date}`));
   };
 
@@ -93,6 +93,19 @@ const Calendar = ({ monthData = [], fetchDateData }) => {
     }
   }, [selectedDate]);
 
+  useEffect(() => {
+    if (!monthData) return;
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = today.getMonth();
+    const newM = month < 9 ? "0" + (month + 1) : month;
+    const date = today.getDate();
+    const newDate = `${year}/${newM}/${date}`;
+    if (monthData.includes(newDate)) {
+      fetchDateData(new Date(newDate).getTime());
+    }
+  }, [monthData]);
+
   return (
     <div className={style.calendar}>
       <div className={style.controls}>
@@ -127,7 +140,7 @@ const Calendar = ({ monthData = [], fetchDateData }) => {
                     <li key={di}>
                       <button
                         onClick={() =>
-                          makeNewDate({
+                          selectNewDate({
                             date: d.date,
                             month: d.month,
                             year: d.year,

@@ -1,12 +1,16 @@
 import style from "./gallery.module.scss";
 import Layout from "../components/layout";
 import { useState, useEffect } from "react";
+import { useRouter } from "next/router";
 
 const Gallery = () => {
+  const router = useRouter();
+
   const [user, setUser] = useState(null);
   const [authKey, setAuthKey] = useState(null);
   const [images, setimages] = useState([]);
   const [popupImage, setPopupImage] = useState(null);
+  const [fieldName, setFieldName] = useState("");
 
   const nextImage = () => {
     const newIndex =
@@ -29,10 +33,13 @@ const Gallery = () => {
     setAuthKey(key);
     const passedImages = JSON.parse(localStorage.getItem("gallery"));
     setimages(passedImages);
+    const field = localStorage.getItem("field");
+    setFieldName(field);
+    console.log(localStorage);
   }, []);
 
   return (
-    <Layout title="Gallery" bg="#F3F3F3">
+    <Layout title={fieldName || "Gallery"} bg="#F3F3F3">
       <div className={style.gallery}>
         <div className={style.views}>
           <button className={style.active}>Gallery</button>
@@ -80,9 +87,9 @@ const Gallery = () => {
                 <path
                   d="M7 1L1 7L7 13"
                   stroke="url(#paint0_linear_1276_263)"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
                 />
                 <defs>
                   <linearGradient
@@ -93,8 +100,8 @@ const Gallery = () => {
                     y2="5.97776"
                     gradientUnits="userSpaceOnUse"
                   >
-                    <stop stop-color="#69AA72" />
-                    <stop offset="1" stop-color="#69AA72" />
+                    <stop stopColor="#69AA72" />
+                    <stop offset="1" stopColor="#69AA72" />
                   </linearGradient>
                 </defs>
               </svg>
@@ -117,9 +124,9 @@ const Gallery = () => {
                 <path
                   d="M1 13L7 7L0.999999 1"
                   stroke="url(#paint0_linear_1276_262)"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
+                  strokWidth="2"
+                  strokLinecap="round"
+                  strokLinejoin="round"
                 />
                 <defs>
                   <linearGradient
@@ -130,8 +137,8 @@ const Gallery = () => {
                     y2="8.02224"
                     gradientUnits="userSpaceOnUse"
                   >
-                    <stop stop-color="#69AA72" />
-                    <stop offset="1" stop-color="#69AA72" />
+                    <stop stopColor="#69AA72" />
+                    <stop offset="1" stopColor="#69AA72" />
                   </linearGradient>
                 </defs>
               </svg>

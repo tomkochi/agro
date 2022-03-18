@@ -119,29 +119,35 @@ const Dashboard = () => {
   const upload = (e) => {
     let formData = new FormData();
     formData.append("file", file);
-    formData.append("file", file);
     formData.append("cropid", selectedCrop._id);
     formData.append("cropname", selectedCrop.name);
     formData.append("fieldid", selectedField._id);
     axios({
       method: "post",
-      url: `${process.env.NEXT_PUBLIC_BASE_URL}/inspection/upload`,
+      url: `${process.env.NEXT_PUBLIC_UPLOAD_URL}/inspection/upload`,
       data: formData,
       onUploadProgress: (e) => {
         setUpSize(e.loaded);
         setTotalSize(e.total);
       },
       headers: {
-        content_type: "miltipart/form-data",
+        content_type: "multipart/form-data",
+        authKey,
       },
     })
       .then((e) => {
-        console.log("Success!");
-        // console.log(e);
+        if (e.data.msg.code === 2007) {
+          alert(e.data.msg.msg);
+        } else {
+          alert(e.data.msg.msg);
+        }
       })
       .catch((e) => {
         console.log(e);
         // console.log(e);
+      })
+      .finally(() => {
+        setUploading(false);
       });
     setUploadOverlay(false);
     setUploading(true);
@@ -276,15 +282,7 @@ const Dashboard = () => {
               </div>
               {/* .left */}
               <div className={style.headerRight}>
-                <button className={style.showChart}>
-                  <Image
-                    src="/images/chart-icon.svg"
-                    alt=""
-                    width={18}
-                    height={10}
-                  />
-                  <h5>15 April 2021</h5>
-                </button>
+                <h5>15 April 2021</h5>
               </div>
               {/* .right */}
             </div>

@@ -42,9 +42,8 @@
       grid-template-columns: repeat(4, 1fr);
     }
     a {
-      padding: 0;
+      display: block;
       border: none;
-      background: #c4c4c4;
       border-radius: 14px;
       box-shadow: 10px 10px 8px rgba(0, 0, 0, 0);
       transition: 0.5s;
