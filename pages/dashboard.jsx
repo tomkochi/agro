@@ -4,11 +4,12 @@ import Calendar from "../components/calendar";
 import Layout from "../components/layout";
 import Image from "next/image";
 import FieldCard from "../components/dashboard/fieldCard";
-import { useRef, useState, useEffect } from "react";
 import Progress from "../components/dashboard/progress";
-import { useRouter } from "next/router";
 import PageHeader from "../components/header";
 import moment from "moment";
+import Dropdown from "../components/dropdown";
+import { useRef, useState, useEffect } from "react";
+import { useRouter } from "next/router";
 
 const Dashboard = () => {
   const router = useRouter();
@@ -21,17 +22,12 @@ const Dashboard = () => {
   const [file, setFile] = useState(null); // selected file stored in here
   const [uploadOverlay, setUploadOverlay] = useState(false); // whether to show upload overlay box after choosing the file
 
-  const [fieldOpen, setFieldOpen] = useState(false); // status of field dropdown
   const [selectedField, setSelectedField] = useState(null);
+  const [selectedCrop, setSelectedCrop] = useState(null);
+  const [selectedFieldFilter, setSelectedFieldFilter] = useState(null);
 
   const [fields, setFields] = useState([]); // got while logging in
   const [crops, setCrops] = useState([]); // got while logging in
-
-  const [cropOpen, setCropOpen] = useState(false); // status of dropdown
-  const [selectedCrop, setSelectedCrop] = useState(null);
-
-  const [fieldFilterOpen, setFieldFilterOpen] = useState(false); // drowdown status
-  const [selectedFieldFilter, setSelectedFieldFilter] = useState(null);
 
   const [uploading, setUploading] = useState(false); // decides whether to show upload status indicator
   const [upSize, setUpSize] = useState(0); // uploaded size - from upload progress
@@ -61,33 +57,12 @@ const Dashboard = () => {
     fileInput.current.click();
   };
 
-  const setUploadField = (f) => {
-    setSelectedField(f);
-    setFieldOpen(false);
-  };
-
-  const setUploadCrop = (f) => {
-    setSelectedCrop(f);
-    setCropOpen(false);
-  };
-
-  const setFieldFilter = (f) => {
-    setSelectedFieldFilter(f);
-    setFieldFilterOpen(false);
-  };
-
   const documentClick = (e) => {
     if (fieldWrapper.current && !fieldWrapper.current.contains(e.target)) {
       setFieldOpen(false);
     }
     if (cropWrapper.current && !cropWrapper.current.contains(e.target)) {
       setCropOpen(false);
-    }
-    if (
-      fieldFilterWrapper.current &&
-      !fieldFilterWrapper.current.contains(e.target)
-    ) {
-      setFieldFilterOpen(false);
     }
   };
 
@@ -244,38 +219,11 @@ const Dashboard = () => {
         <main>
           <div className={style.leftPanel}>
             <div className={style.fieldFilter}>
-              <div
-                ref={fieldFilterWrapper}
-                className={style.fieldFilterWrapper}
-              >
-                <button
-                  onClick={() => setFieldFilterOpen((c) => !c)}
-                  className={`${style.dropdown} ${
-                    fieldFilterOpen ? style.open : ""
-                  }`}
-                >
-                  {selectedFieldFilter?.name}
-                </button>
-                <div
-                  className={`${style.menu} ${
-                    fieldFilterOpen ? style.open : ""
-                  }`}
-                >
-                  {fields.map((f) => {
-                    return (
-                      <button
-                        key={f._id}
-                        onClick={() => setFieldFilter(f)}
-                        className={style.menuItem}
-                      >
-                        {f.name}
-                      </button>
-                    );
-                  })}
-                </div>
-                {/* .menu */}
-              </div>
-              {/* .fieldFilterWrapper */}
+              <Dropdown
+                data={fields}
+                value={selectedFieldFilter}
+                onSelection={setSelectedFieldFilter}
+              />
             </div>
             {/* .inputGroup */}
             <Calendar
@@ -322,64 +270,20 @@ const Dashboard = () => {
             <div className={style.form}>
               <div className={style.inputGroup}>
                 <label>Field Name</label>
-                <div ref={fieldWrapper} className={style.dropdownWrapper}>
-                  <button
-                    onClick={() => setFieldOpen((c) => !c)}
-                    className={`${style.dropdown} ${
-                      fieldOpen ? style.open : ""
-                    }`}
-                  >
-                    {selectedField?.name}
-                  </button>
-                  <div
-                    className={`${style.menu} ${fieldOpen ? style.open : ""}`}
-                  >
-                    {fields.map((f) => {
-                      return (
-                        <button
-                          key={f._id}
-                          onClick={() => setUploadField(f)}
-                          className={style.menuItem}
-                        >
-                          {f.name}
-                        </button>
-                      );
-                    })}
-                  </div>
-                  {/* .menu */}
-                </div>
-                {/* .dropdownWrapper */}
+                <Dropdown
+                  data={fields}
+                  value={selectedField}
+                  onSelection={setSelectedField}
+                />
               </div>
               {/* .inputGroup */}
               <div className={style.inputGroup}>
                 <label>Crop Type</label>
-                <div ref={cropWrapper} className={style.dropdownWrapper}>
-                  <button
-                    onClick={() => setCropOpen((c) => !c)}
-                    className={`${style.dropdown} ${
-                      cropOpen ? style.open : ""
-                    }`}
-                  >
-                    {selectedCrop?.name}
-                  </button>
-                  <div
-                    className={`${style.menu} ${cropOpen ? style.open : ""}`}
-                  >
-                    {crops.map((c) => {
-                      return (
-                        <button
-                          key={c._id}
-                          onClick={() => setUploadCrop(c)}
-                          className={style.menuItem}
-                        >
-                          {c.name}
-                        </button>
-                      );
-                    })}
-                  </div>
-                  {/* .menu */}
-                </div>
-                {/* .dropdownWrapper */}
+                <Dropdown
+                  data={crops}
+                  value={selectedCrop}
+                  onSelection={setSelectedCrop}
+                />
               </div>
               {/* .inputGroup */}
               <div className={style.changeVideo}>

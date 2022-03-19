@@ -11,7 +11,9 @@
 .logo {
   display: flex;
   img {
+    display: block;
     margin-right: 24px;
+    cursor: pointer;
   }
   h2 {
     font-family: "Poppins", sans-serif;
