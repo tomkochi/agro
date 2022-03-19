@@ -1,6 +1,6 @@
 import style from "./header.module.scss";
 
-const Header = ({ title }) => {
+const Header = ({ title, children }) => {
   return (
     <div className={style.header}>
       <div className={style.left}>
@@ -12,8 +12,9 @@ const Header = ({ title }) => {
       </div>
       {/* .left */}
       <div className={style.right}>
+        {children}
         <div className={style.loggedIn}>
-          <button>Logout</button>
+          <button className={style.logout}>Logout</button>
         </div>
       </div>
       {/* .right */}

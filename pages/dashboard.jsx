@@ -7,10 +7,11 @@ import FieldCard from "../components/dashboard/fieldCard";
 import { useRef, useState, useEffect } from "react";
 import Progress from "../components/dashboard/progress";
 import { useRouter } from "next/router";
+import PageHeader from "../components/header";
+import moment from "moment";
 
 const Dashboard = () => {
   const router = useRouter();
-
   const [monthData, setMonthData] = useState([]); // which all dates of this month has data
   const [dateData, setDateData] = useState([]); // selected day's data
 
@@ -41,6 +42,8 @@ const Dashboard = () => {
   const cropWrapper = useRef(null);
   const uploadWindow = useRef(null);
   const fieldFilterWrapper = useRef(null);
+
+  const [selectedDate, setSelectedDate] = useState(new Date());
 
   const closeUploadOverlay = () => {
     setUploadOverlay(false);
@@ -96,15 +99,12 @@ const Dashboard = () => {
 
   const humanFileSize = (bytes, dp = 1) => {
     const thresh = 1024;
-
     if (Math.abs(bytes) < thresh) {
       return bytes + " B";
     }
-
     const units = ["KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
     let u = -1;
     const r = 10 ** dp;
-
     do {
       bytes /= thresh;
       ++u;
@@ -112,7 +112,6 @@ const Dashboard = () => {
       Math.round(Math.abs(bytes) * r) / r >= thresh &&
       u < units.length - 1
     );
-
     return bytes.toFixed(dp) + " " + units[u];
   };
 
@@ -153,7 +152,13 @@ const Dashboard = () => {
     setUploading(true);
   };
 
-  const fetchDateData = (date) => {
+  const fetchDateData = (date, hasData) => {
+    setSelectedDate(date);
+
+    if (!hasData) {
+      setDateData([]);
+      return;
+    }
     axios({
       url: `${process.env.NEXT_PUBLIC_BASE_URL}/data/list`,
       method: "post",
@@ -162,7 +167,7 @@ const Dashboard = () => {
         authKey,
       },
       data: {
-        date,
+        date: date.getTime(),
         field: [],
       },
     })
@@ -224,15 +229,17 @@ const Dashboard = () => {
 
   return (
     <Layout title="Dashboard" bg="#F3F3F3">
+      <PageHeader title="Dashboard">
+        <button onClick={openFileDialog} className={style.selectVideoButton}>
+          Select video
+        </button>
+      </PageHeader>
       <div className={style.dashboard}>
         <header>
           <div className={style.status}>
             {uploading && <Progress size={totalSize} done={upSize} />}
           </div>
           <input ref={fileInput} type="file" hidden onChange={handleFile} />
-          <button onClick={openFileDialog} className={style.videoButton}>
-            Select video
-          </button>
         </header>
         <main>
           <div className={style.leftPanel}>
@@ -271,7 +278,11 @@ const Dashboard = () => {
               {/* .fieldFilterWrapper */}
             </div>
             {/* .inputGroup */}
-            <Calendar monthData={monthData} fetchDateData={fetchDateData} />
+            <Calendar
+              monthData={monthData}
+              fetchDateData={fetchDateData}
+              setParentDate={setSelectedDate}
+            />
           </div>
           {/* .calendar */}
           <div className={style.reports}>
@@ -282,7 +293,7 @@ const Dashboard = () => {
               </div>
               {/* .left */}
               <div className={style.headerRight}>
-                <h5>15 April 2021</h5>
+                <h5>{moment(selectedDate).format("DD MMMM YYYY")}</h5>
               </div>
               {/* .right */}
             </div>
@@ -377,7 +388,10 @@ const Dashboard = () => {
                   <h4>{humanFileSize(file.size)}</h4>
                 </div>
                 {/* .fileDetails */}
-                <button onClick={openFileDialog} className={style.videoButton}>
+                <button
+                  onClick={openFileDialog}
+                  className={style.changeVideoButton}
+                >
                   Change video
                 </button>
               </div>

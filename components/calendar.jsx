@@ -88,9 +88,7 @@ const Calendar = ({ monthData = [], fetchDateData }) => {
     let newM = month < 9 ? `0${month + 1}` : month + 1;
 
     const newDate = `${year}/${newM}/${date}`;
-    if (monthData.includes(newDate)) {
-      fetchDateData(new Date(newDate).getTime());
-    }
+    fetchDateData(new Date(newDate), monthData.includes(newDate));
   }, [selectedDate]);
 
   useEffect(() => {

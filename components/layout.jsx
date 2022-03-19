@@ -1,4 +1,3 @@
-import Header from "./header";
 import Head from "next/head";
 
 export default function Layout({ title, bg, children }) {
@@ -7,7 +6,6 @@ export default function Layout({ title, bg, children }) {
       <Head>
         <title>{title} - Agrofocal</title>
       </Head>
-      <Header title={title} />
       <main>{children}</main>
       <style jsx>{`
         .layout {

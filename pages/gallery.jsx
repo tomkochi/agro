@@ -2,6 +2,7 @@ import style from "./gallery.module.scss";
 import Layout from "../components/layout";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
+import PageHeader from "../components/header";
 
 const Gallery = () => {
   const router = useRouter();
@@ -40,6 +41,7 @@ const Gallery = () => {
 
   return (
     <Layout title={fieldName || "Gallery"} bg="#F3F3F3">
+      <PageHeader title={fieldName || "Gallery"}></PageHeader>
       <div className={style.gallery}>
         <div className={style.views}>
           <button className={style.active}>Gallery</button>
