@@ -3,10 +3,11 @@ import { useRef, useState, useEffect } from "react";
 
 const Dropdown = ({ data = [], value, onSelection }) => {
   const wrapperRef = useRef(null);
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(false); // dropdown menu state
 
   const documentClick = (e) => {
     if (wrapperRef.current && !wrapperRef.current.contains(e.target)) {
+      // clecked outside
       setOpen(false);
     }
   };

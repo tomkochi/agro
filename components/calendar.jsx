@@ -20,7 +20,7 @@ const Calendar = ({ monthData = [], fetchDateData }) => {
   ];
 
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [dates, setDates] = useState([]);
+  const [dates, setDates] = useState([]); // date array for the whole month
 
   const selectNewDate = (d) => {
     setSelectedDate(new Date(`${d.year}/${d.month + 1}/${d.date}`));

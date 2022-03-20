@@ -1,6 +1,8 @@
 import style from "./progress.module.scss";
 
 const Progress = ({ size, done }) => {
+  // size - total size of the file
+  // done - uploaded till now
   const calcPercent = () => {
     return `${(100 / size) * done}%`;
   };

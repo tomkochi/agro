@@ -5,10 +5,12 @@ import { useRouter } from "next/router";
 
 const FieldCard = ({ data }) => {
   const router = useRouter();
-  console.log(data.field);
+
   const [showFullResult, setShowFullResult] = useState(false); // this decides show/hide more that 4
 
   const openGallery = () => {
+    // currently there's no api to fetch gallery date for a particular result
+    // need to chenge once we get the api
     localStorage.setItem("gallery", JSON.stringify(data.result.images));
     localStorage.setItem("field", data.field);
     router.push("/gallery");
