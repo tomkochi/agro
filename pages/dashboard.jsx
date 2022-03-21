@@ -9,15 +9,12 @@ import PageHeader from "../components/header";
 import moment from "moment";
 import Dropdown from "../components/dropdown";
 import { useRef, useState, useEffect } from "react";
-import { useRouter } from "next/router";
 
-const Dashboard = () => {
-  const router = useRouter();
+const Dashboard = ({ authKey }) => {
   const [monthData, setMonthData] = useState([]); // which all dates of this month has data
   const [dateData, setDateData] = useState([]); // selected day's data
 
   const [user, setUser] = useState(null); // got while loggin g in
-  const [authKey, setAuthKey] = useState(null); // got while loggin g in
 
   const [file, setFile] = useState(null); // selected file stored in here
   const [uploadOverlay, setUploadOverlay] = useState(false); // whether to show upload overlay box after choosing the file
@@ -160,7 +157,7 @@ const Dashboard = () => {
       method: "post",
       headers: {
         "Content-Type": "application/json",
-        authKey: "agroQ1dr$sA",
+        authKey,
       },
       data: {
         date: date,
@@ -174,13 +171,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     const userInfo = JSON.parse(localStorage.getItem("user"));
-    if (!userInfo) {
-      router.push("/");
-      return false;
-    }
     setUser(userInfo);
-    const key = JSON.parse(localStorage.getItem("authKey"));
-    setAuthKey(key);
 
     setFields(userInfo.account.fields);
     setCrops(userInfo.account.croptype);
@@ -317,3 +308,18 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+
+export function getServerSideProps(ctx) {
+  const { authKey } = ctx.req.cookies;
+  if (authKey) {
+    return { props: { authKey: ctx.req.cookies.authKey || null } };
+  } else {
+    return {
+      redirect: {
+        permanent: false,
+        destination: "/",
+      },
+      props: {},
+    };
+  }
+}

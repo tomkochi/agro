@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { useRouter } from "next/router";
 
-const Signin = () => {
+const Signin = ({ authKey }) => {
   const router = useRouter();
 
   const [email, setEmail] = useState("");
@@ -36,25 +36,25 @@ const Signin = () => {
           alert(r.data.msg.msg);
           return;
         }
-        // setUser(r.data.data.user);
-        // setAuthKey(r.data.data.authKey);
-        // save user info locally
         localStorage.setItem("user", JSON.stringify(r.data.data.user));
-        localStorage.setItem("authKey", JSON.stringify(r.data.data.authKey));
+        // localStorage.setItem("authKey", JSON.stringify(r.data.data.authKey));
+        fetch("/api/login", {
+          method: "post",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ authKey: r.data.data.authKey }),
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            console.log(data);
+          });
         router.push("/dashboard");
       })
       .catch((e) => {
         alert(e);
-      })
-      .finally(() => {});
+      });
   };
-
-  useEffect(() => {
-    const userInfo = JSON.parse(localStorage.getItem("user"));
-    if (userInfo) {
-      router.push("/dashboard");
-    }
-  }, []);
 
   return (
     <div className={style.signin}>
@@ -92,3 +92,18 @@ const Signin = () => {
 };
 
 export default Signin;
+
+export function getServerSideProps(ctx) {
+  const { authKey } = ctx.req.cookies;
+  if (authKey) {
+    return {
+      redirect: {
+        permanent: false,
+        destination: "/dashboard",
+      },
+      props: { authKey: ctx.req.cookies.authKey || null },
+    };
+  } else {
+    return { props: {} };
+  }
+}
