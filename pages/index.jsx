@@ -3,12 +3,15 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useRouter } from "next/router";
+import Loading from "../components/loading";
 
 const Signin = ({ authKey }) => {
   const router = useRouter();
 
   const [email, setEmail] = useState("");
   const [password, setpassword] = useState("");
+
+  const [busy, setBusy] = useState(false);
 
   const submit = (e) => {
     e.preventDefault();
@@ -20,6 +23,7 @@ const Signin = ({ authKey }) => {
       alert("Please fill all fields");
       return;
     }
+    setBusy(true);
     axios({
       url: `${process.env.NEXT_PUBLIC_BASE_URL}/user/login`,
       method: "post",
@@ -34,6 +38,7 @@ const Signin = ({ authKey }) => {
       .then((r) => {
         if (r.data.msg.code !== 2000) {
           alert(r.data.msg.msg);
+          setBusy(false);
           return;
         }
         console.log(r.data);
@@ -54,6 +59,7 @@ const Signin = ({ authKey }) => {
       })
       .catch((e) => {
         alert(e);
+        setBusy(false);
       });
   };
 
@@ -72,6 +78,7 @@ const Signin = ({ authKey }) => {
             onChange={(e) => setEmail(e.target.value)}
             placeholder="Username"
             required
+            disabled={busy}
           />
           <input
             type="password"
@@ -80,8 +87,11 @@ const Signin = ({ authKey }) => {
             onChange={(e) => setpassword(e.target.value)}
             placeholder="Password"
             required
+            disabled={busy}
           />
-          <button type="submit">Login</button>
+          <button type="submit" disabled={busy}>
+            {busy ? <Loading height={70} /> : "Login"}
+          </button>
           <Link href="/dashboard" passHref>
             Forgot Password?
           </Link>

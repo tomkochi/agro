@@ -9,8 +9,11 @@ import PageHeader from "../components/header";
 import moment from "moment";
 import Dropdown from "../components/dropdown";
 import { useRef, useState, useEffect } from "react";
+import Loading from "../components/loading";
 
 const Dashboard = ({ authKey }) => {
+  const [busy, setBusy] = useState(false);
+
   const [monthData, setMonthData] = useState([]); // which all dates of this month has data
   const [dateData, setDateData] = useState([]); // selected day's data
 
@@ -130,6 +133,9 @@ const Dashboard = ({ authKey }) => {
       setDateData([]);
       return;
     }
+
+    setBusy(true);
+
     axios({
       url: `${process.env.NEXT_PUBLIC_BASE_URL}/data/list`,
       method: "post",
@@ -147,6 +153,9 @@ const Dashboard = ({ authKey }) => {
       })
       .catch((e) => {
         console.log(e);
+      })
+      .finally(() => {
+        setBusy(false);
       });
   };
 
@@ -236,12 +245,17 @@ const Dashboard = ({ authKey }) => {
               {/* .right */}
             </div>
             {/* .header */}
-            <div className={style.cards}>
-              {dateData.map((d, di) => {
-                return <FieldCard key={di} data={d} />;
-              })}
-            </div>
-            {/* .body */}
+            {busy ? (
+              <div className={style.loadingWrapper}>
+                <Loading height={120} />
+              </div>
+            ) : (
+              <div className={style.cards}>
+                {dateData.map((d, di) => {
+                  return <FieldCard key={di} data={d} />;
+                })}
+              </div>
+            )}
           </div>
         </main>
       </div>

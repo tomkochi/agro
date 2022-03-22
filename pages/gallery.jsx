@@ -4,11 +4,10 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import PageHeader from "../components/header";
 
-const Gallery = () => {
+const Gallery = ({ authKey }) => {
   const router = useRouter();
 
   const [user, setUser] = useState(null);
-  const [authKey, setAuthKey] = useState(null);
   const [images, setimages] = useState([]);
   const [popupImage, setPopupImage] = useState(null);
   const [fieldName, setFieldName] = useState("");
@@ -30,8 +29,6 @@ const Gallery = () => {
       return false;
     }
     setUser(userInfo);
-    const key = JSON.parse(localStorage.getItem("authKey"));
-    setAuthKey(key);
     const passedImages = JSON.parse(localStorage.getItem("gallery"));
     setimages(passedImages);
     const field = localStorage.getItem("field");
@@ -154,3 +151,18 @@ const Gallery = () => {
 };
 
 export default Gallery;
+
+export function getServerSideProps(ctx) {
+  const { authKey } = ctx.req.cookies;
+  if (authKey) {
+    return { props: { authKey: ctx.req.cookies.authKey || null } };
+  } else {
+    return {
+      redirect: {
+        permanent: false,
+        destination: "/",
+      },
+      props: {},
+    };
+  }
+}

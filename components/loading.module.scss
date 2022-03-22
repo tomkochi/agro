@@ -1,0 +1,38 @@
+.one {
+  animation: one;
+  animation-duration: 1s;
+  animation-iteration-count: infinite;
+}
+
+.two {
+  animation: two;
+  animation-duration: 1s;
+  animation-iteration-count: infinite;
+}
+
+.three {
+  animation: three;
+  animation-duration: 1s;
+  animation-iteration-count: infinite;
+}
+
+@keyframes one {
+  30% {
+    opacity: 0;
+    transform: translatey(20px);
+  }
+}
+
+@keyframes two {
+  60% {
+    opacity: 0;
+    transform: translatey(20px);
+  }
+}
+
+@keyframes three {
+  100% {
+    opacity: 0;
+    transform: translatey(20px);
+  }
+}
