@@ -34,7 +34,6 @@ const Dashboard = ({ authKey }) => {
   const fieldWrapper = useRef(null);
   const cropWrapper = useRef(null);
   const uploadWindow = useRef(null);
-  const fieldFilterWrapper = useRef(null);
 
   const [selectedDate, setSelectedDate] = useState(new Date());
 

@@ -26,6 +26,16 @@
   h5 {
     font-size: 14px;
     color: #78828c;
+    display: flex;
+    align-items: center;
+    img {
+      margin-left: 27px;
+      margin-right: 9px;
+      margin-top: -2px;
+    }
+    span {
+      text-transform: uppercase;
+    }
   }
   button {
     margin-left: 27px;

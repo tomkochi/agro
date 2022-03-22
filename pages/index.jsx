@@ -36,6 +36,7 @@ const Signin = ({ authKey }) => {
           alert(r.data.msg.msg);
           return;
         }
+        console.log(r.data);
         localStorage.setItem("user", JSON.stringify(r.data.data.user));
         // localStorage.setItem("authKey", JSON.stringify(r.data.data.authKey));
         fetch("/api/login", {

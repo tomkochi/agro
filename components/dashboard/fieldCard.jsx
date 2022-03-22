@@ -2,8 +2,10 @@ import Image from "next/image";
 import { useState } from "react";
 import style from "./fieldCard.module.scss";
 import { useRouter } from "next/router";
+import moment from "moment";
 
 const FieldCard = ({ data }) => {
+  console.log(data);
   const router = useRouter();
 
   const [showFullResult, setShowFullResult] = useState(false); // this decides show/hide more that 4
@@ -20,7 +22,11 @@ const FieldCard = ({ data }) => {
     <div className={style.fieldCard}>
       <button onClick={openGallery} className={style.top}>
         <h4>{data.field}</h4>
-        <h5>{data.area}</h5>
+        <h5>
+          {data.area}
+          <img src="/images/clock.svg" alt="" />
+          <span>{moment.unix(data.date).format("HH:MM a")}</span>
+        </h5>
         <button>
           <Image
             src="/images/menu-three-dots.svg"
@@ -38,7 +44,9 @@ const FieldCard = ({ data }) => {
             return (
               <div key={ri} className={style.item}>
                 <h4>{r}</h4>
-                <h5>{data.result.objects.value[ri]}</h5>
+                <h5>
+                  {data.result.objects.value[ri]} {data.result.objects.unit[ri]}
+                </h5>
               </div>
             );
           } else {
@@ -47,7 +55,10 @@ const FieldCard = ({ data }) => {
               return (
                 <div key={ri} className={style.item}>
                   <h4>{r}</h4>
-                  <h5>{data.result.objects.value[ri]}</h5>
+                  <h5>
+                    {data.result.objects.value[ri]}{" "}
+                    {data.result.objects.unit[ri]}
+                  </h5>
                 </div>
               );
             }
