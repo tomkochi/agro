@@ -23,7 +23,7 @@ const FieldCard = ({ data }) => {
         <h4>{data.field}</h4>
         <h5>
           {data.area} acres
-          <span>{moment.unix(data.date).format("HH:MM a")}</span>
+          <span>{moment.unix(data.date).local().format("hh:mm a")}</span>
         </h5>
         <button>
           <Image
@@ -43,8 +43,7 @@ const FieldCard = ({ data }) => {
               <div key={ri} className={style.item}>
                 <h4>{r}</h4>
                 <h5>
-                  {data.result.objects.value[ri]}{" "}
-                  <span>{data.result.objects.unit[ri]}</span>
+                  {data.result.objects.value[ri]} <span>%</span>
                 </h5>
               </div>
             );

@@ -128,6 +128,9 @@ const Dashboard = ({ authKey }) => {
               },
             })
               .then((r) => {
+                console.log(r);
+                console.log(r.data.data);
+                console.log(r.data.data.status);
                 if (r.data.data.status === "Analysis Completed") {
                   setInspectionid(null);
                   // clear interval
@@ -227,7 +230,7 @@ const Dashboard = ({ authKey }) => {
 
   return (
     <Layout title="Dashboard" bg="#F3F3F3">
-      <PageHeader title="Dashboard">
+      <PageHeader title="Dashboard" authKey={authKey}>
         <button
           onClick={openFileDialog}
           className={style.selectVideoButton}
