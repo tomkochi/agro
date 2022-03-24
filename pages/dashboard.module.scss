@@ -27,6 +27,9 @@
   padding: 0 14px;
   display: flex;
   align-items: center;
+  &:disabled {
+    opacity: 0.4;
+  }
   &:before {
     content: url(/images/upload-white.svg);
     margin-right: 20px;
@@ -64,6 +67,41 @@
 }
 .leftPanel {
   margin-top: 56px;
+}
+.inspectionInProgress {
+  height: 37px;
+  box-shadow: 0px 4px 8px rgba(217, 220, 231, 0.58);
+  border-radius: 10px;
+  background: #ffffff;
+  margin-top: 16px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  h4 {
+    color: #343a40;
+    font-size: 14px;
+  }
+  span {
+    display: block;
+    width: 9px;
+    height: 9px;
+    background: #f0b734;
+    border-radius: 50%;
+    animation: blink 1.5s infinite;
+  }
+}
+@keyframes blink {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
 }
 .header {
   display: flex;

@@ -5,7 +5,6 @@ import { useRouter } from "next/router";
 import moment from "moment";
 
 const FieldCard = ({ data }) => {
-  console.log(data);
   const router = useRouter();
 
   const [showFullResult, setShowFullResult] = useState(false); // this decides show/hide more that 4
@@ -23,8 +22,7 @@ const FieldCard = ({ data }) => {
       <button onClick={openGallery} className={style.top}>
         <h4>{data.field}</h4>
         <h5>
-          {data.area}
-          <img src="/images/clock.svg" alt="" />
+          {data.area} acres
           <span>{moment.unix(data.date).format("HH:MM a")}</span>
         </h5>
         <button>
@@ -45,7 +43,8 @@ const FieldCard = ({ data }) => {
               <div key={ri} className={style.item}>
                 <h4>{r}</h4>
                 <h5>
-                  {data.result.objects.value[ri]} {data.result.objects.unit[ri]}
+                  {data.result.objects.value[ri]}{" "}
+                  <span>{data.result.objects.unit[ri]}</span>
                 </h5>
               </div>
             );
@@ -57,7 +56,7 @@ const FieldCard = ({ data }) => {
                   <h4>{r}</h4>
                   <h5>
                     {data.result.objects.value[ri]}{" "}
-                    {data.result.objects.unit[ri]}
+                    <span>{data.result.objects.unit[ri]}</span>
                   </h5>
                 </div>
               );

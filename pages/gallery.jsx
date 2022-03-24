@@ -33,7 +33,6 @@ const Gallery = ({ authKey }) => {
     setimages(passedImages);
     const field = localStorage.getItem("field");
     setFieldName(field);
-    console.log(localStorage);
   }, []);
 
   return (

@@ -41,7 +41,6 @@ const Signin = ({ authKey }) => {
           setBusy(false);
           return;
         }
-        console.log(r.data);
         localStorage.setItem("user", JSON.stringify(r.data.data.user));
         // localStorage.setItem("authKey", JSON.stringify(r.data.data.authKey));
         fetch("/api/login", {
@@ -53,7 +52,7 @@ const Signin = ({ authKey }) => {
         })
           .then((res) => res.json())
           .then((data) => {
-            console.log(data);
+            // console.log(data);
           });
         router.push("/dashboard");
       })
@@ -90,7 +89,7 @@ const Signin = ({ authKey }) => {
             disabled={busy}
           />
           <button type="submit" disabled={busy}>
-            {busy ? <Loading height={70} /> : "Login"}
+            {busy ? <Loading height={40} /> : "Login"}
           </button>
           <Link href="/dashboard" passHref>
             Forgot Password?

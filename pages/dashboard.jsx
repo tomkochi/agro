@@ -14,10 +14,12 @@ import Loading from "../components/loading";
 const Dashboard = ({ authKey }) => {
   const [busy, setBusy] = useState(false);
 
+  const [inspectionid, setInspectionid] = useState(null);
+
   const [monthData, setMonthData] = useState([]); // which all dates of this month has data
   const [dateData, setDateData] = useState([]); // selected day's data
 
-  const [user, setUser] = useState(null); // got while loggin g in
+  const [user, setUser] = useState(null); // got while logging in
 
   const [file, setFile] = useState(null); // selected file stored in here
   const [uploadOverlay, setUploadOverlay] = useState(false); // whether to show upload overlay box after choosing the file
@@ -108,15 +110,39 @@ const Dashboard = ({ authKey }) => {
         authKey,
       },
     })
-      .then((e) => {
-        if (e.data.msg.code === 2007) {
-          alert(e.data.msg.msg);
+      .then((r) => {
+        if (r.data.msg.code === 2007) {
+          // alert(r.data.msg.msg);
+          setInspectionid(r.data.data.inspectionid);
+
+          // check after some time
+          const inspectionCheck = setTimeout(() => {
+            console.log("checking");
+            axios({
+              method: "post",
+              url: `${process.env.NEXT_PUBLIC_BASE_URL}/data/inspection`,
+              data: { inspectionid },
+              headers: {
+                content_type: "application/json",
+                authKey,
+              },
+            })
+              .then((r) => {
+                if (r.data.data.status === "Analysis Completed") {
+                  setInspectionid(null);
+                  // clear interval
+                  clearInterval(inspectionCheck);
+                }
+              })
+              .catch((e) => {
+                console.log(e);
+              });
+          }, 3000);
         } else {
-          alert(e.data.msg.msg);
+          alert(r.data.msg.msg);
         }
       })
       .catch((e) => {
-        console.log(e);
         // console.log(e);
       })
       .finally(() => {
@@ -127,8 +153,6 @@ const Dashboard = ({ authKey }) => {
   };
 
   const fetchDateData = (date, hasData) => {
-    setSelectedDate(date);
-
     if (!hasData) {
       setDateData([]);
       return;
@@ -144,7 +168,7 @@ const Dashboard = ({ authKey }) => {
         authKey,
       },
       data: {
-        date: date.getTime(),
+        date,
         field: [],
       },
     })
@@ -152,7 +176,7 @@ const Dashboard = ({ authKey }) => {
         setDateData(r.data.data);
       })
       .catch((e) => {
-        console.log(e);
+        // console.log(e);
       })
       .finally(() => {
         setBusy(false);
@@ -204,7 +228,11 @@ const Dashboard = ({ authKey }) => {
   return (
     <Layout title="Dashboard" bg="#F3F3F3">
       <PageHeader title="Dashboard">
-        <button onClick={openFileDialog} className={style.selectVideoButton}>
+        <button
+          onClick={openFileDialog}
+          className={style.selectVideoButton}
+          disabled={uploading}
+        >
           Select video
         </button>
       </PageHeader>
@@ -230,6 +258,12 @@ const Dashboard = ({ authKey }) => {
               fetchDateData={fetchDateData}
               setParentDate={setSelectedDate}
             />
+            {inspectionid && (
+              <div className={style.inspectionInProgress}>
+                <h4>Inspection in progress</h4>
+                <span className={style.blinkingDot}></span>
+              </div>
+            )}
           </div>
           {/* .calendar */}
           <div className={style.reports}>
