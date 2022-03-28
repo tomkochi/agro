@@ -9,17 +9,17 @@ const FieldCard = ({ data }) => {
 
   const [showFullResult, setShowFullResult] = useState(false); // this decides show/hide more that 4
 
-  const openGallery = () => {
+  const openGallery = (e) => {
+    e.preventDefault();
     // currently there's no api to fetch gallery date for a particular result
     // need to chenge once we get the api
     localStorage.setItem("gallery", JSON.stringify(data.result.images));
-    localStorage.setItem("field", data.field);
     router.push("/gallery");
   };
 
   return (
     <div className={style.fieldCard}>
-      <button onClick={openGallery} className={style.top}>
+      <a href="#" onClick={openGallery} className={style.top}>
         <h4>{data.field}</h4>
         <h5>
           {data.area} acres
@@ -33,7 +33,7 @@ const FieldCard = ({ data }) => {
             height={20}
           />
         </button>
-      </button>
+      </a>
       {/* .top */}
       <div className={style.middle}>
         {data.result.objects.name.map((r, ri) => {
@@ -43,7 +43,8 @@ const FieldCard = ({ data }) => {
               <div key={ri} className={style.item}>
                 <h4>{r}</h4>
                 <h5>
-                  {data.result.objects.value[ri]} <span>%</span>
+                  {data.result.objects.value[ri]}{" "}
+                  <span>{data.result.objects.unit[ri]}</span>
                 </h5>
               </div>
             );

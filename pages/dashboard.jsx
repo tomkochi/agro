@@ -10,11 +10,23 @@ import moment from "moment";
 import Dropdown from "../components/dropdown";
 import { useRef, useState, useEffect } from "react";
 import Loading from "../components/loading";
+import Link from "next/link";
 
 const Dashboard = ({ authKey }) => {
+  const inspectionStatus = {
+    HIDDEN: 0,
+    PROGRESS: 1,
+    COMPLETED: 2,
+  };
+  Object.freeze(inspectionStatus);
+
   const [busy, setBusy] = useState(false);
 
-  const [inspectionid, setInspectionid] = useState(null);
+  const [inspectionProgress, setInspectionProgress] = useState(
+    inspectionStatus.HIDDEN
+  );
+
+  const [inspectionId, setInspectionId] = useState("");
 
   const [monthData, setMonthData] = useState([]); // which all dates of this month has data
   const [dateData, setDateData] = useState([]); // selected day's data
@@ -40,7 +52,7 @@ const Dashboard = ({ authKey }) => {
   const cropWrapper = useRef(null);
   const uploadWindow = useRef(null);
 
-  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState(new Date().getTime());
 
   const closeUploadOverlay = () => {
     setUploadOverlay(false);
@@ -110,29 +122,30 @@ const Dashboard = ({ authKey }) => {
         authKey,
       },
     })
-      .then((r) => {
-        if (r.data.msg.code === 2007) {
-          // alert(r.data.msg.msg);
-          setInspectionid(r.data.data.inspectionid);
-
+      .then((ur) => {
+        if (ur.data.msg.code === 2007) {
+          setInspectionProgress(inspectionStatus.PROGRESS);
+          setInspectionId(ur.data.data.inspectionid);
           // check after some time
-          const inspectionCheck = setTimeout(() => {
-            console.log("checking");
+          const inspectionCheck = setInterval(() => {
             axios({
               method: "post",
               url: `${process.env.NEXT_PUBLIC_BASE_URL}/data/inspection`,
-              data: { inspectionid },
+              data: { inspectionid: ur.data.data.inspectionid },
               headers: {
                 content_type: "application/json",
                 authKey,
               },
             })
-              .then((r) => {
-                console.log(r);
-                console.log(r.data.data);
-                console.log(r.data.data.status);
-                if (r.data.data.status === "Analysis Completed") {
-                  setInspectionid(null);
+              .then((ir) => {
+                if (ir.data.data.status === "Analysis Completed") {
+                  setInspectionProgress(inspectionStatus.COMPLETED);
+                  // update monthsData
+                  getMonthData(new Date().getTime());
+                  // if selectedDate is today, refresh fieldcards
+                  if (moment(selectedDate).isSame(moment(), "day")) {
+                    fetchDateData(moment(selectedDate).unix(), true);
+                  }
                   // clear interval
                   clearInterval(inspectionCheck);
                 }
@@ -140,13 +153,13 @@ const Dashboard = ({ authKey }) => {
               .catch((e) => {
                 console.log(e);
               });
-          }, 3000);
+          }, 1000 * 10);
         } else {
-          alert(r.data.msg.msg);
+          alert(ur.data.msg.msg);
         }
       })
       .catch((e) => {
-        // console.log(e);
+        console.log(e);
       })
       .finally(() => {
         setUploading(false);
@@ -156,6 +169,7 @@ const Dashboard = ({ authKey }) => {
   };
 
   const fetchDateData = (date, hasData) => {
+    setSelectedDate(moment(date * 1000));
     if (!hasData) {
       setDateData([]);
       return;
@@ -176,6 +190,7 @@ const Dashboard = ({ authKey }) => {
       },
     })
       .then((r) => {
+        console.log(r);
         setDateData(r.data.data);
       })
       .catch((e) => {
@@ -187,6 +202,7 @@ const Dashboard = ({ authKey }) => {
   };
 
   const getMonthData = (date) => {
+    console.log("Getting monthData");
     axios({
       url: `${process.env.NEXT_PUBLIC_BASE_URL}/data/month/list`,
       method: "post",
@@ -258,13 +274,31 @@ const Dashboard = ({ authKey }) => {
             {/* .inputGroup */}
             <Calendar
               monthData={monthData}
+              getMonthData={getMonthData}
               fetchDateData={fetchDateData}
-              setParentDate={setSelectedDate}
             />
-            {inspectionid && (
-              <div className={style.inspectionInProgress}>
-                <h4>Inspection in progress</h4>
-                <span className={style.blinkingDot}></span>
+            {inspectionProgress !== inspectionStatus.HIDDEN && (
+              <div className={style.inspectionStatus}>
+                {inspectionProgress === inspectionStatus.PROGRESS && (
+                  <>
+                    <h4>Inspection in progress</h4>
+                    <span className={style.blinkingDot}></span>
+                  </>
+                )}
+                {inspectionProgress === inspectionStatus.COMPLETED && (
+                  <>
+                    <h4>Inspection completed</h4>
+                    <Link href={`/inspection/${inspectionId}`} passHref>
+                      <a
+                        onClick={() =>
+                          setInspectionProgress(inspectionStatus.HIDDEN)
+                        }
+                      >
+                        VIEW
+                      </a>
+                    </Link>
+                  </>
+                )}
               </div>
             )}
           </div>
@@ -283,8 +317,11 @@ const Dashboard = ({ authKey }) => {
             </div>
             {/* .header */}
             {busy ? (
-              <div className={style.loadingWrapper}>
-                <Loading height={120} />
+              <div
+                className={style.loadingWrapper}
+                style={{ marginTop: "100px" }}
+              >
+                <Loading height={15} />
               </div>
             ) : (
               <div className={style.cards}>

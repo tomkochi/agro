@@ -27,7 +27,6 @@ const Header = ({ title, authKey, children }) => {
         })
           .then((res) => res.json())
           .then((data) => {
-            console.log(data);
             router.push("/");
           })
           .catch((e) => {
@@ -43,7 +42,7 @@ const Header = ({ title, authKey, children }) => {
     <div className={style.header}>
       <div className={style.left}>
         <div className={style.logo}>
-          <Link href="/dashboard" passHref>
+          <Link href="/" passHref>
             <img src="/images/logo.svg" width={140} alt="" />
           </Link>
           <h2>{title}</h2>
@@ -55,7 +54,7 @@ const Header = ({ title, authKey, children }) => {
         {children}
         <div className={style.loggedIn}>
           <button className={style.logout} onClick={logout}>
-            {authKey}
+            Logout
           </button>
         </div>
       </div>

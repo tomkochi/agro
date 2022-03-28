@@ -66,9 +66,9 @@
   }
 }
 .leftPanel {
-  margin-top: 56px;
+  margin-top: 41px;
 }
-.inspectionInProgress {
+.inspectionStatus {
   height: 37px;
   box-shadow: 0px 4px 8px rgba(217, 220, 231, 0.58);
   border-radius: 10px;
@@ -90,6 +90,15 @@
     background: #f0b734;
     border-radius: 50%;
     animation: blink 1.5s infinite;
+  }
+  a {
+    background: none;
+    border: none;
+    font-size: 12px;
+    font-weight: 600;
+    color: #f0b734;
+    padding: 0;
+    text-decoration: none;
   }
 }
 @keyframes blink {

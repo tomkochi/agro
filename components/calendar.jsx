@@ -2,115 +2,92 @@ import style from "./calendar.module.scss";
 import { datesGenerator, daysInMonth } from "dates-generator";
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import moment from "moment";
 
-const Calendar = ({ monthData = [], fetchDateData }) => {
-  const months = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
-  ];
+const Calendar = ({ monthData = [], getMonthData, fetchDateData }) => {
+  const monthAction = {
+    TO: 0,
+    NEXT: 1,
+    PREVIOUS: 2,
+  };
+  Object.freeze(monthAction);
 
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [dates, setDates] = useState([]); // date array for the whole month
 
-  const selectNewDate = (d) => {
-    setSelectedDate(new Date(`${d.year}/${d.month + 1}/${d.date}`));
-  };
+  const [display, setDisplay] = useState({
+    year: parseInt(moment().format("YYYY")),
+    month: parseInt(moment().format("M")),
+  });
 
-  const nextMonth = () => {
-    const curDate = selectedDate.getDate();
-    const curMonth = selectedDate.getMonth();
-    const curYear = selectedDate.getFullYear();
-
-    let newMonth = curMonth + 1;
-
-    let newYear = curYear;
-    let newDate = curDate;
-
-    if (newMonth >= 12) {
-      newMonth = 1;
-      newYear++;
-    } else {
-      newMonth++;
+  const changeMonth = (action) => {
+    let newMonth;
+    if (action === monthAction.NEXT) {
+      newMonth = moment(
+        `${display.year}/${display.month}/01`,
+        "YYYY/MM/DD"
+      ).add(1, "month");
     }
-    if (selectedDate.getDate() > daysInMonth(newYear, newMonth - 1)) {
-      newDate = daysInMonth(newYear, newMonth - 1);
+    if (action === monthAction.PREVIOUS) {
+      newMonth = moment(
+        `${display.year}/${display.month}/01`,
+        "YYYY/MM/DD"
+      ).subtract(1, "month");
     }
-    setSelectedDate(new Date(`${newYear}/${newMonth}/${newDate}`));
-  };
-  const previousMonth = () => {
-    const curDate = selectedDate.getDate();
-    const curMonth = selectedDate.getMonth();
-    const curYear = selectedDate.getFullYear();
-
-    let newMonth = curMonth;
-
-    let newYear = curYear;
-    let newDate = curDate;
-
-    if (newMonth <= 0) {
-      newMonth = 12;
-      newYear--;
-    }
-
-    setSelectedDate(new Date(`${newYear}/${newMonth}/${newDate}`));
+    const year = parseInt(moment(newMonth).format("YYYY"));
+    const month = parseInt(moment(newMonth).format("MM"));
+    setDisplay({
+      year,
+      month,
+    });
+    displayCalendar(year, month);
+    setTimeout(() => {
+      getMonthData(
+        moment(`${year}/${month}/1 12:59:59`, "YYYY/M/D HH:mm:ss").unix()
+      );
+    }, 200);
   };
 
   const hasData = (d) => {
-    let newM = d.month < 9 ? `0${d.month + 1}` : d.month + 1;
-    const date = `${d.year}/${newM}/${d.date}`;
+    const date = moment({ year: d.year, month: d.month, day: d.date }).format(
+      "YYYY/MM/DD"
+    );
     return monthData.includes(date);
   };
 
-  useEffect(() => {
+  const displayCalendar = (year, month) => {
     const body = {
-      month: selectedDate.getMonth(),
-      year: selectedDate.getFullYear(),
+      year: year,
+      month: month - 1,
     };
     const { dates } = datesGenerator(body);
-
     setDates([...dates]);
+  };
 
-    // check if the selected date has data
-    const date = selectedDate.getDate();
-    const month = selectedDate.getMonth();
-    const year = selectedDate.getFullYear();
-
-    let newM = month < 9 ? `0${month + 1}` : month + 1;
-
-    const newDate = `${year}/${newM}/${date}`;
-    fetchDateData(
-      new Date(`${newDate} 23:59:59`).getTime(),
-      monthData.includes(newDate)
-    );
-  }, [selectedDate]);
+  // new date click event
+  const selectNewDate = (date) => {
+    setSelectedDate(date);
+    const newDate = moment(date).format("YYYY/MM/DD");
+    fetchDateData(moment(date).unix(), monthData.includes(newDate));
+  };
 
   useEffect(() => {
-    if (!monthData) return;
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = today.getMonth();
-    const newM = month < 9 ? "0" + (month + 1) : month;
-    const date = today.getDate();
-    const newDate = `${year}/${newM}/${date}`;
-    if (monthData.includes(newDate)) {
-      fetchDateData(new Date(`${newDate} 23:59:59`).getTime());
-    }
-  }, [monthData]);
+    const year = parseInt(moment().format("YYYY"));
+    const month = parseInt(moment().format("MM"));
+    setDisplay({
+      year,
+      month,
+    });
+    displayCalendar(year, month);
+  }, []);
 
   return (
     <div className={style.calendar}>
       <div className={style.controls}>
-        <button onClick={() => previousMonth()} className={style.previousMonth}>
+        <button
+          onClick={() => changeMonth(monthAction.PREVIOUS)}
+          className={style.previousMonth}
+        >
           <Image
             src="/images/left-arrow-outline-green.svg"
             alt=""
@@ -119,9 +96,12 @@ const Calendar = ({ monthData = [], fetchDateData }) => {
           />
         </button>
         <button className={style.monthAndYear}>
-          {months[selectedDate.getMonth()]} {selectedDate.getFullYear()}
+          {moment(display.month, "M").format("MMMM")} {display.year}
         </button>
-        <button onClick={() => nextMonth()} className={style.nextMonth}>
+        <button
+          onClick={() => changeMonth(monthAction.NEXT)}
+          className={style.nextMonth}
+        >
           <Image
             src="/images/right-arrow-outline-green.svg"
             alt=""
@@ -137,18 +117,20 @@ const Calendar = ({ monthData = [], fetchDateData }) => {
             <div key={wi} className={style.week}>
               <ul>
                 {w.map((d, di) => {
-                  return selectedDate.getMonth() === d.month ? (
+                  return display.month - 1 === d.month ? (
                     <li key={di}>
                       <button
                         onClick={() =>
-                          selectNewDate({
-                            date: d.date,
-                            month: d.month,
-                            year: d.year,
-                          })
+                          selectNewDate(
+                            new Date(
+                              `${d.year}/${d.month + 1}/${d.date} 12:59:59`
+                            )
+                          )
                         }
                         className={`${
-                          d.date === selectedDate.getDate()
+                          d.date === selectedDate.getDate() &&
+                          d.month === selectedDate.getMonth() &&
+                          d.year === selectedDate.getFullYear()
                             ? style.selected
                             : ""
                         } ${hasData(d) ? style.hasData : ""}`}

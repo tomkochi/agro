@@ -13,7 +13,7 @@ const Signin = ({ authKey }) => {
 
   const [busy, setBusy] = useState(false);
 
-  const submit = (e) => {
+  const submit = async (e) => {
     e.preventDefault();
     if (email.trim().length === 0 || password.length === 0) {
       alert("Please fill all fields");
@@ -89,7 +89,7 @@ const Signin = ({ authKey }) => {
             disabled={busy}
           />
           <button type="submit" disabled={busy}>
-            {busy ? <Loading height={40} /> : "Login"}
+            {busy ? <Loading height={10} /> : "Login"}
           </button>
           <Link href="/dashboard" passHref>
             Forgot Password?
