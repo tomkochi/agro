@@ -9,17 +9,20 @@ const FieldCard = ({ data }) => {
 
   const [showFullResult, setShowFullResult] = useState(false); // this decides show/hide more that 4
 
-  const openGallery = (e) => {
+  const openGallery = (id, e) => {
     e.preventDefault();
     // currently there's no api to fetch gallery date for a particular result
     // need to chenge once we get the api
-    localStorage.setItem("gallery", JSON.stringify(data.result.images));
-    router.push("/gallery");
+    router.push(`/inspection/${id}`);
   };
 
   return (
     <div className={style.fieldCard}>
-      <a href="#" onClick={openGallery} className={style.top}>
+      <a
+        href="#"
+        onClick={(e) => openGallery(data.inspectionid, e)}
+        className={style.top}
+      >
         <h4>{data.field}</h4>
         <h5>
           {data.area} acres

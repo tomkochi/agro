@@ -176,6 +176,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  backdrop-filter: blur(8px);
 }
 .uploadWindow {
   background: #f4f5f2;
