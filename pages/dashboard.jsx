@@ -20,6 +20,8 @@ const Dashboard = ({ authKey }) => {
   };
   Object.freeze(inspectionStatus);
 
+  const allFields = { _id: 0, name: "All" };
+
   const [busy, setBusy] = useState(false);
 
   const [inspectionProgress, setInspectionProgress] = useState(
@@ -228,7 +230,7 @@ const Dashboard = ({ authKey }) => {
     setCrops(userInfo.account.croptype);
     setSelectedField(userInfo.account.fields[0]);
     setSelectedCrop(userInfo.account.croptype[0]);
-    setSelectedFieldFilter(userInfo.account.fields[0]);
+    setSelectedFieldFilter(allFields);
 
     getMonthData(new Date().getTime());
 
@@ -266,7 +268,7 @@ const Dashboard = ({ authKey }) => {
           <div className={style.leftPanel}>
             <div className={style.fieldFilter}>
               <Dropdown
-                data={fields}
+                data={[allFields, ...fields]}
                 value={selectedFieldFilter}
                 onSelection={setSelectedFieldFilter}
               />
@@ -324,10 +326,12 @@ const Dashboard = ({ authKey }) => {
                 <Loading height={15} />
               </div>
             ) : (
-              <div className={style.cards}>
-                {dateData.map((d, di) => {
-                  return <FieldCard key={di} data={d} />;
-                })}
+              <div className={style.cardsWrapper}>
+                <div className={style.cards}>
+                  {dateData.map((d, di) => {
+                    return <FieldCard key={di} data={d} />;
+                  })}
+                </div>
               </div>
             )}
           </div>

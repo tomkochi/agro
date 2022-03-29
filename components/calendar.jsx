@@ -20,6 +20,21 @@ const Calendar = ({ monthData = [], getMonthData, fetchDateData }) => {
     month: parseInt(moment().format("M")),
   });
 
+  const [yearMonthSelector, setYearMonthSelector] = useState(false);
+
+  const years = () => {
+    const startYear = 2021;
+    const endYear = parseInt(moment().format("YYYY"));
+    return Array.from(
+      { length: endYear - startYear + 1 },
+      (_, i) => i + startYear
+    );
+  };
+
+  const months = () => {
+    return moment.months();
+  };
+
   const changeMonth = (action) => {
     let newMonth;
     if (action === monthAction.NEXT) {
@@ -71,6 +86,39 @@ const Calendar = ({ monthData = [], getMonthData, fetchDateData }) => {
     fetchDateData(moment(date).unix(), monthData.includes(newDate));
   };
 
+  const selectYear = (y) => {
+    setDisplay((d) => {
+      return {
+        year: y,
+        month: d.month,
+      };
+    });
+    displayCalendar(y, display.month);
+  };
+  const selectMonth = (m) => {
+    setDisplay((d) => {
+      return {
+        year: d.year,
+        month: m + 1,
+      };
+    });
+    displayCalendar(display.year, m + 1);
+  };
+
+  const handleOutsideClick = (e) => {
+    console.log(e);
+    setYearMonthSelector(false);
+  };
+
+  useEffect(() => {
+    if (yearMonthSelector) {
+      document.addEventListener("click", handleOutsideClick);
+    }
+    return () => {
+      document.removeEventListener("click", handleOutsideClick);
+    };
+  }, [yearMonthSelector]);
+
   useEffect(() => {
     const year = parseInt(moment().format("YYYY"));
     const month = parseInt(moment().format("MM"));
@@ -95,9 +143,40 @@ const Calendar = ({ monthData = [], getMonthData, fetchDateData }) => {
             height={14}
           />
         </button>
-        <button className={style.monthAndYear}>
-          {moment(display.month, "M").format("MMMM")} {display.year}
-        </button>
+        <div className={style.yearMonth}>
+          <button
+            className={`${style.monthAndYear} ${
+              yearMonthSelector ? style.open : ""
+            }`}
+            onClick={() => setYearMonthSelector(true)}
+          >
+            {moment(display.month, "M").format("MMMM")} {display.year}
+          </button>
+          {yearMonthSelector && (
+            <div className={style.customYearMonth}>
+              <div className={style.years}>
+                {years().map((y, yi) => {
+                  return (
+                    <button key={yi} onClick={() => selectYear(y)}>
+                      {y}
+                    </button>
+                  );
+                })}
+              </div>
+              {/* .years */}
+              <div className={style.months}>
+                {months().map((m, mi) => {
+                  return (
+                    <button key={mi} onClick={() => selectMonth(mi)}>
+                      {m}
+                    </button>
+                  );
+                })}
+              </div>
+              {/* .months */}
+            </div>
+          )}
+        </div>
         <button
           onClick={() => changeMonth(monthAction.NEXT)}
           className={style.nextMonth}

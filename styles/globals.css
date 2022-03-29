@@ -1,7 +1,29 @@
+html,
+body {
+  height: 100vh;
+  overflow-y: hidden;
+}
 * {
   font-family: "Poppins", sans-serif;
   box-sizing: border-box;
 }
 button {
   cursor: pointer;
+}
+::-webkit-scrollbar {
+  width: 6px;
+}
+/* Track */
+::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 6px;
+}
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #e0e0e0;
+  border-radius: 6px;
+}
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #cecdcd;
 }
