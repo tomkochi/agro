@@ -52,7 +52,6 @@ const Signin = ({ authKey }) => {
         })
           .then((res) => res.json())
           .then((data) => {
-            console.log(data);
             setBusy(false);
             router.replace("/dashboard");
           });
