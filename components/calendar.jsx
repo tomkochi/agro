@@ -3,8 +3,11 @@ import { datesGenerator, daysInMonth } from "dates-generator";
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import moment from "moment";
+import { useRouter } from "next/router";
 
 const Calendar = ({ monthData = [], getMonthData, fetchDateData }) => {
+  const router = useRouter();
+
   const monthAction = {
     TO: 0,
     NEXT: 1,
@@ -12,7 +15,9 @@ const Calendar = ({ monthData = [], getMonthData, fetchDateData }) => {
   };
   Object.freeze(monthAction);
 
-  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState(
+    router.query.d ? new Date(router.query.d * 1000) : new Date()
+  );
   const [dates, setDates] = useState([]); // date array for the whole month
 
   const [display, setDisplay] = useState({
@@ -83,6 +88,14 @@ const Calendar = ({ monthData = [], getMonthData, fetchDateData }) => {
   const selectNewDate = (date) => {
     setSelectedDate(date);
     const newDate = moment(date).format("YYYY/MM/DD");
+    router.push(
+      {
+        pathname: "/dashboard",
+        query: { d: moment(date).unix() },
+      },
+      undefined,
+      { shallow: true }
+    );
     fetchDateData(moment(date).unix(), monthData.includes(newDate));
   };
 

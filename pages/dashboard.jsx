@@ -11,6 +11,7 @@ import Dropdown from "../components/dropdown";
 import { useRef, useState, useEffect } from "react";
 import Loading from "../components/loading";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 const Dashboard = ({ authKey }) => {
   const inspectionStatus = {
@@ -19,6 +20,8 @@ const Dashboard = ({ authKey }) => {
     COMPLETED: 2,
   };
   Object.freeze(inspectionStatus);
+
+  const router = useRouter();
 
   const allFields = { _id: 0, name: "All" };
 
@@ -40,7 +43,7 @@ const Dashboard = ({ authKey }) => {
 
   const [selectedField, setSelectedField] = useState(null);
   const [selectedCrop, setSelectedCrop] = useState(null);
-  const [selectedFieldFilter, setSelectedFieldFilter] = useState(null);
+  const [selectedFieldFilter, setSelectedFieldFilter] = useState(allFields);
 
   const [fields, setFields] = useState([]); // got while logging in
   const [crops, setCrops] = useState([]); // got while logging in
@@ -54,7 +57,9 @@ const Dashboard = ({ authKey }) => {
   const cropWrapper = useRef(null);
   const uploadWindow = useRef(null);
 
-  const [selectedDate, setSelectedDate] = useState(new Date().getTime());
+  const [selectedDate, setSelectedDate] = useState(
+    router.query.d ? new Date(router.query.d * 1000) : new Date().getTime()
+  );
 
   const closeUploadOverlay = () => {
     setUploadOverlay(false);
@@ -188,7 +193,7 @@ const Dashboard = ({ authKey }) => {
       },
       data: {
         date,
-        field: [],
+        field: selectedFieldFilter._id === 0 ? [] : [selectedFieldFilter._id],
       },
     })
       .then((r) => {
@@ -203,7 +208,6 @@ const Dashboard = ({ authKey }) => {
   };
 
   const getMonthData = (date) => {
-    console.log("Getting monthData");
     axios({
       url: `${process.env.NEXT_PUBLIC_BASE_URL}/data/month/list`,
       method: "post",
@@ -222,6 +226,10 @@ const Dashboard = ({ authKey }) => {
   };
 
   useEffect(() => {
+    if (router.query.d) {
+      fetchDateData(router.query.d * 1000, true);
+    }
+
     const userInfo = JSON.parse(localStorage.getItem("user"));
     setUser(userInfo);
 
@@ -244,6 +252,11 @@ const Dashboard = ({ authKey }) => {
       fileInput.current.value = "";
     }
   }, [uploadOverlay]);
+
+  useEffect(() => {
+    const newDate = moment(selectedDate).format("YYYY/MM/DD");
+    fetchDateData(moment(selectedDate).unix(), monthData.includes(newDate));
+  }, [selectedFieldFilter]);
 
   return (
     <Layout title="Dashboard" bg="#F3F3F3">
