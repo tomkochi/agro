@@ -21,8 +21,7 @@ const FieldCard = ({ data }) => {
       <a
         href="#"
         onClick={(e) => openGallery(data.inspectionid, e)}
-        className={style.top}
-      >
+        className={style.top}>
         <h4>{data.field}</h4>
         <h5>
           {data.area} acres
@@ -70,8 +69,7 @@ const FieldCard = ({ data }) => {
           <div className={style.showMore}>
             <button
               onClick={() => setShowFullResult(!showFullResult)}
-              className={showFullResult ? "" : style.expanded}
-            >
+              className={showFullResult ? "" : style.expanded}>
               {showFullResult ? (
                 "Show less"
               ) : (
@@ -85,7 +83,10 @@ const FieldCard = ({ data }) => {
       </div>
       {/* .middle */}
       <div className={style.bottom}>
-        <h4>{data.result.objects.value.reduce((a, b) => a + b)}</h4>
+        <h4>
+          {data.result.objects.value.reduce((a, b) => a + b)}
+          <span></span>
+        </h4>
       </div>
       {/* .bottom */}
     </div>

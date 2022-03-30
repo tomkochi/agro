@@ -9,8 +9,11 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@nivo/bar": "^0.79.1",
+    "@nivo/core": "^0.79.0",
     "axios": "^0.26.0",
     "cookie": "^0.4.2",
+    "d3": "^7.4.0",
     "dates-generator": "^1.0.4",
     "moment": "^2.29.1",
     "next": "12.1.0",

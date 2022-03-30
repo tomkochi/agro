@@ -192,7 +192,6 @@ const Dashboard = ({ authKey }) => {
       },
     })
       .then((r) => {
-        console.log(r);
         setDateData(r.data.data);
       })
       .catch((e) => {
@@ -252,8 +251,7 @@ const Dashboard = ({ authKey }) => {
         <button
           onClick={openFileDialog}
           className={style.selectVideoButton}
-          disabled={uploading}
-        >
+          disabled={uploading}>
           Select video
         </button>
       </PageHeader>
@@ -294,8 +292,7 @@ const Dashboard = ({ authKey }) => {
                       <a
                         onClick={() =>
                           setInspectionProgress(inspectionStatus.HIDDEN)
-                        }
-                      >
+                        }>
                         VIEW
                       </a>
                     </Link>
@@ -321,8 +318,7 @@ const Dashboard = ({ authKey }) => {
             {busy ? (
               <div
                 className={style.loadingWrapper}
-                style={{ marginTop: "100px" }}
-              >
+                style={{ marginTop: "100px" }}>
                 <Loading height={15} />
               </div>
             ) : (
@@ -376,8 +372,7 @@ const Dashboard = ({ authKey }) => {
                 {/* .fileDetails */}
                 <button
                   onClick={openFileDialog}
-                  className={style.changeVideoButton}
-                >
+                  className={style.changeVideoButton}>
                   Change video
                 </button>
               </div>
@@ -385,8 +380,7 @@ const Dashboard = ({ authKey }) => {
               <button
                 type="button"
                 onClick={upload}
-                className={style.uploadInspectButton}
-              >
+                className={style.uploadInspectButton}>
                 Upload & Start Inspection
               </button>
             </div>

@@ -1,14 +1,14 @@
 import style from "./[id].module.scss";
 import Layout from "../../components/layout";
 import { useState, useEffect } from "react";
-import { useRouter } from "next/router";
+import moment from "moment";
 import PageHeader from "../../components/header";
 import axios from "axios";
+import * as d3 from "d3";
+import { alphabet, BarChart } from "../../components/graph";
 
-const Inspection = ({ authKey, images }) => {
-  const router = useRouter();
-
-  const [user, setUser] = useState(null);
+const Inspection = ({ authKey, images, data }) => {
+  console.log(data);
   const [popupImage, setPopupImage] = useState(null);
   const [fieldName, setFieldName] = useState("");
 
@@ -32,7 +32,10 @@ const Inspection = ({ authKey, images }) => {
           <button>Graph</button>
         </div>
         {/* .views */}
-        <h4>17 Mar 2022</h4>
+        <h4>
+          {moment.unix(data.date).format("MMMM Do YYYY, h:mm a")} | Croptype :{" "}
+          {data.croptype} | Field : {data.field}
+        </h4>
         <div className={style.images}>
           {images.map((i, ii) => {
             return (
@@ -42,8 +45,7 @@ const Inspection = ({ authKey, images }) => {
                   setPopupImage(ii);
                   e.preventDefault();
                 }}
-                key={ii}
-              >
+                key={ii}>
                 <img
                   src={`${process.env.NEXT_PUBLIC_BASE_URL}${i.link}?authKey=${authKey}`}
                   alt=""
@@ -57,8 +59,7 @@ const Inspection = ({ authKey, images }) => {
           <div className={style.popup}>
             <button
               onClick={() => setPopupImage(null)}
-              className={style.closeButton}
-            >
+              className={style.closeButton}>
               <img src="/images/close.svg" alt="" />
             </button>
             <button onClick={previousImage} className={style.navLeft}>
@@ -67,8 +68,7 @@ const Inspection = ({ authKey, images }) => {
                 height="14"
                 viewBox="0 0 8 14"
                 fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
+                xmlns="http://www.w3.org/2000/svg">
                 <path
                   d="M7 1L1 7L7 13"
                   stroke="url(#paint0_linear_1276_263)"
@@ -83,8 +83,7 @@ const Inspection = ({ authKey, images }) => {
                     y1="5.32"
                     x2="-0.918024"
                     y2="5.97776"
-                    gradientUnits="userSpaceOnUse"
-                  >
+                    gradientUnits="userSpaceOnUse">
                     <stop stopColor="#69AA72" />
                     <stop offset="1" stopColor="#69AA72" />
                   </linearGradient>
@@ -104,8 +103,7 @@ const Inspection = ({ authKey, images }) => {
                 height="14"
                 viewBox="0 0 8 14"
                 fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
+                xmlns="http://www.w3.org/2000/svg">
                 <path
                   d="M1 13L7 7L0.999999 1"
                   stroke="url(#paint0_linear_1276_262)"
@@ -120,8 +118,7 @@ const Inspection = ({ authKey, images }) => {
                     y1="8.68"
                     x2="8.91802"
                     y2="8.02224"
-                    gradientUnits="userSpaceOnUse"
-                  >
+                    gradientUnits="userSpaceOnUse">
                     <stop stopColor="#69AA72" />
                     <stop offset="1" stopColor="#69AA72" />
                   </linearGradient>
@@ -156,6 +153,7 @@ export async function getServerSideProps(ctx) {
       props: {
         authKey: ctx.req.cookies.authKey || null,
         images: r.data.data.result.images,
+        data: r.data.data,
       },
     };
   } else {

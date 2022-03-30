@@ -95,10 +95,18 @@
 }
 .bottom {
   padding: 13px 21px;
+
   h4 {
     font-weight: 600;
     font-size: 16px;
     text-align: right;
     color: #f0b734;
+    display: flex;
+    justify-content: flex-end;
+    span {
+      display: block;
+      width: 12px;
+      margin-left: 4px;
+    }
   }
 }
