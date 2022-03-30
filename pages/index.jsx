@@ -53,8 +53,8 @@ const Signin = ({ authKey }) => {
           .then((res) => res.json())
           .then((data) => {
             // console.log(data);
+            router.push("/dashboard");
           });
-        router.push("/dashboard");
       })
       .catch((e) => {
         alert(e);
