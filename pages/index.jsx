@@ -53,7 +53,7 @@ const Signin = ({ authKey }) => {
           .then((res) => res.json())
           .then((data) => {
             setBusy(false);
-            router.replace("/dashboard");
+            router.push("/dashboard");
           });
       })
       .catch((e) => {
