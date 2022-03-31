@@ -5,10 +5,10 @@ export default (req, res) => {
     "Set-Cookie",
     cookie.serialize("authKey", req.body.authKey, {
       httpOnly: true,
-      secure: false,
+      // secure: false,
       // secure: process.env.NODE_ENV !== "development",
-      // maxAge: 60 * 60,
-      sameSite: "none",
+      maxAge: 60 * 60 * 24 * 7,
+      // sameSite: "none",
       path: "/",
     })
   );
