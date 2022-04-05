@@ -1,6 +1,6 @@
 import style from "./signin.module.scss";
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/router";
 import Loading from "../components/loading";
@@ -52,7 +52,6 @@ const Signin = ({ authKey }) => {
         })
           .then((res) => res.json())
           .then((data) => {
-            setBusy(false);
             router.push("/dashboard");
           });
       })
@@ -75,6 +74,7 @@ const Signin = ({ authKey }) => {
             name="name"
             autoComplete="username"
             onChange={(e) => setEmail(e.target.value)}
+            onFocus={(e) => e.target.select()}
             placeholder="Username"
             required
             disabled={busy}
@@ -84,6 +84,7 @@ const Signin = ({ authKey }) => {
             name="password"
             autoComplete="current-password"
             onChange={(e) => setpassword(e.target.value)}
+            onFocus={(e) => e.target.select()}
             placeholder="Password"
             required
             disabled={busy}

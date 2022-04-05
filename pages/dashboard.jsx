@@ -325,7 +325,18 @@ const Dashboard = ({ authKey }) => {
               </div>
               {/* .left */}
               <div className={style.headerRight}>
-                <h5>{moment(selectedDate).format("DD MMMM YYYY")}</h5>
+                <Link
+                  href={{
+                    pathname: "/chart",
+                    query: {
+                      f: moment(selectedDate).startOf("month").unix(),
+                      t: moment(selectedDate).endOf("month").unix(),
+                    },
+                  }}
+                  passHref
+                >
+                  <a>{moment(selectedDate).format("DD MMMM YYYY")}</a>
+                </Link>
               </div>
               {/* .right */}
             </div>
@@ -420,7 +431,7 @@ export function getServerSideProps(ctx) {
     return {
       redirect: {
         permanent: false,
-        destination: "/",
+        destination: "/?a=dashboard",
       },
       props: {},
     };

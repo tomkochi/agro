@@ -66,7 +66,7 @@
   }
 }
 .leftPanel {
-  margin-top: 41px;
+  margin-top: 56px;
 }
 .inspectionStatus {
   height: 37px;
@@ -136,10 +136,27 @@
     color: #78828c;
   }
   .headerRight {
-    h5 {
+    a {
+      display: flex;
+      align-items: center;
       font-weight: 300;
       font-size: 14px;
       color: #78828c;
+      height: 37px;
+      padding: 0 13px;
+      box-shadow: 2px 2px 4px rgba(195, 232, 203, 0.41);
+      border-radius: 4px;
+      background: #fff;
+      border: none;
+      text-decoration: none;
+      transition: 0.2s;
+      &::before {
+        content: url(/images/chart-icon.svg);
+        margin-right: 12px;
+      }
+      &:hover {
+        transform: translate(-1px, -1px);
+      }
     }
   }
 }
