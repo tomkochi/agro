@@ -228,6 +228,8 @@ const Dashboard = ({ authKey }) => {
   useEffect(() => {
     if (router.query.d) {
       fetchDateData(router.query.d * 1000, true);
+    } else {
+      fetchDateData(moment(selectedDate).unix(), true);
     }
 
     const userInfo = JSON.parse(localStorage.getItem("user"));

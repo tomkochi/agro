@@ -7,6 +7,7 @@ import Layout from "../../components/layout";
 import PageHeader from "../../components/header";
 
 const Chart = ({ authKey, from, to, data }) => {
+  console.log(data);
   return (
     <Layout
       title={`Chart - ${moment(from).format("DD MMM, YYYY")} to ${moment(
