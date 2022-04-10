@@ -45,7 +45,8 @@ const Inspection = ({ authKey, images, data }) => {
                   setPopupImage(ii);
                   e.preventDefault();
                 }}
-                key={ii}>
+                key={ii}
+              >
                 <img
                   src={`${process.env.NEXT_PUBLIC_BASE_URL}${i.link}?authKey=${authKey}`}
                   alt=""
@@ -59,7 +60,8 @@ const Inspection = ({ authKey, images, data }) => {
           <div className={style.popup}>
             <button
               onClick={() => setPopupImage(null)}
-              className={style.closeButton}>
+              className={style.closeButton}
+            >
               <img src="/images/close.svg" alt="" />
             </button>
             <button onClick={previousImage} className={style.navLeft}>
@@ -68,7 +70,8 @@ const Inspection = ({ authKey, images, data }) => {
                 height="14"
                 viewBox="0 0 8 14"
                 fill="none"
-                xmlns="http://www.w3.org/2000/svg">
+                xmlns="http://www.w3.org/2000/svg"
+              >
                 <path
                   d="M7 1L1 7L7 13"
                   stroke="url(#paint0_linear_1276_263)"
@@ -83,7 +86,8 @@ const Inspection = ({ authKey, images, data }) => {
                     y1="5.32"
                     x2="-0.918024"
                     y2="5.97776"
-                    gradientUnits="userSpaceOnUse">
+                    gradientUnits="userSpaceOnUse"
+                  >
                     <stop stopColor="#69AA72" />
                     <stop offset="1" stopColor="#69AA72" />
                   </linearGradient>
@@ -103,7 +107,8 @@ const Inspection = ({ authKey, images, data }) => {
                 height="14"
                 viewBox="0 0 8 14"
                 fill="none"
-                xmlns="http://www.w3.org/2000/svg">
+                xmlns="http://www.w3.org/2000/svg"
+              >
                 <path
                   d="M1 13L7 7L0.999999 1"
                   stroke="url(#paint0_linear_1276_262)"
@@ -118,7 +123,8 @@ const Inspection = ({ authKey, images, data }) => {
                     y1="8.68"
                     x2="8.91802"
                     y2="8.02224"
-                    gradientUnits="userSpaceOnUse">
+                    gradientUnits="userSpaceOnUse"
+                  >
                     <stop stopColor="#69AA72" />
                     <stop offset="1" stopColor="#69AA72" />
                   </linearGradient>

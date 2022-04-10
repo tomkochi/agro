@@ -23,6 +23,8 @@ const Dashboard = ({ authKey }) => {
 
   const router = useRouter();
 
+  const controller = useRef(null);
+
   const allFields = { _id: 0, name: "All" };
 
   const [busy, setBusy] = useState(false);
@@ -58,7 +60,7 @@ const Dashboard = ({ authKey }) => {
   const uploadWindow = useRef(null);
 
   const [selectedDate, setSelectedDate] = useState(
-    router.query.d ? new Date(router.query.d * 1000) : new Date().getTime()
+    parseInt(router.query.d) || moment().unix() * 1000
   );
 
   const closeUploadOverlay = () => {
@@ -75,6 +77,11 @@ const Dashboard = ({ authKey }) => {
   };
   const openFileDialog = () => {
     fileInput.current.click();
+  };
+  const abortUploading = () => {
+    if (controller.current) {
+      controller.current.abort("Operation ended by user.");
+    }
   };
 
   const documentClick = (e) => {
@@ -116,10 +123,14 @@ const Dashboard = ({ authKey }) => {
     formData.append("cropid", selectedCrop._id);
     formData.append("cropname", selectedCrop.name);
     formData.append("fieldid", selectedField._id);
+
+    controller.current = new AbortController();
+
     axios({
       method: "post",
       url: `${process.env.NEXT_PUBLIC_UPLOAD_URL}/inspection/upload`,
       data: formData,
+      signal: controller.current.signal,
       onUploadProgress: (e) => {
         setUpSize(e.loaded);
         setTotalSize(e.total);
@@ -151,7 +162,7 @@ const Dashboard = ({ authKey }) => {
                   getMonthData(new Date().getTime());
                   // if selectedDate is today, refresh fieldcards
                   if (moment(selectedDate).isSame(moment(), "day")) {
-                    fetchDateData(moment(selectedDate).unix(), true);
+                    fetchDateData(selectedDate, true);
                   }
                   // clear interval
                   clearInterval(inspectionCheck);
@@ -167,6 +178,11 @@ const Dashboard = ({ authKey }) => {
       })
       .catch((e) => {
         console.log(e);
+        if (e.message == "canceled") {
+          // alert("Uploading cancelled by the user.");
+        } else {
+          // alert(e.message);
+        }
       })
       .finally(() => {
         setUploading(false);
@@ -176,7 +192,7 @@ const Dashboard = ({ authKey }) => {
   };
 
   const fetchDateData = (date, hasData) => {
-    setSelectedDate(moment(date * 1000));
+    // setSelectedDate(date);
     if (!hasData) {
       setDateData([]);
       return;
@@ -206,7 +222,6 @@ const Dashboard = ({ authKey }) => {
         setBusy(false);
       });
   };
-
   const getMonthData = (date) => {
     axios({
       url: `${process.env.NEXT_PUBLIC_BASE_URL}/data/month/list`,
@@ -225,11 +240,19 @@ const Dashboard = ({ authKey }) => {
       .catch((e) => alert(e));
   };
 
+  const routeChangeConfirmation = () => {
+    router.events.on("routeChangeStart", () => {
+      if (uploading) {
+        throw "";
+      }
+    });
+  };
+
   useEffect(() => {
     if (router.query.d) {
-      fetchDateData(router.query.d * 1000, true);
+      fetchDateData(parseInt(router.query.d), true);
     } else {
-      fetchDateData(moment(selectedDate).unix(), true);
+      fetchDateData(selectedDate, true);
     }
 
     const userInfo = JSON.parse(localStorage.getItem("user"));
@@ -244,8 +267,14 @@ const Dashboard = ({ authKey }) => {
     getMonthData(new Date().getTime());
 
     document.addEventListener("click", documentClick);
+
+    routeChangeConfirmation();
+
     return () => {
       document.removeEventListener("click", documentClick);
+      try {
+        controller.current.abort();
+      } catch (error) {}
     };
   }, []);
 
@@ -257,19 +286,25 @@ const Dashboard = ({ authKey }) => {
 
   useEffect(() => {
     const newDate = moment(selectedDate).format("YYYY/MM/DD");
-    fetchDateData(moment(selectedDate).unix(), monthData.includes(newDate));
+    fetchDateData(selectedDate, monthData.includes(newDate));
   }, [selectedFieldFilter]);
 
   return (
     <Layout title="Dashboard" bg="#F3F3F3">
       <PageHeader title="Dashboard" authKey={authKey}>
-        <button
-          onClick={openFileDialog}
-          className={style.selectVideoButton}
-          disabled={uploading}
-        >
-          Select video
-        </button>
+        {uploading ? (
+          <button onClick={abortUploading} className={style.abortUploadButton}>
+            Abort uploading
+          </button>
+        ) : (
+          <button
+            onClick={openFileDialog}
+            className={style.selectVideoButton}
+            disabled={uploading}
+          >
+            Select video
+          </button>
+        )}
       </PageHeader>
       <div className={style.dashboard}>
         <header>
@@ -289,6 +324,8 @@ const Dashboard = ({ authKey }) => {
             </div>
             {/* .inputGroup */}
             <Calendar
+              selectedDate={selectedDate}
+              setSelectedDate={setSelectedDate}
               monthData={monthData}
               getMonthData={getMonthData}
               fetchDateData={fetchDateData}

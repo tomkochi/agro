@@ -1,38 +1,75 @@
-import styles from "./index.module.scss";
-import style from "../components/header.module.scss";
+import style from "./home.module.scss";
 import Link from "next/link";
-import { useRouter } from "next/router";
+import Layout from "../components/layout";
+import Head from "next/head";
 
-export default function home() {
-  return (
-    <div className={styles.bg}>
-      <HeaderHome />
-    </div>
-  );
-}
+const Home = () => {
+	return (
+		<Layout title="Welcome">
+			<div className={style.home}>
+				<section className={style.hero}>
+					<header>
+						<Link href="/" passHref>
+							<a className={style.contact}>Contact</a>
+						</Link>
+						<Link href="/" passHref>
+							<a className={style.login}>Login</a>
+						</Link>
+					</header>
+					<div className={style.contents}>
+						<div className={style.logo}>
+							<img src="/images/logo.svg" alt="" />
+						</div>
+						{/* .logo */}
+						<h1>
+							Unleashing technology to solve problems fundamental to our
+							existence
+						</h1>
+					</div>
+					{/* .contents */}
+				</section>
+				{/* .hero */}
+				<div className="container">
+					<section className={style.whyAgrofocal}>
+						<h2>Why Agrofocal? </h2>
+						<p>
+							Agrofocal enables farmers to make informed decisions based on
+							objective crop measurements. Thus increase production, reduce
+							costs, and lessen environmental impact.{" "}
+						</p>
+						<div className={style.points}>
+							<div className={style.point}>
+								<img src="/images/realtime.svg" alt="" />
+								<h3>Realtime</h3>
+							</div>
+							{/* .point */}
+							<div className={style.point}>
+								<img src="/images/easy-to-use.svg" alt="" />
+								<h3>Easy to use</h3>
+							</div>
+							{/* .point */}
+							<div className={style.point}>
+								<img src="/images/affordable.svg" alt="" />
+								<h3>Affordable </h3>
+							</div>
+							{/* .point */}
+						</div>
+						{/* .points */}
+					</section>
+					{/* .whyAgrofocal */}
+				</div>
+				{/* .container */}
+				<footer>
+					<div className="container">
+						<img src="/images/logo.svg" alt="" />
+						<p>&copy; Agorofocal 2022. All Rights Reserved. </p>
+					</div>
+					{/* .container */}
+				</footer>
+			</div>
+			{/* .home */}
+		</Layout>
+	);
+};
 
-export function HeaderHome({ children }) {
-  const router = useRouter();
-  return (
-    <div className={style.header}>
-      <div className={style.left}>
-        <div className={style.logo}>
-          <Link href="/" passHref>
-            <img src="/images/logo.svg" width={140} alt="" />
-          </Link>
-        </div>
-        {/* .currentPosition */}
-      </div>
-      {/* .left */}
-      <div className={style.right}>
-        {children}
-        <div className={style.loggedIn}>
-          <button className={style.logout} onClick={() => router.push("/")}>
-            Login
-          </button>
-        </div>
-      </div>
-      {/* .right */}
-    </div>
-  );
-}
+export default Home;

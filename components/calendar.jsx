@@ -5,7 +5,13 @@ import Image from "next/image";
 import moment from "moment";
 import { useRouter } from "next/router";
 
-const Calendar = ({ monthData = [], getMonthData, fetchDateData }) => {
+const Calendar = ({
+  selectedDate,
+  setSelectedDate,
+  monthData = [],
+  getMonthData,
+  fetchDateData,
+}) => {
   const router = useRouter();
 
   const monthAction = {
@@ -15,9 +21,6 @@ const Calendar = ({ monthData = [], getMonthData, fetchDateData }) => {
   };
   Object.freeze(monthAction);
 
-  const [selectedDate, setSelectedDate] = useState(
-    router.query.d ? new Date(router.query.d * 1000) : new Date()
-  );
   const [dates, setDates] = useState([]); // date array for the whole month
 
   const [display, setDisplay] = useState({
@@ -86,17 +89,19 @@ const Calendar = ({ monthData = [], getMonthData, fetchDateData }) => {
 
   // new date click event
   const selectNewDate = (date) => {
-    setSelectedDate(date);
-    const newDate = moment(date).format("YYYY/MM/DD");
+    const dateString = `${date.date}/${date.month + 1}/${date.year} 12:59:59`;
+    const dateNumber = moment(dateString, "D/M/YYYY hh:mm:ss").unix() * 1000;
+    setSelectedDate(dateNumber);
+    const newDate = moment(dateNumber).format("YYYY/MM/DD");
     router.push(
       {
         pathname: "/dashboard",
-        query: { d: moment(date).unix() },
+        query: { d: dateNumber },
       },
       undefined,
       { shallow: true }
     );
-    fetchDateData(moment(date).unix(), monthData.includes(newDate));
+    fetchDateData(dateNumber, monthData.includes(newDate));
   };
 
   const selectYear = (y) => {
@@ -119,7 +124,6 @@ const Calendar = ({ monthData = [], getMonthData, fetchDateData }) => {
   };
 
   const handleOutsideClick = (e) => {
-    console.log(e);
     setYearMonthSelector(false);
   };
 
@@ -212,17 +216,14 @@ const Calendar = ({ monthData = [], getMonthData, fetchDateData }) => {
                   return display.month - 1 === d.month ? (
                     <li key={di}>
                       <button
-                        onClick={() =>
-                          selectNewDate(
-                            new Date(
-                              `${d.year}/${d.month + 1}/${d.date} 12:59:59`
-                            )
-                          )
-                        }
+                        onClick={() => selectNewDate(d)}
                         className={`${
-                          d.date === selectedDate.getDate() &&
-                          d.month === selectedDate.getMonth() &&
-                          d.year === selectedDate.getFullYear()
+                          d.date ===
+                            parseInt(moment(selectedDate).format("DD")) &&
+                          d.month ===
+                            parseInt(moment(selectedDate).format("MM")) - 1 &&
+                          d.year ===
+                            parseInt(moment(selectedDate).format("YYYY"))
                             ? style.selected
                             : ""
                         } ${hasData(d) ? style.hasData : ""}`}
