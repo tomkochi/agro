@@ -1,7 +1,6 @@
 import style from "./home.module.scss";
 import Link from "next/link";
 import Layout from "../components/layout";
-import Head from "next/head";
 
 const Home = () => {
 	return (
