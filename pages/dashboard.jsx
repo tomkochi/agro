@@ -14,465 +14,465 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 
 const Dashboard = ({ authKey }) => {
-  const inspectionStatus = {
-    HIDDEN: 0,
-    PROGRESS: 1,
-    COMPLETED: 2,
-  };
-  Object.freeze(inspectionStatus);
+	const inspectionStatus = {
+		HIDDEN: 0,
+		PROGRESS: 1,
+		COMPLETED: 2,
+	};
+	Object.freeze(inspectionStatus);
 
-  const router = useRouter();
+	const router = useRouter();
 
-  const controller = useRef(null);
+	const controller = useRef(null);
 
-  const allFields = { _id: 0, name: "All" };
+	const allFields = { _id: 0, name: "All" };
 
-  const [busy, setBusy] = useState(false);
+	const [busy, setBusy] = useState(false);
 
-  const [inspectionProgress, setInspectionProgress] = useState(
-    inspectionStatus.HIDDEN
-  );
+	const [inspectionProgress, setInspectionProgress] = useState(
+		inspectionStatus.HIDDEN
+	);
 
-  const [inspectionId, setInspectionId] = useState("");
+	const [inspectionId, setInspectionId] = useState("");
 
-  const [monthData, setMonthData] = useState([]); // which all dates of this month has data
-  const [dateData, setDateData] = useState([]); // selected day's data
+	const [monthData, setMonthData] = useState([]); // which all dates of this month has data
+	const [dateData, setDateData] = useState([]); // selected day's data
 
-  const [user, setUser] = useState(null); // got while logging in
+	const [user, setUser] = useState(null); // got while logging in
 
-  const [file, setFile] = useState(null); // selected file stored in here
-  const [uploadOverlay, setUploadOverlay] = useState(false); // whether to show upload overlay box after choosing the file
+	const [file, setFile] = useState(null); // selected file stored in here
+	const [uploadOverlay, setUploadOverlay] = useState(false); // whether to show upload overlay box after choosing the file
 
-  const [selectedField, setSelectedField] = useState(null);
-  const [selectedCrop, setSelectedCrop] = useState(null);
-  const [selectedFieldFilter, setSelectedFieldFilter] = useState(allFields);
+	const [selectedField, setSelectedField] = useState(null);
+	const [selectedCrop, setSelectedCrop] = useState(null);
+	const [selectedFieldFilter, setSelectedFieldFilter] = useState(allFields);
 
-  const [fields, setFields] = useState([]); // got while logging in
-  const [crops, setCrops] = useState([]); // got while logging in
+	const [fields, setFields] = useState([]); // got while logging in
+	const [crops, setCrops] = useState([]); // got while logging in
 
-  const [uploading, setUploading] = useState(false); // decides whether to show upload status indicator
-  const [upSize, setUpSize] = useState(0); // uploaded size - from upload progress
-  const [totalSize, setTotalSize] = useState(0); // size of the file from upload progress
+	const [uploading, setUploading] = useState(false); // decides whether to show upload status indicator
+	const [upSize, setUpSize] = useState(0); // uploaded size - from upload progress
+	const [totalSize, setTotalSize] = useState(0); // size of the file from upload progress
 
-  const fileInput = useRef(null);
-  const fieldWrapper = useRef(null);
-  const cropWrapper = useRef(null);
-  const uploadWindow = useRef(null);
+	const fileInput = useRef(null);
+	const fieldWrapper = useRef(null);
+	const cropWrapper = useRef(null);
+	const uploadWindow = useRef(null);
 
-  const [selectedDate, setSelectedDate] = useState(
-    parseInt(router.query.d) || moment().unix() * 1000
-  );
+	const [selectedDate, setSelectedDate] = useState(
+		parseInt(router.query.d) || moment().unix() * 1000
+	);
 
-  const closeUploadOverlay = () => {
-    setUploadOverlay(false);
-  };
+	const closeUploadOverlay = () => {
+		setUploadOverlay(false);
+	};
 
-  const handleFile = (e) => {
-    if (e.target.files) {
-      setFile(e.target.files[0]);
-      setUploadOverlay(true);
-    } else {
-      setUploadOverlay(false);
-    }
-  };
-  const openFileDialog = () => {
-    fileInput.current.click();
-  };
-  const abortUploading = () => {
-    if (controller.current) {
-      controller.current.abort("Operation ended by user.");
-    }
-  };
+	const handleFile = (e) => {
+		if (e.target.files) {
+			setFile(e.target.files[0]);
+			setUploadOverlay(true);
+		} else {
+			setUploadOverlay(false);
+		}
+	};
+	const openFileDialog = () => {
+		fileInput.current.click();
+	};
+	const abortUploading = () => {
+		if (controller.current) {
+			controller.current.abort("Operation ended by user.");
+		}
+	};
 
-  const documentClick = (e) => {
-    if (fieldWrapper.current && !fieldWrapper.current.contains(e.target)) {
-      setFieldOpen(false);
-    }
-    if (cropWrapper.current && !cropWrapper.current.contains(e.target)) {
-      setCropOpen(false);
-    }
-  };
+	const documentClick = (e) => {
+		if (fieldWrapper.current && !fieldWrapper.current.contains(e.target)) {
+			setFieldOpen(false);
+		}
+		if (cropWrapper.current && !cropWrapper.current.contains(e.target)) {
+			setCropOpen(false);
+		}
+	};
 
-  const handleOverlay = (e) => {
-    if (!uploadWindow.current.contains(e.target)) {
-      setUploadOverlay(false);
-    }
-  };
+	const handleOverlay = (e) => {
+		if (!uploadWindow.current.contains(e.target)) {
+			setUploadOverlay(false);
+		}
+	};
 
-  const humanFileSize = (bytes, dp = 1) => {
-    const thresh = 1024;
-    if (Math.abs(bytes) < thresh) {
-      return bytes + " B";
-    }
-    const units = ["KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
-    let u = -1;
-    const r = 10 ** dp;
-    do {
-      bytes /= thresh;
-      ++u;
-    } while (
-      Math.round(Math.abs(bytes) * r) / r >= thresh &&
-      u < units.length - 1
-    );
-    return bytes.toFixed(dp) + " " + units[u];
-  };
+	const humanFileSize = (bytes, dp = 1) => {
+		const thresh = 1024;
+		if (Math.abs(bytes) < thresh) {
+			return bytes + " B";
+		}
+		const units = ["KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
+		let u = -1;
+		const r = 10 ** dp;
+		do {
+			bytes /= thresh;
+			++u;
+		} while (
+			Math.round(Math.abs(bytes) * r) / r >= thresh &&
+			u < units.length - 1
+		);
+		return bytes.toFixed(dp) + " " + units[u];
+	};
 
-  const upload = (e) => {
-    let formData = new FormData();
-    formData.append("file", file);
-    formData.append("cropid", selectedCrop._id);
-    formData.append("cropname", selectedCrop.name);
-    formData.append("fieldid", selectedField._id);
+	const upload = (e) => {
+		let formData = new FormData();
+		formData.append("file", file);
+		formData.append("cropid", selectedCrop._id);
+		formData.append("cropname", selectedCrop.name);
+		formData.append("fieldid", selectedField._id);
 
-    controller.current = new AbortController();
+		controller.current = new AbortController();
 
-    axios({
-      method: "post",
-      url: `${process.env.NEXT_PUBLIC_UPLOAD_URL}/inspection/upload`,
-      data: formData,
-      signal: controller.current.signal,
-      onUploadProgress: (e) => {
-        setUpSize(e.loaded);
-        setTotalSize(e.total);
-      },
-      headers: {
-        content_type: "multipart/form-data",
-        authKey,
-      },
-    })
-      .then((ur) => {
-        if (ur.data.msg.code === 2007) {
-          setInspectionProgress(inspectionStatus.PROGRESS);
-          setInspectionId(ur.data.data.inspectionid);
-          // check after some time
-          const inspectionCheck = setInterval(() => {
-            axios({
-              method: "post",
-              url: `${process.env.NEXT_PUBLIC_BASE_URL}/data/inspection`,
-              data: { inspectionid: ur.data.data.inspectionid },
-              headers: {
-                content_type: "application/json",
-                authKey,
-              },
-            })
-              .then((ir) => {
-                if (ir.data.data.status === "Analysis Completed") {
-                  setInspectionProgress(inspectionStatus.COMPLETED);
-                  // update monthsData
-                  getMonthData(new Date().getTime());
-                  // if selectedDate is today, refresh fieldcards
-                  if (moment(selectedDate).isSame(moment(), "day")) {
-                    fetchDateData(selectedDate, true);
-                  }
-                  // clear interval
-                  clearInterval(inspectionCheck);
-                }
-              })
-              .catch((e) => {
-                console.log(e);
-              });
-          }, 1000 * 10);
-        } else {
-          alert(ur.data.msg.msg);
-        }
-      })
-      .catch((e) => {
-        console.log(e);
-        if (e.message == "canceled") {
-          // alert("Uploading cancelled by the user.");
-        } else {
-          // alert(e.message);
-        }
-      })
-      .finally(() => {
-        setUploading(false);
-      });
-    setUploadOverlay(false);
-    setUploading(true);
-  };
+		axios({
+			method: "post",
+			url: `${process.env.NEXT_PUBLIC_UPLOAD_URL}/inspection/upload`,
+			data: formData,
+			signal: controller.current.signal,
+			onUploadProgress: (e) => {
+				setUpSize(e.loaded);
+				setTotalSize(e.total);
+			},
+			headers: {
+				content_type: "multipart/form-data",
+				authKey,
+			},
+		})
+			.then((ur) => {
+				if (ur.data.msg.code === 2007) {
+					setInspectionProgress(inspectionStatus.PROGRESS);
+					setInspectionId(ur.data.data.inspectionid);
+					// check after some time
+					const inspectionCheck = setInterval(() => {
+						axios({
+							method: "post",
+							url: `${process.env.NEXT_PUBLIC_BASE_URL}/data/inspection`,
+							data: { inspectionid: ur.data.data.inspectionid },
+							headers: {
+								content_type: "application/json",
+								authKey,
+							},
+						})
+							.then((ir) => {
+								if (ir.data.data.status === "Analysis Completed") {
+									setInspectionProgress(inspectionStatus.COMPLETED);
+									// update monthsData
+									getMonthData(new Date().getTime());
+									// if selectedDate is today, refresh fieldcards
+									if (moment(selectedDate).isSame(moment(), "day")) {
+										fetchDateData(selectedDate, true);
+									}
+									// clear interval
+									clearInterval(inspectionCheck);
+								}
+							})
+							.catch((e) => {
+								console.log(e);
+							});
+					}, 1000 * 10);
+				} else {
+					alert(ur.data.msg.msg);
+				}
+			})
+			.catch((e) => {
+				console.log(e);
+				if (e.message == "canceled") {
+					// alert("Uploading cancelled by the user.");
+				} else {
+					// alert(e.message);
+				}
+			})
+			.finally(() => {
+				setUploading(false);
+			});
+		setUploadOverlay(false);
+		setUploading(true);
+	};
 
-  const fetchDateData = (date, hasData) => {
-    // setSelectedDate(date);
-    if (!hasData) {
-      setDateData([]);
-      return;
-    }
+	const fetchDateData = (date, hasData) => {
+		// setSelectedDate(date);
+		if (!hasData) {
+			setDateData([]);
+			return;
+		}
 
-    setBusy(true);
+		setBusy(true);
 
-    axios({
-      url: `${process.env.NEXT_PUBLIC_BASE_URL}/data/list`,
-      method: "post",
-      headers: {
-        "Content-Type": "application/json",
-        authKey,
-      },
-      data: {
-        date,
-        field: selectedFieldFilter._id === 0 ? [] : [selectedFieldFilter._id],
-      },
-    })
-      .then((r) => {
-        setDateData(r.data.data);
-      })
-      .catch((e) => {
-        // console.log(e);
-      })
-      .finally(() => {
-        setBusy(false);
-      });
-  };
-  const getMonthData = (date) => {
-    axios({
-      url: `${process.env.NEXT_PUBLIC_BASE_URL}/data/month/list`,
-      method: "post",
-      headers: {
-        "Content-Type": "application/json",
-        authKey,
-      },
-      data: {
-        date: date,
-      },
-    })
-      .then((r) => {
-        setMonthData(r.data.data);
-      })
-      .catch((e) => alert(e));
-  };
+		axios({
+			url: `${process.env.NEXT_PUBLIC_BASE_URL}/data/list`,
+			method: "post",
+			headers: {
+				"Content-Type": "application/json",
+				authKey,
+			},
+			data: {
+				date,
+				field: selectedFieldFilter._id === 0 ? [] : [selectedFieldFilter._id],
+			},
+		})
+			.then((r) => {
+				setDateData(r.data.data);
+			})
+			.catch((e) => {
+				// console.log(e);
+			})
+			.finally(() => {
+				setBusy(false);
+			});
+	};
+	const getMonthData = (date) => {
+		axios({
+			url: `${process.env.NEXT_PUBLIC_BASE_URL}/data/month/list`,
+			method: "post",
+			headers: {
+				"Content-Type": "application/json",
+				authKey,
+			},
+			data: {
+				date: date,
+			},
+		})
+			.then((r) => {
+				setMonthData(r.data.data);
+			})
+			.catch((e) => alert(e));
+	};
 
-  const routeChangeConfirmation = () => {
-    router.events.on("routeChangeStart", () => {
-      if (uploading) {
-        throw "";
-      }
-    });
-  };
+	const routeChangeConfirmation = () => {
+		router.events.on("routeChangeStart", () => {
+			if (uploading) {
+				throw "";
+			}
+		});
+	};
 
-  useEffect(() => {
-    if (router.query.d) {
-      fetchDateData(parseInt(router.query.d), true);
-    } else {
-      fetchDateData(selectedDate, true);
-    }
+	useEffect(() => {
+		if (router.query.d) {
+			fetchDateData(parseInt(router.query.d), true);
+		} else {
+			fetchDateData(selectedDate, true);
+		}
 
-    const userInfo = JSON.parse(localStorage.getItem("user"));
-    setUser(userInfo);
+		const userInfo = JSON.parse(localStorage.getItem("user"));
+		setUser(userInfo);
 
-    setFields(userInfo.account.fields);
-    setCrops(userInfo.account.croptype);
-    setSelectedField(userInfo.account.fields[0]);
-    setSelectedCrop(userInfo.account.croptype[0]);
-    setSelectedFieldFilter(allFields);
+		setFields(userInfo.account.fields);
+		setCrops(userInfo.account.croptype);
+		setSelectedField(userInfo.account.fields[0]);
+		setSelectedCrop(userInfo.account.croptype[0]);
+		setSelectedFieldFilter(allFields);
 
-    getMonthData(new Date().getTime());
+		getMonthData(new Date().getTime());
 
-    document.addEventListener("click", documentClick);
+		document.addEventListener("click", documentClick);
 
-    routeChangeConfirmation();
+		routeChangeConfirmation();
 
-    return () => {
-      document.removeEventListener("click", documentClick);
-      try {
-        controller.current.abort();
-      } catch (error) {}
-    };
-  }, []);
+		return () => {
+			document.removeEventListener("click", documentClick);
+			try {
+				controller.current.abort();
+			} catch (error) {}
+		};
+	}, []);
 
-  useEffect(() => {
-    if (!uploadOverlay) {
-      fileInput.current.value = "";
-    }
-  }, [uploadOverlay]);
+	useEffect(() => {
+		if (!uploadOverlay) {
+			fileInput.current.value = "";
+		}
+	}, [uploadOverlay]);
 
-  useEffect(() => {
-    const newDate = moment(selectedDate).format("YYYY/MM/DD");
-    fetchDateData(selectedDate, monthData.includes(newDate));
-  }, [selectedFieldFilter]);
+	useEffect(() => {
+		const newDate = moment(selectedDate).format("YYYY/MM/DD");
+		fetchDateData(selectedDate, monthData.includes(newDate));
+	}, [selectedFieldFilter]);
 
-  return (
-    <Layout title="Dashboard" bg="#F3F3F3">
-      <PageHeader title="Dashboard" authKey={authKey}>
-        {uploading ? (
-          <button onClick={abortUploading} className={style.abortUploadButton}>
-            Abort uploading
-          </button>
-        ) : (
-          <button
-            onClick={openFileDialog}
-            className={style.selectVideoButton}
-            disabled={uploading}
-          >
-            Select video
-          </button>
-        )}
-      </PageHeader>
-      <div className={style.dashboard}>
-        <header>
-          <div className={style.status}>
-            {uploading && <Progress size={totalSize} done={upSize} />}
-          </div>
-          <input ref={fileInput} type="file" hidden onChange={handleFile} />
-        </header>
-        <main>
-          <div className={style.leftPanel}>
-            <div className={style.fieldFilter}>
-              <Dropdown
-                data={[allFields, ...fields]}
-                value={selectedFieldFilter}
-                onSelection={setSelectedFieldFilter}
-              />
-            </div>
-            {/* .inputGroup */}
-            <Calendar
-              selectedDate={selectedDate}
-              setSelectedDate={setSelectedDate}
-              monthData={monthData}
-              getMonthData={getMonthData}
-              fetchDateData={fetchDateData}
-            />
-            {inspectionProgress !== inspectionStatus.HIDDEN && (
-              <div className={style.inspectionStatus}>
-                {inspectionProgress === inspectionStatus.PROGRESS && (
-                  <>
-                    <h4>Inspection in progress</h4>
-                    <span className={style.blinkingDot}></span>
-                  </>
-                )}
-                {inspectionProgress === inspectionStatus.COMPLETED && (
-                  <>
-                    <h4>Inspection completed</h4>
-                    <Link href={`/inspection/${inspectionId}`} passHref>
-                      <a
-                        onClick={() =>
-                          setInspectionProgress(inspectionStatus.HIDDEN)
-                        }
-                      >
-                        VIEW
-                      </a>
-                    </Link>
-                  </>
-                )}
-              </div>
-            )}
-          </div>
-          {/* .calendar */}
-          <div className={style.reports}>
-            <div className={style.header}>
-              <div className={style.headerLeft}>
-                <h4>{dateData.length}</h4>
-                <h5>Reports found</h5>
-              </div>
-              {/* .left */}
-              <div className={style.headerRight}>
-                <Link
-                  href={{
-                    pathname: "/chart",
-                    query: {
-                      f: moment(selectedDate).startOf("month").unix(),
-                      t: moment(selectedDate).endOf("month").unix(),
-                    },
-                  }}
-                  passHref
-                >
-                  <a>{moment(selectedDate).format("DD MMMM YYYY")}</a>
-                </Link>
-              </div>
-              {/* .right */}
-            </div>
-            {/* .header */}
-            {busy ? (
-              <div
-                className={style.loadingWrapper}
-                style={{ marginTop: "100px" }}
-              >
-                <Loading height={15} />
-              </div>
-            ) : (
-              <div className={style.cardsWrapper}>
-                <div className={style.cards}>
-                  {dateData.map((d, di) => {
-                    return <FieldCard key={di} data={d} />;
-                  })}
-                </div>
-              </div>
-            )}
-          </div>
-        </main>
-      </div>
-      {/* .dashboard */}
+	return (
+		<Layout title="Dashboard" bg="#F3F3F3">
+			<PageHeader title="Dashboard" authKey={authKey}>
+				{uploading ? (
+					<button onClick={abortUploading} className={style.abortUploadButton}>
+						Abort uploading
+					</button>
+				) : (
+					<button
+						onClick={openFileDialog}
+						className={style.selectVideoButton}
+						disabled={uploading}
+					>
+						Select video
+					</button>
+				)}
+			</PageHeader>
+			<div className={style.dashboard}>
+				<header>
+					<div className={style.status}>
+						{uploading && <Progress size={totalSize} done={upSize} />}
+					</div>
+					<input ref={fileInput} type="file" hidden onChange={handleFile} />
+				</header>
+				<main>
+					<div className={style.leftPanel}>
+						<div className={style.fieldFilter}>
+							<Dropdown
+								data={[allFields, ...fields]}
+								value={selectedFieldFilter}
+								onSelection={setSelectedFieldFilter}
+							/>
+						</div>
+						{/* .inputGroup */}
+						<Calendar
+							selectedDate={selectedDate}
+							setSelectedDate={setSelectedDate}
+							monthData={monthData}
+							getMonthData={getMonthData}
+							fetchDateData={fetchDateData}
+						/>
+						{inspectionProgress !== inspectionStatus.HIDDEN && (
+							<div className={style.inspectionStatus}>
+								{inspectionProgress === inspectionStatus.PROGRESS && (
+									<>
+										<h4>Inspection in progress</h4>
+										<span className={style.blinkingDot}></span>
+									</>
+								)}
+								{inspectionProgress === inspectionStatus.COMPLETED && (
+									<>
+										<h4>Inspection completed</h4>
+										<Link href={`/inspection/${inspectionId}`} passHref>
+											<a
+												onClick={() =>
+													setInspectionProgress(inspectionStatus.HIDDEN)
+												}
+											>
+												VIEW
+											</a>
+										</Link>
+									</>
+								)}
+							</div>
+						)}
+					</div>
+					{/* .calendar */}
+					<div className={style.reports}>
+						<div className={style.header}>
+							<div className={style.headerLeft}>
+								<h4>{dateData.length}</h4>
+								<h5>Reports found</h5>
+							</div>
+							{/* .left */}
+							<div className={style.headerRight}>
+								<Link
+									href={{
+										pathname: "/chart",
+										query: {
+											f: moment(selectedDate).startOf("month").unix(),
+											t: moment(selectedDate).endOf("month").unix(),
+										},
+									}}
+									passHref
+								>
+									<a>{moment(selectedDate).format("DD MMMM YYYY")}</a>
+								</Link>
+							</div>
+							{/* .right */}
+						</div>
+						{/* .header */}
+						{busy ? (
+							<div
+								className={style.loadingWrapper}
+								style={{ marginTop: "100px" }}
+							>
+								<Loading height={15} />
+							</div>
+						) : (
+							<div className={style.cardsWrapper}>
+								<div className={style.cards}>
+									{dateData.map((d, di) => {
+										return <FieldCard key={di} data={d} />;
+									})}
+								</div>
+							</div>
+						)}
+					</div>
+				</main>
+			</div>
+			{/* .dashboard */}
 
-      {uploadOverlay && file && (
-        <div onClick={handleOverlay} className={style.uploadOverlay}>
-          <div ref={uploadWindow} className={style.uploadWindow}>
-            <div className={style.uploadWindowHeader}>
-              <h4>Video Upload</h4>
-              <button onClick={closeUploadOverlay}>
-                <Image src="/images/close.svg" alt="" width={14} height={16} />
-              </button>
-            </div>
-            {/* .uploadWindowHeader */}
-            <div className={style.form}>
-              <div className={style.inputGroup}>
-                <label>Field Name</label>
-                <Dropdown
-                  data={fields}
-                  value={selectedField}
-                  onSelection={setSelectedField}
-                />
-              </div>
-              {/* .inputGroup */}
-              <div className={style.inputGroup}>
-                <label>Crop Type</label>
-                <Dropdown
-                  data={crops}
-                  value={selectedCrop}
-                  onSelection={setSelectedCrop}
-                />
-              </div>
-              {/* .inputGroup */}
-              <div className={style.changeVideo}>
-                <div className={style.fileDetails}>
-                  <h4>{file.name}</h4>
-                  <h4>{humanFileSize(file.size)}</h4>
-                </div>
-                {/* .fileDetails */}
-                <button
-                  onClick={openFileDialog}
-                  className={style.changeVideoButton}
-                >
-                  Change video
-                </button>
-              </div>
-              {/* .changeVideo */}
-              <button
-                type="button"
-                onClick={upload}
-                className={style.uploadInspectButton}
-              >
-                Upload & Start Inspection
-              </button>
-            </div>
-          </div>
-          {/* .uploadWindow */}
-        </div>
-      )}
-    </Layout>
-  );
+			{uploadOverlay && file && (
+				<div onClick={handleOverlay} className={style.uploadOverlay}>
+					<div ref={uploadWindow} className={style.uploadWindow}>
+						<div className={style.uploadWindowHeader}>
+							<h4>Video Upload</h4>
+							<button onClick={closeUploadOverlay}>
+								<Image src="/images/close.svg" alt="" width={14} height={16} />
+							</button>
+						</div>
+						{/* .uploadWindowHeader */}
+						<div className={style.form}>
+							<div className={style.inputGroup}>
+								<label>Field Name</label>
+								<Dropdown
+									data={fields}
+									value={selectedField}
+									onSelection={setSelectedField}
+								/>
+							</div>
+							{/* .inputGroup */}
+							<div className={style.inputGroup}>
+								<label>Crop Type</label>
+								<Dropdown
+									data={crops}
+									value={selectedCrop}
+									onSelection={setSelectedCrop}
+								/>
+							</div>
+							{/* .inputGroup */}
+							<div className={style.changeVideo}>
+								<div className={style.fileDetails}>
+									<h4>{file.name}</h4>
+									<h4>{humanFileSize(file.size)}</h4>
+								</div>
+								{/* .fileDetails */}
+								<button
+									onClick={openFileDialog}
+									className={style.changeVideoButton}
+								>
+									Change video
+								</button>
+							</div>
+							{/* .changeVideo */}
+							<button
+								type="button"
+								onClick={upload}
+								className={style.uploadInspectButton}
+							>
+								Upload & Start Inspection
+							</button>
+						</div>
+					</div>
+					{/* .uploadWindow */}
+				</div>
+			)}
+		</Layout>
+	);
 };
 
 export default Dashboard;
 
 export function getServerSideProps(ctx) {
-  const { authKey } = ctx.req.cookies;
-  if (authKey) {
-    return { props: { authKey: ctx.req.cookies.authKey || null } };
-  } else {
-    return {
-      redirect: {
-        permanent: false,
-        destination: "/?a=dashboard",
-      },
-      props: {},
-    };
-  }
+	const { authKey } = ctx.req.cookies;
+	if (authKey) {
+		return { props: { authKey: ctx.req.cookies.authKey || null } };
+	} else {
+		return {
+			redirect: {
+				permanent: false,
+				destination: "/login",
+			},
+			props: {},
+		};
+	}
 }

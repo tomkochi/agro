@@ -7,15 +7,20 @@
   justify-content: center;
   background: #f3f3f3;
 }
+
 .signinWrapper {
   width: 317px;
-  .image {
+
+  .logo {
+    display: block;
     text-align: center;
     margin-bottom: 90px;
   }
+
   form {
     display: flex;
     flex-direction: column;
+
     input {
       font-weight: 400;
       font-size: 14px;
@@ -26,22 +31,28 @@
       border-radius: 10px;
       border: none;
       margin-bottom: 15px;
+
       &::placeholder {
         opacity: 0.6;
       }
+
       &:-moz-placeholder {
         background: #ffffff;
       }
+
       &::-moz-placeholder {
         background: #ffffff;
       }
+
       &:-ms-input-placeholder {
         background: #ffffff;
       }
+
       &::-webkit-input-placeholder {
         background: #ffffff;
       }
     }
+
     button {
       font-weight: 600;
       font-size: 16px;
@@ -53,11 +64,13 @@
       box-shadow: 4px 4px 6px #c7d5c9;
       border-radius: 10px;
       margin-bottom: 35px;
+
       &:disabled {
         background: rgba(105, 170, 114, 0.3);
         padding-top: 5px;
       }
     }
+
     a {
       font-family: Poppins, sans-serif;
       font-weight: 400;

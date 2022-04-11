@@ -1,120 +1,91 @@
-import style from "./signin.module.scss";
+import style from "./index.module.scss";
 import Link from "next/link";
-import { useState } from "react";
-import axios from "axios";
-import { useRouter } from "next/router";
-import Loading from "../components/loading";
+import Layout from "../components/layout";
 
-const Signin = ({ authKey }) => {
-  const router = useRouter();
-
-  const [email, setEmail] = useState("");
-  const [password, setpassword] = useState("");
-
-  const [busy, setBusy] = useState(false);
-
-  const submit = async (e) => {
-    e.preventDefault();
-    if (email.trim().length === 0 || password.length === 0) {
-      alert("Please fill all fields");
-      return;
-    }
-    if (email.trim().length === 0 || password.length === 0) {
-      alert("Please fill all fields");
-      return;
-    }
-    setBusy(true);
-    axios({
-      url: `${process.env.NEXT_PUBLIC_BASE_URL}/user/login`,
-      method: "post",
-      data: {
-        email,
-        password,
-      },
-      headers: {
-        "Content-type": "application/json",
-      },
-    })
-      .then((r) => {
-        if (r.data.msg.code !== 2000) {
-          alert(r.data.msg.msg);
-          setBusy(false);
-          return;
-        }
-        localStorage.setItem("user", JSON.stringify(r.data.data.user));
-        // localStorage.setItem("authKey", JSON.stringify(r.data.data.authKey));
-        fetch("/api/login", {
-          method: "post",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ authKey: r.data.data.authKey }),
-        })
-          .then((res) => res.json())
-          .then((data) => {
-            router.push("/dashboard");
-          });
-      })
-      .catch((e) => {
-        alert(e);
-        setBusy(false);
-      });
-  };
-
-  return (
-    <div className={style.signin}>
-      <div className={style.signinWrapper}>
-        <div className={style.image}>
-          <img src="/images/logo.svg" alt="" />
-        </div>
-        {/* .image */}
-        <form onSubmit={submit}>
-          <input
-            type="text"
-            name="name"
-            autoComplete="username"
-            onChange={(e) => setEmail(e.target.value)}
-            onFocus={(e) => e.target.select()}
-            placeholder="Username"
-            required
-            disabled={busy}
-          />
-          <input
-            type="password"
-            name="password"
-            autoComplete="current-password"
-            onChange={(e) => setpassword(e.target.value)}
-            onFocus={(e) => e.target.select()}
-            placeholder="Password"
-            required
-            disabled={busy}
-          />
-          <button type="submit" disabled={busy}>
-            {busy ? <Loading height={10} /> : "Login"}
-          </button>
-          <Link href="/dashboard" passHref>
-            Forgot Password?
-          </Link>
-        </form>
-      </div>
-      {/* .signinWrapper */}
-    </div>
-  );
+const Home = ({ authKey }) => {
+	return (
+		<Layout title="Welcome">
+			<div className={style.home}>
+				<section className={style.hero}>
+					<header>
+						<Link href="/" passHref>
+							<a className={style.contact}>Contact</a>
+						</Link>
+						{authKey ? (
+							<Link href="/dashboard" passHref>
+								<a className={style.login}>Dashboard</a>
+							</Link>
+						) : (
+							<Link href="/login" passHref>
+								<a className={style.login}>Login</a>
+							</Link>
+						)}
+					</header>
+					<div className={style.contents}>
+						<div className={style.logo}>
+							<img src="/images/logo.svg" alt="" />
+						</div>
+						{/* .logo */}
+						<h1>
+							Unleashing technology to solve problems fundamental to our
+							existence
+						</h1>
+					</div>
+					{/* .contents */}
+				</section>
+				{/* .hero */}
+				<div className="container">
+					<section className={style.whyAgrofocal}>
+						<h2>Why Agrofocal? </h2>
+						<p>
+							Agrofocal enables farmers to make informed decisions based on
+							objective crop measurements. Thus increase production, reduce
+							costs, and lessen environmental impact.{" "}
+						</p>
+						<div className={style.points}>
+							<div className={style.point}>
+								<img src="/images/realtime.svg" alt="" />
+								<h3>Realtime</h3>
+							</div>
+							{/* .point */}
+							<div className={style.point}>
+								<img src="/images/easy-to-use.svg" alt="" />
+								<h3>Easy to use</h3>
+							</div>
+							{/* .point */}
+							<div className={style.point}>
+								<img src="/images/affordable.svg" alt="" />
+								<h3>Affordable </h3>
+							</div>
+							{/* .point */}
+						</div>
+						{/* .points */}
+					</section>
+					{/* .whyAgrofocal */}
+				</div>
+				{/* .container */}
+				<footer>
+					<div className="container">
+						<img src="/images/logo.svg" alt="" />
+						<p>&copy; Agorofocal 2022. All Rights Reserved. </p>
+					</div>
+					{/* .container */}
+				</footer>
+			</div>
+			{/* .home */}
+		</Layout>
+	);
 };
 
-export default Signin;
+export default Home;
 
 export function getServerSideProps(ctx) {
-  const { authKey } = ctx.req.cookies;
-  if (authKey) {
-    return {
-      redirect: {
-        permanent: false,
-        destination: "/dashboard",
-      },
-      props: { authKey: ctx.req.cookies.authKey || null },
-    };
-  } else {
-    return { props: {} };
-  }
+	const { authKey } = ctx.req.cookies;
+	if (authKey) {
+		return {
+			props: { authKey: ctx.req.cookies.authKey || null },
+		};
+	} else {
+		return { props: {} };
+	}
 }
