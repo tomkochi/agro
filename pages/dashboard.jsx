@@ -12,6 +12,7 @@ import { useRef, useState, useEffect } from "react";
 import Loading from "../components/loading";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import useStore from "../store";
 
 const Dashboard = ({ authKey }) => {
 	const inspectionStatus = {
@@ -27,6 +28,8 @@ const Dashboard = ({ authKey }) => {
 
 	const allFields = { _id: 0, name: "All" };
 
+	const user = useStore((state) => state.user);
+
 	const [busy, setBusy] = useState(false);
 
 	const [inspectionProgress, setInspectionProgress] = useState(
@@ -37,8 +40,6 @@ const Dashboard = ({ authKey }) => {
 
 	const [monthData, setMonthData] = useState([]); // which all dates of this month has data
 	const [dateData, setDateData] = useState([]); // selected day's data
-
-	const [user, setUser] = useState(null); // got while logging in
 
 	const [file, setFile] = useState(null); // selected file stored in here
 	const [uploadOverlay, setUploadOverlay] = useState(false); // whether to show upload overlay box after choosing the file
@@ -156,6 +157,7 @@ const Dashboard = ({ authKey }) => {
 							},
 						})
 							.then((ir) => {
+								console.log(ir);
 								if (ir.data.data.status === "Analysis Completed") {
 									setInspectionProgress(inspectionStatus.COMPLETED);
 									// update monthsData
@@ -171,7 +173,7 @@ const Dashboard = ({ authKey }) => {
 							.catch((e) => {
 								console.log(e);
 							});
-					}, 1000 * 10);
+					}, 1000 * 4);
 				} else {
 					alert(ur.data.msg.msg);
 				}
@@ -240,14 +242,6 @@ const Dashboard = ({ authKey }) => {
 			.catch((e) => alert(e));
 	};
 
-	const routeChangeConfirmation = () => {
-		router.events.on("routeChangeStart", () => {
-			if (uploading) {
-				throw "";
-			}
-		});
-	};
-
 	useEffect(() => {
 		if (router.query.d) {
 			fetchDateData(parseInt(router.query.d), true);
@@ -255,20 +249,9 @@ const Dashboard = ({ authKey }) => {
 			fetchDateData(selectedDate, true);
 		}
 
-		const userInfo = JSON.parse(localStorage.getItem("user"));
-		setUser(userInfo);
-
-		setFields(userInfo.account.fields);
-		setCrops(userInfo.account.croptype);
-		setSelectedField(userInfo.account.fields[0]);
-		setSelectedCrop(userInfo.account.croptype[0]);
-		setSelectedFieldFilter(allFields);
-
 		getMonthData(new Date().getTime());
 
 		document.addEventListener("click", documentClick);
-
-		routeChangeConfirmation();
 
 		return () => {
 			document.removeEventListener("click", documentClick);
@@ -277,6 +260,16 @@ const Dashboard = ({ authKey }) => {
 			} catch (error) {}
 		};
 	}, []);
+
+	useEffect(() => {
+		if (user) {
+			setFields(user.account.fields);
+			setCrops(user.account.croptype);
+			setSelectedField(user.account.fields[0]);
+			setSelectedCrop(user.account.croptype[0]);
+			setSelectedFieldFilter(allFields);
+		}
+	}, [user]);
 
 	useEffect(() => {
 		if (!uploadOverlay) {

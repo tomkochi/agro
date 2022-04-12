@@ -4,9 +4,12 @@ import { useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/router";
 import Loading from "../components/loading";
+import useStore from "../store";
 
-const Signin = ({ authKey }) => {
+const Login = () => {
 	const router = useRouter();
+
+	const setUser = useStore((state) => state.setUser);
 
 	const [email, setEmail] = useState("");
 	const [password, setpassword] = useState("");
@@ -41,8 +44,7 @@ const Signin = ({ authKey }) => {
 					setBusy(false);
 					return;
 				}
-				localStorage.setItem("user", JSON.stringify(r.data.data.user));
-				// localStorage.setItem("authKey", JSON.stringify(r.data.data.authKey));
+				setUser(r.data.data.user);
 				fetch("/api/login", {
 					method: "post",
 					headers: {
@@ -103,7 +105,7 @@ const Signin = ({ authKey }) => {
 	);
 };
 
-export default Signin;
+export default Login;
 
 export function getServerSideProps(ctx) {
 	const { authKey } = ctx.req.cookies;

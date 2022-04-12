@@ -1,0 +1,77 @@
+{
+	"data": {
+		"data": {
+			"area": 400,
+			"croptype": "Strawberry",
+			"date": 1649789328,
+			"field": "Unknown",
+			"inspectionid": "53f6ea43af7b4249a63a66056475d400",
+			"result": {
+				"eoi": 0,
+				"gpsid": {
+					"lat": 34.210233407267246,
+					"lng": -119.15660152046519
+				},
+				"images": [
+					{
+						"link": "/display/53f6ea43af7b4249a63a66056475d400/frame0001.jpg",
+						"name": "frame0001.jpg",
+						"stream": ""
+					}
+				],
+				"objects": {
+					"name": [
+						"ripe",
+						"full",
+						"mid",
+						"small",
+						"tiny",
+						"flower",
+						"damage",
+						"chlorosis",
+						"dieoff"
+					],
+					"unit": ["", "", "", "", "", "", "", "", ""],
+					"value": [0, 0, 0, 0, 0, 0, 0, 0, 0]
+				},
+				"tot-objects": null
+			},
+			"status": "{\"inspectionid\": \"53f6ea43af7b4249a63a66056475d400\", \"username\": \"admin@agrofocal.ai\", \"status\": \"Analyzing Inspection\", \"doi\": 1649789325, \"lastupdated\": 1649789325}"
+		},
+		"msg": {
+			"code": 2000,
+			"msg": "OK"
+		},
+		"success": true
+	},
+	"status": 200,
+	"statusText": "OK",
+	"headers": {
+		"content-length": "1356",
+		"content-type": "application/json"
+	},
+	"config": {
+		"transitional": {
+			"silentJSONParsing": true,
+			"forcedJSONParsing": true,
+			"clarifyTimeoutError": false
+		},
+		"transformRequest": [null],
+		"transformResponse": [null],
+		"timeout": 0,
+		"xsrfCookieName": "XSRF-TOKEN",
+		"xsrfHeaderName": "X-XSRF-TOKEN",
+		"maxContentLength": -1,
+		"maxBodyLength": -1,
+		"headers": {
+			"Accept": "application/json, text/plain, */*",
+			"Content-Type": "application/json",
+			"content_type": "application/json",
+			"authKey": "agroQ1dr$sA"
+		},
+		"method": "post",
+		"url": "http://54.219.244.64:9020/data/inspection",
+		"data": "{\"inspectionid\":\"53f6ea43af7b4249a63a66056475d400\"}"
+	},
+	"request": {}
+}
