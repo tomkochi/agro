@@ -15,16 +15,11 @@ import { useRouter } from "next/router";
 import useStore from "../store";
 
 const Dashboard = ({ authKey }) => {
-	const inspectionStatus = {
-		HIDDEN: 0,
-		PROGRESS: 1,
-		COMPLETED: 2,
-	};
-	Object.freeze(inspectionStatus);
-
 	const router = useRouter();
 
 	const controller = useRef(null);
+
+	const inspectionInterval = useRef(null);
 
 	const allFields = { _id: 0, name: "All" };
 
@@ -32,11 +27,7 @@ const Dashboard = ({ authKey }) => {
 
 	const [busy, setBusy] = useState(false);
 
-	const [inspectionProgress, setInspectionProgress] = useState(
-		inspectionStatus.HIDDEN
-	);
-
-	const [inspectionId, setInspectionId] = useState("");
+	const [inspectionData, setInspectionData] = useState({});
 
 	const [monthData, setMonthData] = useState([]); // which all dates of this month has data
 	const [dateData, setDateData] = useState([]); // selected day's data
@@ -143,37 +134,7 @@ const Dashboard = ({ authKey }) => {
 		})
 			.then((ur) => {
 				if (ur.data.msg.code === 2007) {
-					setInspectionProgress(inspectionStatus.PROGRESS);
-					setInspectionId(ur.data.data.inspectionid);
-					// check after some time
-					const inspectionCheck = setInterval(() => {
-						axios({
-							method: "post",
-							url: `${process.env.NEXT_PUBLIC_BASE_URL}/data/inspection`,
-							data: { inspectionid: ur.data.data.inspectionid },
-							headers: {
-								content_type: "application/json",
-								authKey,
-							},
-						})
-							.then((ir) => {
-								console.log(ir);
-								if (ir.data.data.status === "Analysis Completed") {
-									setInspectionProgress(inspectionStatus.COMPLETED);
-									// update monthsData
-									getMonthData(new Date().getTime());
-									// if selectedDate is today, refresh fieldcards
-									if (moment(selectedDate).isSame(moment(), "day")) {
-										fetchDateData(selectedDate, true);
-									}
-									// clear interval
-									clearInterval(inspectionCheck);
-								}
-							})
-							.catch((e) => {
-								console.log(e);
-							});
-					}, 1000 * 4);
+					checkInspections();
 				} else {
 					alert(ur.data.msg.msg);
 				}
@@ -242,6 +203,23 @@ const Dashboard = ({ authKey }) => {
 			.catch((e) => alert(e));
 	};
 
+	const checkInspections = () => {
+		console.log("Checking inspection");
+		axios({
+			method: "post",
+			url: `${process.env.NEXT_PUBLIC_BASE_URL}/user/inspection`,
+			data: {},
+			headers: {
+				content_type: "application/json",
+				authKey,
+			},
+		})
+			.then((r) => {
+				setInspectionData(r.data.data);
+			})
+			.catch((e) => console.log(e));
+	};
+
 	useEffect(() => {
 		if (router.query.d) {
 			fetchDateData(parseInt(router.query.d), true);
@@ -251,10 +229,17 @@ const Dashboard = ({ authKey }) => {
 
 		getMonthData(new Date().getTime());
 
+		checkInspections();
+
+		inspectionInterval.current = setInterval(() => {
+			checkInspections();
+		}, 1000 * 30);
+
 		document.addEventListener("click", documentClick);
 
 		return () => {
 			document.removeEventListener("click", documentClick);
+			clearInterval(inspectionInterval.current);
 			try {
 				controller.current.abort();
 			} catch (error) {}
@@ -323,28 +308,27 @@ const Dashboard = ({ authKey }) => {
 							getMonthData={getMonthData}
 							fetchDateData={fetchDateData}
 						/>
-						{inspectionProgress !== inspectionStatus.HIDDEN && (
+						{Object.entries(inspectionData).length > 0 && (
 							<div className={style.inspectionStatus}>
-								{inspectionProgress === inspectionStatus.PROGRESS && (
-									<>
-										<h4>Inspection in progress</h4>
-										<span className={style.blinkingDot}></span>
-									</>
-								)}
-								{inspectionProgress === inspectionStatus.COMPLETED && (
-									<>
-										<h4>Inspection completed</h4>
-										<Link href={`/inspection/${inspectionId}`} passHref>
-											<a
-												onClick={() =>
-													setInspectionProgress(inspectionStatus.HIDDEN)
-												}
-											>
-												VIEW
-											</a>
-										</Link>
-									</>
-								)}
+								{Object.entries(inspectionData).map((id, idi) => {
+									return (
+										<div className={style.inspection} key={idi}>
+											{id[1].status === "Analysis Completed" ? (
+												<>
+													<h4>Inspection completed</h4>
+													<Link href={`/inspection/${id[0]}`} passHref>
+														<a>VIEW</a>
+													</Link>
+												</>
+											) : (
+												<>
+													<h4>Inspection in progress</h4>
+													<span className={style.blinkingDot}></span>
+												</>
+											)}
+										</div>
+									);
+								})}
 							</div>
 						)}
 					</div>

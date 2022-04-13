@@ -1,26 +1,13 @@
 import style from "./index.module.scss";
-import Link from "next/link";
 import Layout from "../components/layout";
+import Header from "../components/guestHeader";
 
 const Home = ({ authKey }) => {
 	return (
 		<Layout title="Welcome">
 			<div className={style.home}>
 				<section className={style.hero}>
-					<header>
-						<Link href="/" passHref>
-							<a className={style.contact}>Contact</a>
-						</Link>
-						{authKey ? (
-							<Link href="/dashboard" passHref>
-								<a className={style.login}>Dashboard</a>
-							</Link>
-						) : (
-							<Link href="/login" passHref>
-								<a className={style.login}>Login</a>
-							</Link>
-						)}
-					</header>
+					<Header authKey={authKey} />
 					<div className={style.contents}>
 						<div className={style.logo}>
 							<img src="/images/logo.svg" alt="" />

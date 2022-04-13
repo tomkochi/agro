@@ -1,0 +1,50 @@
+.guestHeader {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  padding: 20px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 2000;
+
+  @media (min-width: 992px) {
+    padding: 38px 47px;
+  }
+
+  img {
+    width: 120px;
+
+    @media (min-width:992px) {
+      width: auto;
+    }
+  }
+
+  .right {
+    display: flex;
+    align-items: center;
+  }
+
+  a {
+    font-family: "Poppins", sans-serif;
+    font-weight: 600;
+    font-size: 16px;
+    color: #F2F2F2;
+    text-decoration: none;
+  }
+}
+
+.login {
+  height: 49px;
+  background: linear-gradient(172.08deg, #69AA72 -18.15%, #69AA72 120.92%);
+  box-shadow: 0px 4px 8px rgba(52, 131, 50, 0.58);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  margin-left: 37px;
+
+  @media (min-width: 992px) {
+    padding: 0 44px;
+  }
+}
