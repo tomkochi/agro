@@ -66,11 +66,7 @@ const Calendar = ({
 			month,
 		});
 		displayCalendar(year, month);
-		setTimeout(() => {
-			getMonthData(
-				moment(`${year}/${month}/1 12:59:59`, "YYYY/M/D HH:mm:ss").unix()
-			);
-		}, 200);
+		getMonthData(moment().startOf("month").utc().unix() * 1000);
 	};
 
 	const hasData = (d) => {

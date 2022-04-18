@@ -233,7 +233,7 @@ const Dashboard = ({ authKey }) => {
 			fetchDateData(selectedDate, true);
 		}
 
-		getMonthData(moment.utc().unix());
+		getMonthData(moment.utc().unix() * 1000);
 
 		checkInspections();
 
@@ -334,7 +334,7 @@ const Dashboard = ({ authKey }) => {
 							</div>
 						)}
 					</div>
-					{/* .calendar */}
+					{/* .leftPanel */}
 					<div className={style.reports}>
 						<div className={style.header}>
 							<div className={style.headerLeft}>
@@ -379,6 +379,7 @@ const Dashboard = ({ authKey }) => {
 							</div>
 						)}
 					</div>
+					{/* .reports */}
 				</main>
 			</div>
 			{/* .dashboard */}
