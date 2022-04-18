@@ -91,8 +91,8 @@ const Calendar = ({
 
 	// new date click event
 	const selectNewDate = (date) => {
-		const dateString = `${date.date}/${date.month + 1}/${date.year} 12:59:59`;
-		const dateNumber = moment(dateString, "D/M/YYYY hh:mm:ss").unix() * 1000;
+		const dateString = `${date.date}/${date.month + 1}/${date.year}`;
+		const dateNumber = moment(dateString, "D/M/YYYY").utc().unix() * 1000;
 		setSelectedDate(dateNumber);
 		const newDate = moment(dateNumber).format("YYYY/MM/DD");
 		router.push(

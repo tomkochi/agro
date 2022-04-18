@@ -51,9 +51,11 @@ const Dashboard = ({ authKey }) => {
 	const cropWrapper = useRef(null);
 	const uploadWindow = useRef(null);
 
-	const [selectedDate, setSelectedDate] = useState(
-		parseInt(router.query.d) || moment().unix() * 1000
-	);
+	const [selectedDate, setSelectedDate] = useState(() => {
+		return (
+			parseInt(router.query.d) || moment().startOf("day").utc().unix() * 1000
+		);
+	});
 
 	const closeUploadOverlay = () => {
 		setUploadOverlay(false);
@@ -154,6 +156,11 @@ const Dashboard = ({ authKey }) => {
 		setUploading(true);
 	};
 
+	const fieldFilterCallBack = () => {
+		const newDate = moment(selectedDate).format("YYYY/MM/DD");
+		fetchDateData(selectedDate, monthData.includes(newDate));
+	};
+
 	const fetchDateData = (date, hasData) => {
 		// setSelectedDate(date);
 		if (!hasData) {
@@ -204,7 +211,6 @@ const Dashboard = ({ authKey }) => {
 	};
 
 	const checkInspections = () => {
-		console.log("Checking inspection");
 		axios({
 			method: "post",
 			url: `${process.env.NEXT_PUBLIC_BASE_URL}/user/inspection`,
@@ -227,7 +233,7 @@ const Dashboard = ({ authKey }) => {
 			fetchDateData(selectedDate, true);
 		}
 
-		getMonthData(new Date().getTime());
+		getMonthData(moment.utc().unix());
 
 		checkInspections();
 
@@ -262,11 +268,6 @@ const Dashboard = ({ authKey }) => {
 		}
 	}, [uploadOverlay]);
 
-	useEffect(() => {
-		const newDate = moment(selectedDate).format("YYYY/MM/DD");
-		fetchDateData(selectedDate, monthData.includes(newDate));
-	}, [selectedFieldFilter]);
-
 	return (
 		<Layout title="Dashboard" bg="#F3F3F3">
 			<PageHeader title="Dashboard" authKey={authKey}>
@@ -298,6 +299,7 @@ const Dashboard = ({ authKey }) => {
 								data={[allFields, ...fields]}
 								value={selectedFieldFilter}
 								onSelection={setSelectedFieldFilter}
+								cb={fieldFilterCallBack}
 							/>
 						</div>
 						{/* .inputGroup */}
@@ -345,8 +347,11 @@ const Dashboard = ({ authKey }) => {
 									href={{
 										pathname: "/chart",
 										query: {
-											f: moment(selectedDate).startOf("month").unix(),
-											t: moment(selectedDate).endOf("month").unix(),
+											f:
+												moment(selectedDate).startOf("month").utc().unix() *
+												1000,
+											t:
+												moment(selectedDate).endOf("month").utc().unix() * 1000,
 										},
 									}}
 									passHref
