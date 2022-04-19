@@ -77,3 +77,16 @@
 
   }
 }
+.chartContainer {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  padding: 20px;
+}
+.chartCard {
+  background: #FFFFFF;
+box-shadow: 0px 4px 8px rgba(217, 220, 231, 0.58);
+border-radius: 10px;
+height: 60vh;
+padding-top: 80px;
+}
