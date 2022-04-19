@@ -11,6 +11,7 @@ const Calendar = ({
 	monthData = [],
 	getMonthData,
 	fetchDateData,
+	gap = 18,
 }) => {
 	const router = useRouter();
 
@@ -146,7 +147,7 @@ const Calendar = ({
 
 	return (
 		<div className={style.calendar}>
-			<div className={style.controls}>
+			<div className={style.controls} style={{ marginBottom: gap }}>
 				<button
 					onClick={() => changeMonth(monthAction.PREVIOUS)}
 					className={style.previousMonth}

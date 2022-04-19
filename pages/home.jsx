@@ -1,4 +1,4 @@
-import style from "./index.module.scss";
+import style from "./home.module.scss";
 import Layout from "../components/layout";
 import Header from "../components/guestHeader";
 
@@ -6,8 +6,8 @@ const Home = ({ authKey }) => {
 	return (
 		<Layout title="Welcome">
 			<div className={style.home}>
-				<section className={style.hero}>
-					<Header authKey={authKey} />
+				<Header authKey={authKey} bg="light" />
+				<div className={style.hero}>
 					<div className={style.contents}>
 						<div className={style.logo}>
 							<img src="/images/logo.svg" alt="" />
@@ -19,7 +19,7 @@ const Home = ({ authKey }) => {
 						</h1>
 					</div>
 					{/* .contents */}
-				</section>
+				</div>
 				{/* .hero */}
 				<div className="container">
 					<section className={style.whyAgrofocal}>
@@ -57,11 +57,10 @@ const Home = ({ authKey }) => {
 				</div>
 				{/* .container */}
 				<footer>
-					<div className="container">
+					<div className={style.image}>
 						<img src="/images/logo.svg" alt="" />
-						<p>&copy; Agorofocal 2022. All Rights Reserved. </p>
 					</div>
-					{/* .container */}
+					<p>&copy; Agorofocal 2022. All Rights Reserved. </p>
 				</footer>
 			</div>
 			{/* .home */}

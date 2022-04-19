@@ -8,11 +8,11 @@ import Progress from "../components/dashboard/progress";
 import PageHeader from "../components/header";
 import moment from "moment";
 import Dropdown from "../components/dropdown";
-import { useRef, useState, useEffect } from "react";
-import Loading from "../components/loading";
 import Link from "next/link";
+import { useRef, useState, useEffect } from "react";
 import { useRouter } from "next/router";
-import useStore from "../store";
+import Loading from "../components/loading";
+import { userStore } from "../store";
 
 const Dashboard = ({ authKey }) => {
 	const router = useRouter();
@@ -23,7 +23,7 @@ const Dashboard = ({ authKey }) => {
 
 	const allFields = { _id: 0, name: "All" };
 
-	const user = useStore((state) => state.user);
+	const user = userStore((state) => state.user);
 
 	const [busy, setBusy] = useState(false);
 
@@ -226,6 +226,10 @@ const Dashboard = ({ authKey }) => {
 			.catch((e) => console.log(e));
 	};
 
+	const sortedDateData = () => {
+		return dateData.sort((a, b) => (a.date > b.date ? -1 : 1));
+	};
+
 	useEffect(() => {
 		if (router.query.d) {
 			fetchDateData(parseInt(router.query.d), true);
@@ -347,11 +351,8 @@ const Dashboard = ({ authKey }) => {
 									href={{
 										pathname: "/chart",
 										query: {
-											f:
-												moment(selectedDate).startOf("month").utc().unix() *
-												1000,
-											t:
-												moment(selectedDate).endOf("month").utc().unix() * 1000,
+											d:
+												moment(selectedDate).startOf("day").utc().unix() * 1000,
 										},
 									}}
 									passHref
@@ -372,7 +373,7 @@ const Dashboard = ({ authKey }) => {
 						) : (
 							<div className={style.cardsWrapper}>
 								<div className={style.cards}>
-									{dateData.map((d, di) => {
+									{sortedDateData().map((d, di) => {
 										return <FieldCard key={di} data={d} />;
 									})}
 								</div>

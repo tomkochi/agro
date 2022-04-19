@@ -1,0 +1,79 @@
+.chart {
+  padding: 35px 55px;
+}
+
+.dataControls {
+  display: flex;
+  justify-content: space-between;
+}
+
+.dropdownWrapper {
+  width: 337px;
+}
+
+.timeSpan {
+  display: flex;
+}
+
+.calendarSelector {
+  margin-right: 27px;
+  position: relative;
+
+  >button {
+    height: 45px;
+    width: 240px;
+    background: white;
+    box-shadow: 0px 4px 8px rgba(217, 220, 231, 0.58);
+    border-radius: 10px;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 0 0 15px;
+    font-weight: 500;
+    font-size: 18px;
+    color: #686868;
+
+    span {
+      display: flex;
+      align-items: center;
+      padding: 0 15px;
+      height: 100%;
+      border-left: 1px solid #E0E0E0;
+    }
+  }
+}
+
+.calendarWrapper {
+  background: #ffffff;
+  position: absolute;
+  left: 0;
+  display: none;
+}
+
+.periodSelector {
+  display: flex;
+  overflow: hidden;
+  border-radius: 10px;
+
+  button {
+    width: 107px;
+    height: 45px;
+    border: none;
+    background: #ffffff;
+    font-weight: 600;
+    font-size: 16px;
+    color: #69AA72;
+
+    &:not(:first-of-type) {
+      border-left: 1px solid #E0E0E0;
+    }
+
+    &.active {
+      background: #69AA72;
+      color: #ffffff;
+      border: none;
+    }
+
+  }
+}

@@ -4,12 +4,12 @@ import { useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/router";
 import Loading from "../components/loading";
-import useStore from "../store";
+import { userStore } from "../store";
 
 const Login = () => {
 	const router = useRouter();
 
-	const setUser = useStore((state) => state.setUser);
+	const setUser = userStore((state) => state.setUser);
 
 	const [email, setEmail] = useState("");
 	const [password, setpassword] = useState("");

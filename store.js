@@ -1,8 +1,13 @@
 import create from "zustand";
 
-const useStore = create((set) => ({
+// implement later
+export const globalStore = create((set) => ({}));
+
+export const userStore = create((set) => ({
 	user: null,
 	setUser: (u) => set((state) => ({ user: u })),
 }));
 
-export default useStore;
+export const dashboardStore = create((set) => ({
+	tst: null,
+}));

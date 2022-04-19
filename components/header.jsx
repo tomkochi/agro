@@ -3,12 +3,12 @@ import Link from "next/link";
 import axios from "axios";
 import { useRouter } from "next/router";
 import { useEffect, useState, useRef } from "react";
-import useStore from "../store";
+import { userStore } from "../store";
 import Loading from "./loading";
 
 const Header = ({ title, authKey, children }) => {
-	const user = useStore((state) => state.user);
-	const setUser = useStore((state) => state.setUser);
+	const user = userStore((state) => state.user);
+	const setUser = userStore((state) => state.setUser);
 
 	const [userSideBar, setUserSideBar] = useState(false);
 
@@ -18,10 +18,10 @@ const Header = ({ title, authKey, children }) => {
 				url: `${process.env.NEXT_PUBLIC_BASE_URL}/user/validate`,
 				method: "post",
 				data: {
-					authKey,
+					authKey: authKey,
 				},
 				headers: {
-					"Content-type": "application/json",
+					content_type: "application/json",
 					authKey,
 				},
 			})
