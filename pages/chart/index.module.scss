@@ -48,7 +48,10 @@
   background: #ffffff;
   position: absolute;
   left: 0;
-  display: none;
+  top: 52px;
+  box-shadow: 0px 4px 8px rgba(217, 220, 231, 0.58);
+  border-radius: 10px;
+  z-index: 2000;
 }
 
 .periodSelector {
@@ -74,19 +77,22 @@
       color: #ffffff;
       border: none;
     }
-
   }
 }
+
 .chartContainer {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 20px;
   padding: 20px;
+  padding: 35px 55px;
 }
+
 .chartCard {
+  padding: 30px;
   background: #FFFFFF;
-box-shadow: 0px 4px 8px rgba(217, 220, 231, 0.58);
-border-radius: 10px;
-height: 60vh;
-padding-top: 80px;
+  box-shadow: 0px 4px 8px rgba(217, 220, 231, 0.58);
+  border-radius: 10px;
+  height: 60vh;
+  padding-top: 80px;
 }

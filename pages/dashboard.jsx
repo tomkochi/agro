@@ -156,13 +156,7 @@ const Dashboard = ({ authKey }) => {
 		setUploading(true);
 	};
 
-	const fieldFilterCallBack = () => {
-		const newDate = moment(selectedDate).format("YYYY/MM/DD");
-		fetchDateData(selectedDate, monthData.includes(newDate));
-	};
-
 	const fetchDateData = (date, hasData) => {
-		// setSelectedDate(date);
 		if (!hasData) {
 			setDateData([]);
 			return;
@@ -226,24 +220,10 @@ const Dashboard = ({ authKey }) => {
 			.catch((e) => console.log(e));
 	};
 
-	const sortedDateData = () => {
-		return dateData.sort((a, b) => (a.date > b.date ? -1 : 1));
-	};
-
 	useEffect(() => {
-		if (router.query.d) {
-			fetchDateData(parseInt(router.query.d), true);
-		} else {
-			fetchDateData(selectedDate, true);
-		}
-
 		getMonthData(moment.utc().unix() * 1000);
 
 		checkInspections();
-
-		inspectionInterval.current = setInterval(() => {
-			checkInspections();
-		}, 1000 * 30);
 
 		document.addEventListener("click", documentClick);
 
@@ -257,12 +237,19 @@ const Dashboard = ({ authKey }) => {
 	}, []);
 
 	useEffect(() => {
+		if (router.query.d) {
+			fetchDateData(parseInt(router.query.d), true);
+		} else {
+			fetchDateData(selectedDate, true);
+		}
+	}, [selectedFieldFilter]);
+
+	useEffect(() => {
 		if (user) {
 			setFields(user.account.fields);
 			setCrops(user.account.croptype);
 			setSelectedField(user.account.fields[0]);
 			setSelectedCrop(user.account.croptype[0]);
-			setSelectedFieldFilter(allFields);
 		}
 	}, [user]);
 
@@ -303,7 +290,6 @@ const Dashboard = ({ authKey }) => {
 								data={[allFields, ...fields]}
 								value={selectedFieldFilter}
 								onSelection={setSelectedFieldFilter}
-								cb={fieldFilterCallBack}
 							/>
 						</div>
 						{/* .inputGroup */}
@@ -313,6 +299,7 @@ const Dashboard = ({ authKey }) => {
 							monthData={monthData}
 							getMonthData={getMonthData}
 							fetchDateData={fetchDateData}
+							inDashboard={true}
 						/>
 						{Object.entries(inspectionData).length > 0 && (
 							<div className={style.inspectionStatus}>
@@ -373,9 +360,11 @@ const Dashboard = ({ authKey }) => {
 						) : (
 							<div className={style.cardsWrapper}>
 								<div className={style.cards}>
-									{sortedDateData().map((d, di) => {
-										return <FieldCard key={di} data={d} />;
-									})}
+									{dateData
+										.sort((a, b) => (a.date > b.date ? -1 : 1))
+										.map((d, di) => {
+											return <FieldCard key={di} data={d} />;
+										})}
 								</div>
 							</div>
 						)}
