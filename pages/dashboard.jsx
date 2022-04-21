@@ -199,6 +199,7 @@ const Dashboard = ({ authKey }) => {
 			},
 		})
 			.then((r) => {
+				console.log(r.data.data);
 				setMonthData(r.data.data);
 			})
 			.catch((e) => alert(e));

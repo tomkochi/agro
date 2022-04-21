@@ -68,7 +68,12 @@ const Calendar = ({
 			month,
 		});
 		displayCalendar(year, month);
-		getMonthData(moment().startOf("month").utc().unix() * 1000);
+		getMonthData(
+			moment(`${year}/${month + 1}/01`, "YYYY/MM/DD")
+				.utc()
+				.startOf("month")
+				.unix() * 1000
+		);
 	};
 
 	const hasData = (d) => {
@@ -108,6 +113,12 @@ const Calendar = ({
 
 	const selectYear = (y) => {
 		setDisplay((d) => {
+			getMonthData(
+				moment(`${y}/${d.month + 1}/01`, "YYYY/MM/DD")
+					.utc()
+					.startOf("month")
+					.unix() * 1000
+			);
 			return {
 				year: y,
 				month: d.month,
@@ -117,6 +128,12 @@ const Calendar = ({
 	};
 	const selectMonth = (m) => {
 		setDisplay((d) => {
+			getMonthData(
+				moment(`${d.year}/${m + 2}/01`, "YYYY/MM/DD")
+					.utc()
+					.startOf("month")
+					.unix() * 1000
+			);
 			return {
 				year: d.year,
 				month: m + 1,

@@ -34,10 +34,61 @@ const Chart = ({ authKey, date }) => {
 	const [selectedPeriod, setSelectedPeriod] = useState("day");
 	const [selectedDate, setSelectedDate] = useState(date / 1000);
 
+	const [monthData, setMonthData] = useState([]); // which all dates of this month has data
+	const [dateData, setDateData] = useState([]); // selected day's data
+
 	const [windowWidth, setwindowWidth] = useState(0);
 
 	const [calendar, setCalendar] = useState(false);
 	const calendarWrapper = useRef(null);
+
+	const fetchDateData = (date, hasData) => {
+		if (!hasData) {
+			setDateData([]);
+			return;
+		}
+
+		setBusy(true);
+
+		axios({
+			url: `${process.env.NEXT_PUBLIC_BASE_URL}/data/list`,
+			method: "post",
+			headers: {
+				"Content-Type": "application/json",
+				authKey,
+			},
+			data: {
+				date,
+				field: selectedFieldFilter._id === 0 ? [] : [selectedFieldFilter._id],
+			},
+		})
+			.then((r) => {
+				setDateData(r.data.data);
+			})
+			.catch((e) => {
+				// console.log(e);
+			})
+			.finally(() => {
+				setBusy(false);
+			});
+	};
+	const getMonthData = (date) => {
+		axios({
+			url: `${process.env.NEXT_PUBLIC_BASE_URL}/data/month/list`,
+			method: "post",
+			headers: {
+				"Content-Type": "application/json",
+				authKey,
+			},
+			data: {
+				date: date,
+			},
+		})
+			.then((r) => {
+				setMonthData(r.data.data);
+			})
+			.catch((e) => alert(e));
+	};
 
 	const fieldChange = (f) => {
 		setSelectedFieldFilter(f);
@@ -120,6 +171,9 @@ const Chart = ({ authKey, date }) => {
 
 	useEffect(() => {
 		windowResized();
+
+		getMonthData(moment(selectedDate).utc().unix() * 1000);
+
 		window.addEventListener("resize", windowResized);
 		return () => {
 			window.removeEventListener("resize", windowResized);
@@ -134,7 +188,7 @@ const Chart = ({ authKey, date }) => {
 			<PageHeader title={"Chart"} authKey={authKey}></PageHeader>
 			<div className={style.chart}>
 				<div className={style.dataControls}>
-					<div ref={calendarWrapper} className={style.dropdownWrapper}>
+					<div className={style.dropdownWrapper}>
 						<Dropdown
 							data={[allFields, ...fields]}
 							value={selectedFieldFilter}
@@ -151,17 +205,13 @@ const Chart = ({ authKey, date }) => {
 								</span>
 							</button>
 							{calendar && (
-								<div className={style.calendarWrapper}>
+								<div ref={calendarWrapper} className={style.calendarWrapper}>
 									<Calendar
 										selectedDate={selectedDate}
 										setSelectedDate={setSelectedDate}
-										monthData={[]}
-										getMonthData={() => {
-											return [];
-										}}
-										fetchDateData={() => {
-											return [];
-										}}
+										monthData={monthData}
+										getMonthData={getMonthData}
+										fetchDateData={fetchDateData}
 										gap={12}
 									/>
 								</div>
