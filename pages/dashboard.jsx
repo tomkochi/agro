@@ -199,7 +199,6 @@ const Dashboard = ({ authKey }) => {
 			},
 		})
 			.then((r) => {
-				console.log(r.data.data);
 				setMonthData(r.data.data);
 			})
 			.catch((e) => alert(e));
@@ -247,10 +246,10 @@ const Dashboard = ({ authKey }) => {
 
 	useEffect(() => {
 		if (user) {
-			setFields(user.account.fields);
-			setCrops(user.account.croptype);
-			setSelectedField(user.account.fields[0]);
-			setSelectedCrop(user.account.croptype[0]);
+			setFields(user.fields);
+			setCrops(user.croptype);
+			setSelectedField(user.fields[0]);
+			setSelectedCrop(user.croptype[0]);
 		}
 	}, [user]);
 

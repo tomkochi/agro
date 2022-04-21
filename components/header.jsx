@@ -8,31 +8,8 @@ import Loading from "./loading";
 
 const Header = ({ title, authKey, children }) => {
 	const user = userStore((state) => state.user);
-	const setUser = userStore((state) => state.setUser);
 
 	const [userSideBar, setUserSideBar] = useState(false);
-
-	useEffect(() => {
-		if (!user) {
-			axios({
-				url: `${process.env.NEXT_PUBLIC_BASE_URL}/user/validate`,
-				method: "post",
-				data: {
-					authKey: authKey,
-				},
-				headers: {
-					content_type: "application/json",
-					authKey,
-				},
-			})
-				.then((r) => {
-					setUser(r.data.data.user);
-				})
-				.catch((e) => {
-					console.log(e);
-				});
-		}
-	}, []);
 
 	return (
 		<div className={style.header}>
@@ -132,7 +109,7 @@ export const Sidebar = ({ user, setUserSideBar, authKey }) => {
 						</div>
 						{/* .close */}
 						<div className={style.nameLogout}>
-							<h2>{user.account.user}</h2>
+							<h2>{user.user}</h2>
 							{/* .userName */}
 							<button className={style.logout} onClick={logout}>
 								Logout
@@ -142,18 +119,18 @@ export const Sidebar = ({ user, setUserSideBar, authKey }) => {
 						<div className={style.userInfo}>
 							<div className={style.info}>
 								<h3>Username</h3>
-								<h4>{user.account.username}</h4>
+								<h4>{user.username}</h4>
 							</div>
 							{/* .userInfo */}
 							<div className={style.info}>
 								<h3>Membership</h3>
-								<h4>{user.account.membership}</h4>
+								<h4>{user.membership}</h4>
 							</div>
 							{/* .userInfo */}
 							<div className={style.info}>
 								<h3>Crop Types</h3>
 								<div className={style.crops}>
-									{user.account.croptype.map((c, i) => {
+									{user.croptype.map((c, i) => {
 										return <h4 key={i}>{c.name}</h4>;
 									})}
 								</div>

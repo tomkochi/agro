@@ -97,18 +97,16 @@ const Calendar = ({
 		const dateString = `${date.date}/${date.month + 1}/${date.year}`;
 		const dateNumber = moment(dateString, "D/M/YYYY").utc().unix() * 1000;
 		setSelectedDate(dateNumber);
-		if (inDashboard) {
-			const newDate = moment(dateNumber).format("YYYY/MM/DD");
-			router.push(
-				{
-					pathname: "/dashboard",
-					query: { d: dateNumber },
-				},
-				undefined,
-				{ shallow: true }
-			);
-			fetchDateData(dateNumber, monthData.includes(newDate));
-		}
+		const newDate = moment(dateNumber).format("YYYY/MM/DD");
+		router.push(
+			{
+				pathname: router.pathname,
+				query: { d: dateNumber },
+			},
+			undefined,
+			{ shallow: true }
+		);
+		if (inDashboard) fetchDateData(dateNumber, monthData.includes(newDate));
 	};
 
 	const selectYear = (y) => {

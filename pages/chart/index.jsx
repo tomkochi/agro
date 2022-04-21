@@ -109,7 +109,7 @@ const Chart = ({ authKey, date }) => {
 
 	useEffect(() => {
 		if (user) {
-			setFields(user.account.fields);
+			setFields(user.fields);
 		}
 	}, [user]);
 
@@ -136,7 +136,6 @@ const Chart = ({ authKey, date }) => {
 			data: { date: selectedDate, field, type: selectedPeriod },
 		})
 			.then((r) => {
-				console.log(r);
 				setBardata(r.data.data);
 			})
 			.catch((e) => {
@@ -159,9 +158,7 @@ const Chart = ({ authKey, date }) => {
 				data: { date: selectedDate, field },
 			})
 				.then((r) => {
-					console.log(r);
 					setForecast(r.data.data);
-					console.log(dataConvert(forecast));
 				})
 				.catch((e) => {
 					console.log(e);
@@ -252,41 +249,37 @@ const Chart = ({ authKey, date }) => {
 			</div>
 			<div className={style.chartContainer}>
 				<div className={style.chartCard}>
-					<ResponsiveContainer height="100%">
-						<BarChart data={bardata} width={windowWidth / 2 - 60} height={200}>
-							<CartesianGrid strokeDasharray="3 3" />
-							<XAxis dataKey={(d) => moment.unix(d.date).format("DD MMM")} />
-							<YAxis />
-							<Tooltip />
-							<Legend />
-							<Bar dataKey="ripe" fill={BarColors.ripe} />
-							<Bar dataKey="full" fill={BarColors.full} />
-							<Bar dataKey="mid" fill={BarColors.mid} />
-							<Bar dataKey="small" fill={BarColors.small} />
-							<Bar dataKey="flower" fill={BarColors.flower} />
-						</BarChart>
-					</ResponsiveContainer>
+					<BarChart data={bardata} width={windowWidth / 2 - 160} height={400}>
+						<CartesianGrid strokeDasharray="3 3" />
+						<XAxis dataKey={(d) => moment.unix(d.date).format("DD MMM")} />
+						<YAxis />
+						<Tooltip />
+						<Legend />
+						<Bar dataKey="ripe" fill={BarColors.ripe} />
+						<Bar dataKey="full" fill={BarColors.full} />
+						<Bar dataKey="mid" fill={BarColors.mid} />
+						<Bar dataKey="small" fill={BarColors.small} />
+						<Bar dataKey="flower" fill={BarColors.flower} />
+					</BarChart>
 				</div>
 				{selectedPeriod == "day" ? (
 					<div className={style.chartCard}>
-						<ResponsiveContainer height="100%">
-							<LineChart
-								data={dataConvert(forecast, selectedDate)}
-								width={windowWidth / 2 - 60}
-								height={200}
-							>
-								<CartesianGrid strokeDasharray="3 3" />
-								<XAxis dataKey="date" interval={7} />
-								<YAxis />
-								<Line
-									dot={false}
-									type="monotone"
-									dataKey="value"
-									stroke={BarColors.ripe}
-									strokeWidth={3}
-								/>
-							</LineChart>
-						</ResponsiveContainer>
+						<LineChart
+							data={dataConvert(forecast, selectedDate)}
+							width={windowWidth / 2 - 160}
+							height={400}
+						>
+							<CartesianGrid strokeDasharray="3 3" />
+							<XAxis dataKey="date" interval={7} />
+							<YAxis />
+							<Line
+								dot={false}
+								type="monotone"
+								dataKey="value"
+								stroke={BarColors.ripe}
+								strokeWidth={3}
+							/>
+						</LineChart>
 					</div>
 				) : null}
 			</div>
