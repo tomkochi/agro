@@ -264,7 +264,6 @@ const Chart = ({ authKey, date }) => {
 							<Bar dataKey="mid" fill={BarColors.mid} />
 							<Bar dataKey="small" fill={BarColors.small} />
 							<Bar dataKey="flower" fill={BarColors.flower} />
-							<Bar dataKey="total" fill={BarColors.total} />
 						</BarChart>
 					</ResponsiveContainer>
 				</div>
