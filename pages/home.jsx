@@ -6,7 +6,7 @@ const Home = ({ authKey }) => {
 	return (
 		<Layout title="Welcome">
 			<div className={style.home}>
-				<Header authKey={authKey} bg="light" />
+				<Header authKey={authKey} />
 				<div className={style.hero}>
 					<div className={style.contents}>
 						<div className={style.logo}>

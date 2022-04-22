@@ -5,7 +5,7 @@ import Link from "next/link";
 const Contact = ({ authKey }) => {
 	return (
 		<div className={style.contact}>
-			<Header authKey={authKey} bg="light">
+			<Header authKey={authKey}>
 				<Link href="/" passHref>
 					<a>
 						<img src="/images/logo.svg" alt="" />

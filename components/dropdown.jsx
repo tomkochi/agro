@@ -1,7 +1,7 @@
 import style from "./dropdown.module.scss";
 import { useRef, useState, useEffect } from "react";
 
-const Dropdown = ({ data = [], value, onSelection }) => {
+const Dropdown = ({ data = [], value, onSelection, label }) => {
 	const wrapperRef = useRef(null);
 	const [open, setOpen] = useState(false); // dropdown menu state
 
@@ -20,11 +20,13 @@ const Dropdown = ({ data = [], value, onSelection }) => {
 	}, []);
 
 	return (
-		<div ref={wrapperRef} className={style.wrapper}>
-			<button
-				onClick={() => setOpen((c) => !c)}
-				className={`${style.dropdown} ${open ? style.open : ""}`}
-			>
+		<div
+			ref={wrapperRef}
+			onClick={() => setOpen((c) => !c)}
+			className={`${style.wrapper} ${open ? style.open : ""}`}
+		>
+			{label && <h4>{label}</h4>}
+			<button className={`${style.dropdown} ${open ? style.open : ""}`}>
 				{value?.name}
 			</button>
 			<div className={`${style.menu} ${open ? style.open : ""}`}>

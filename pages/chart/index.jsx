@@ -24,12 +24,12 @@ import {
 } from "recharts";
 
 const Chart = ({ authKey, date }) => {
-	const user = userStore((state) => state.user);
-	const allFields = { _id: 0, name: "All" };
-	const [fields, setFields] = useState([]);
-	const [selectedFieldFilter, setSelectedFieldFilter] = useState(allFields);
-	const [bardata, setBardata] = useState([]);
-	const [forecast, setForecast] = useState([]);
+	const user = userStore((state) => state.user); // user from store
+	const allFields = { _id: 0, name: "All" }; // for default selection
+	const [fields, setFields] = useState([]); // this will be populated in useEffect[user]
+	const [selectedFieldFilter, setSelectedFieldFilter] = useState(allFields); // defaultly set to all fields
+	const [bardata, setBardata] = useState([]); // data for charts
+	const [forecast, setForecast] = useState([]); // data for charts
 
 	const [selectedPeriod, setSelectedPeriod] = useState("day");
 	const [selectedDate, setSelectedDate] = useState(date / 1000);
@@ -37,11 +37,12 @@ const Chart = ({ authKey, date }) => {
 	const [monthData, setMonthData] = useState([]); // which all dates of this month has data
 	const [dateData, setDateData] = useState([]); // selected day's data
 
-	const [windowWidth, setwindowWidth] = useState(0);
+	const [windowWidth, setwindowWidth] = useState(0); // for calculating chart size
 
-	const [calendar, setCalendar] = useState(false);
-	const calendarWrapper = useRef(null);
+	const [calendar, setCalendar] = useState(false); // whether to show calendar or not
+	const calendarWrapper = useRef(null); // mainly for outside click tracking
 
+	// Fetching the data for a particular date
 	const fetchDateData = (date, hasData) => {
 		if (!hasData) {
 			setDateData([]);
@@ -72,6 +73,8 @@ const Chart = ({ authKey, date }) => {
 				setBusy(false);
 			});
 	};
+
+	// get which all days has data
 	const getMonthData = (date) => {
 		axios({
 			url: `${process.env.NEXT_PUBLIC_BASE_URL}/data/month/list`,
@@ -190,13 +193,14 @@ const Chart = ({ authKey, date }) => {
 							data={[allFields, ...fields]}
 							value={selectedFieldFilter}
 							onSelection={fieldChange}
+							label="Fields"
 						/>
 					</div>
 					{/* .dropdownWrapper */}
 					<div className={style.timeSpan}>
 						<div className={style.calendarSelector}>
 							<button onClick={() => setCalendar(true)}>
-								{moment(selectedDate).format("DD MMM YYYY")}
+								{moment(selectedDate * 1000).format("DD MMM YYYY")}
 								<span>
 									<img src="/images/calendar.svg" alt="" />
 								</span>
@@ -248,38 +252,44 @@ const Chart = ({ authKey, date }) => {
 				{/* .dataControl */}
 			</div>
 			<div className={style.chartContainer}>
-				<div className={style.chartCard}>
-					<BarChart data={bardata} width={windowWidth / 2 - 160} height={400}>
-						<CartesianGrid strokeDasharray="3 3" />
-						<XAxis dataKey={(d) => moment.unix(d.date).format("DD MMM")} />
-						<YAxis />
-						<Tooltip />
-						<Legend />
-						<Bar dataKey="ripe" fill={BarColors.ripe} />
-						<Bar dataKey="full" fill={BarColors.full} />
-						<Bar dataKey="mid" fill={BarColors.mid} />
-						<Bar dataKey="small" fill={BarColors.small} />
-						<Bar dataKey="flower" fill={BarColors.flower} />
-					</BarChart>
+				<div className={style.cardWrapper}>
+					<h4>Yield</h4>
+					<div className={style.chartCard}>
+						<BarChart data={bardata} width={windowWidth / 2 - 160} height={400}>
+							<CartesianGrid strokeDasharray="3 3" />
+							<XAxis dataKey={(d) => moment.unix(d.date).format("DD MMM")} />
+							<YAxis />
+							<Tooltip />
+							<Legend />
+							<Bar dataKey="ripe" fill={BarColors.ripe} />
+							<Bar dataKey="full" fill={BarColors.full} />
+							<Bar dataKey="mid" fill={BarColors.mid} />
+							<Bar dataKey="small" fill={BarColors.small} />
+							<Bar dataKey="flower" fill={BarColors.flower} />
+						</BarChart>
+					</div>
 				</div>
 				{selectedPeriod == "day" ? (
-					<div className={style.chartCard}>
-						<LineChart
-							data={dataConvert(forecast, selectedDate)}
-							width={windowWidth / 2 - 160}
-							height={400}
-						>
-							<CartesianGrid strokeDasharray="3 3" />
-							<XAxis dataKey="date" interval={7} />
-							<YAxis />
-							<Line
-								dot={false}
-								type="monotone"
-								dataKey="value"
-								stroke={BarColors.ripe}
-								strokeWidth={3}
-							/>
-						</LineChart>
+					<div className={style.cardWrapper}>
+						<h4>Forecast</h4>
+						<div className={style.chartCard}>
+							<LineChart
+								data={dataConvert(forecast, selectedDate)}
+								width={windowWidth / 2 - 160}
+								height={400}
+							>
+								<CartesianGrid strokeDasharray="3 3" />
+								<XAxis dataKey="date" interval={7} />
+								<YAxis />
+								<Line
+									dot={false}
+									type="monotone"
+									dataKey="value"
+									stroke={BarColors.ripe}
+									strokeWidth={3}
+								/>
+							</LineChart>
+						</div>
 					</div>
 				) : null}
 			</div>
@@ -314,14 +324,12 @@ export async function getServerSideProps(ctx) {
 	const { authKey } = ctx.req.cookies;
 	if (authKey) {
 		let { d } = ctx.query;
-		if (!d) {
-			d = moment().startOf("day").unix();
-		}
 
 		return {
 			props: {
 				authKey: authKey || null,
-				date: d * 1000,
+				date:
+					d === undefined ? moment().startOf("day").unix() * 1000 : d * 1000,
 			},
 		};
 	} else {

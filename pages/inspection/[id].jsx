@@ -7,7 +7,6 @@ import axios from "axios";
 
 const Inspection = ({ authKey, images, data }) => {
 	const [popupImage, setPopupImage] = useState(null);
-	const [fieldName, setFieldName] = useState("");
 
 	const nextImage = () => {
 		const newIndex =
@@ -20,8 +19,8 @@ const Inspection = ({ authKey, images, data }) => {
 	};
 
 	return (
-		<Layout title={fieldName || "Gallery"} bg="#F3F3F3">
-			<PageHeader title={fieldName || "Gallery"}></PageHeader>
+		<Layout title="Gallery" bg="#F3F3F3">
+			<PageHeader title="Gallery" />
 			<div className={style.gallery}>
 				<div className={style.views}>
 					<button className={style.active}>Gallery</button>
@@ -151,13 +150,23 @@ export async function getServerSideProps(ctx) {
 				inspectionid: ctx.params.id,
 			},
 		});
-		return {
-			props: {
-				authKey: ctx.req.cookies.authKey || null,
-				images: r.data.data.result.images,
-				data: r.data.data,
-			},
-		};
+		if (!r.data.data.status) {
+			return {
+				redirect: {
+					permanent: false,
+					destination: "/404",
+				},
+				props: {},
+			};
+		} else {
+			return {
+				props: {
+					authKey: ctx.req.cookies.authKey || null,
+					images: r.data.data.result.images,
+					data: r.data.data,
+				},
+			};
+		}
 	} else {
 		return {
 			redirect: {
