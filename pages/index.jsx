@@ -58,7 +58,7 @@ const Home = ({ authKey }) => {
 				</div>
 				{/* .container */}
 				<div className={style.learnMore}>
-					<h3>Learm more?</h3>
+					<h3>Learn more?</h3>
 					<Link href="/contact" passHref>
 						<a>Contact</a>
 					</Link>

@@ -8,6 +8,7 @@ import PageHeader from "../../components/header";
 import Calendar from "../../components/calendar";
 import { useState, useEffect, useRef } from "react";
 import { userStore } from "../../store";
+import { useRouter } from "next/router";
 // import { useWindowDimensions } from "../../components/useWindowDimension";
 //chart
 import {
@@ -24,6 +25,10 @@ import {
 } from "recharts";
 
 const Chart = ({ authKey, date }) => {
+	const router = useRouter();
+
+	const [queryDate, setQueryDate] = useState(router.query.d);
+
 	const user = userStore((state) => state.user); // user from store
 	const allFields = { _id: 0, name: "All" }; // for default selection
 	const [fields, setFields] = useState([]); // this will be populated in useEffect[user]
@@ -136,7 +141,12 @@ const Chart = ({ authKey, date }) => {
 				content_type: "application/json",
 				authKey,
 			},
-			data: { date: selectedDate, field, type: selectedPeriod },
+			data: {
+				date: selectedDate,
+				field,
+				type: selectedPeriod,
+				counttype: "acre",
+			},
 		})
 			.then((r) => {
 				setBardata(r.data.data);
@@ -144,7 +154,7 @@ const Chart = ({ authKey, date }) => {
 			.catch((e) => {
 				console.log(e);
 			});
-	}, [selectedPeriod, selectedFieldFilter, selectedDate]);
+	}, [selectedPeriod, selectedFieldFilter, selectedDate, queryDate]);
 
 	useEffect(() => {
 		const field =
@@ -167,7 +177,11 @@ const Chart = ({ authKey, date }) => {
 					console.log(e);
 				});
 		}
-	}, [selectedPeriod, selectedFieldFilter, selectedDate]);
+	}, [selectedPeriod, selectedFieldFilter, selectedDate, queryDate]);
+
+	useEffect(() => {
+		setQueryDate(router.query.d);
+	}, [router.query.d]);
 
 	useEffect(() => {
 		windowResized();
@@ -200,7 +214,7 @@ const Chart = ({ authKey, date }) => {
 					<div className={style.timeSpan}>
 						<div className={style.calendarSelector}>
 							<button onClick={() => setCalendar(true)}>
-								{moment(selectedDate * 1000).format("DD MMM YYYY")}
+								{moment(selectedDate).format("DD MMM YYYY")}
 								<span>
 									<img src="/images/calendar.svg" alt="" />
 								</span>

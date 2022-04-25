@@ -290,6 +290,7 @@ const Dashboard = ({ authKey }) => {
 								data={[allFields, ...fields]}
 								value={selectedFieldFilter}
 								onSelection={setSelectedFieldFilter}
+								label="Fields"
 							/>
 						</div>
 						{/* .inputGroup */}
