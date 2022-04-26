@@ -44,7 +44,7 @@ const Login = () => {
 					setBusy(false);
 					return;
 				}
-				setUser(r.data.data.user);
+				setUser(r.data.data.user.account);
 				fetch("/api/login", {
 					method: "post",
 					headers: {

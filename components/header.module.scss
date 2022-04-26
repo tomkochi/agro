@@ -3,10 +3,13 @@
   justify-content: space-between;
   align-items: center;
   height: 75px;
-  padding: 35px 55px;
+  padding: 24px;
   background: #f3f3f3;
   box-shadow: 0px 4px 8px rgba(217, 220, 231, 0.58);
-  margin-bottom: 20px;
+
+  @media (min-width: 992px) {
+    padding: 35px 55px;
+  }
 }
 
 .logo {
@@ -16,16 +19,19 @@
   img {
     display: block;
     margin-right: 24px;
-    cursor: pointer;
   }
 
   h2 {
     font-weight: 600;
     font-size: 22px;
-    line-height: 44px;
     color: #193550;
     padding-left: 18px;
     border-left: 1px solid #e0e0e0;
+    display: none;
+
+    @media (min-width: 992px) {
+      display: block;
+    }
   }
 }
 
@@ -35,8 +41,8 @@
 }
 
 .user {
-  width: 46px;
-  height: 46px;
+  width: 32px;
+  height: 32px;
   font-weight: 500;
   font-size: 16px;
   color: #686868;
@@ -47,13 +53,28 @@
   display: flex;
   align-items: center;
   justify-content: center;
+
+  img {
+    width: 16px;
+    height: 16px;
+
+    @media (min-width: 992px) {
+      width: auto;
+      height: auto;
+    }
+  }
+
+  @media (min-width: 992px) {
+    width: 46px;
+    height: 46px;
+  }
 }
 
 .sidebar {
   position: fixed;
   right: 0;
   top: 0;
-  width: 375px;
+  width: 100%;
   height: 100vh;
   box-shadow: -3px 0px 10px rgba(195, 198, 209, 0.58);
   z-index: 7000;
@@ -61,6 +82,10 @@
   padding: 20px 20px 0;
   display: flex;
   flex-direction: column;
+
+  @media (min-width: 992px) {
+    width: 375px;
+  }
 }
 
 .loading {

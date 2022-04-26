@@ -27,8 +27,6 @@ import {
 const Chart = ({ authKey, date }) => {
 	const router = useRouter();
 
-	const [queryDate, setQueryDate] = useState(router.query.d);
-
 	const user = userStore((state) => state.user); // user from store
 	const allFields = { _id: 0, name: "All" }; // for default selection
 	const [fields, setFields] = useState([]); // this will be populated in useEffect[user]
@@ -36,8 +34,8 @@ const Chart = ({ authKey, date }) => {
 	const [bardata, setBardata] = useState([]); // data for charts
 	const [forecast, setForecast] = useState([]); // data for charts
 
-	const [selectedPeriod, setSelectedPeriod] = useState("day");
-	const [selectedDate, setSelectedDate] = useState(date / 1000);
+	const [selectedPeriod, setSelectedPeriod] = useState("day"); // 'day', 'month' or 'year'
+	const [selectedDate, setSelectedDate] = useState(date / 1000); // epoch
 
 	const [monthData, setMonthData] = useState([]); // which all dates of this month has data
 	const [dateData, setDateData] = useState([]); // selected day's data
@@ -49,12 +47,13 @@ const Chart = ({ authKey, date }) => {
 
 	// Fetching the data for a particular date
 	const fetchDateData = (date, hasData) => {
+		// if this date has no data clear dateData and return
 		if (!hasData) {
 			setDateData([]);
 			return;
 		}
 
-		setBusy(true);
+		setBusy(true); // show loading component
 
 		axios({
 			url: `${process.env.NEXT_PUBLIC_BASE_URL}/data/list`,
@@ -65,17 +64,17 @@ const Chart = ({ authKey, date }) => {
 			},
 			data: {
 				date,
-				field: selectedFieldFilter._id === 0 ? [] : [selectedFieldFilter._id],
+				field: selectedFieldFilter._id === 0 ? [] : [selectedFieldFilter._id], // if all is selected pass no value.
 			},
 		})
 			.then((r) => {
-				setDateData(r.data.data);
+				setDateData(r.data.data); // set the result
 			})
 			.catch((e) => {
 				// console.log(e);
 			})
 			.finally(() => {
-				setBusy(false);
+				setBusy(false); // hide loading component
 			});
 	};
 
@@ -99,29 +98,35 @@ const Chart = ({ authKey, date }) => {
 	};
 
 	const fieldChange = (f) => {
-		setSelectedFieldFilter(f);
+		setSelectedFieldFilter(f); // the fetching done in useEffect once the filter changed
 	};
 
 	const documentClick = (e) => {
+		// if the click is outside calendar wrapper
 		if (
 			calendarWrapper.current &&
 			!calendarWrapper.current.contains(e.target)
 		) {
-			setCalendar(false);
+			setCalendar(false); // hide calendar
 		}
 	};
 
+	// This is for making the chart responsive - chart width should be given
 	const windowResized = () => {
 		setwindowWidth(window.innerWidth);
 	};
 
+	// [user]
 	useEffect(() => {
+		// set fields on user change (ie, initially)
 		if (user) {
 			setFields(user.fields);
 		}
 	}, [user]);
 
+	// [calendar]
 	useEffect(() => {
+		// for making the outside click of calendar work
 		if (calendar) {
 			document.addEventListener("click", documentClick);
 		}
@@ -130,6 +135,7 @@ const Chart = ({ authKey, date }) => {
 		};
 	}, [calendar]);
 
+	// [selectedPeriod, selectedFieldFilter, selectedDate]
 	useEffect(() => {
 		const field =
 			selectedFieldFilter.name === "All" ? [] : [selectedFieldFilter._id];
@@ -154,8 +160,9 @@ const Chart = ({ authKey, date }) => {
 			.catch((e) => {
 				console.log(e);
 			});
-	}, [selectedPeriod, selectedFieldFilter, selectedDate, queryDate]);
+	}, [selectedPeriod, selectedFieldFilter, selectedDate]);
 
+	// [selectedPeriod, selectedFieldFilter, selectedDate]
 	useEffect(() => {
 		const field =
 			selectedFieldFilter.name === "All" ? [] : [selectedFieldFilter._id];
@@ -177,18 +184,25 @@ const Chart = ({ authKey, date }) => {
 					console.log(e);
 				});
 		}
-	}, [selectedPeriod, selectedFieldFilter, selectedDate, queryDate]);
+	}, [selectedPeriod, selectedFieldFilter, selectedDate]);
 
+	// [router.query]
 	useEffect(() => {
-		setQueryDate(router.query.d);
-	}, [router.query.d]);
+		const newDate =
+			router.query.d === undefined
+				? moment().startOf("day").utc().unix() * 1000
+				: parseInt(router.query.d);
 
+		setSelectedDate(newDate);
+	}, [router.query]);
+
+	// []
 	useEffect(() => {
-		windowResized();
+		windowResized(); // runs initially to get the windowWidth
 
-		getMonthData(moment(selectedDate).utc().unix() * 1000);
+		getMonthData(moment(selectedDate).utc().unix() * 1000); // get months data
 
-		window.addEventListener("resize", windowResized);
+		window.addEventListener("resize", windowResized); // track window resize
 		return () => {
 			window.removeEventListener("resize", windowResized);
 		};

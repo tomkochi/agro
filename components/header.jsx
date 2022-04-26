@@ -8,6 +8,7 @@ import Loading from "./loading";
 
 const Header = ({ title, authKey, children }) => {
 	const user = userStore((state) => state.user);
+	const setUser = userStore((state) => state.setUser);
 
 	const [userSideBar, setUserSideBar] = useState(false);
 
@@ -39,13 +40,14 @@ const Header = ({ title, authKey, children }) => {
 					user={user}
 					setUserSideBar={setUserSideBar}
 					authKey={authKey}
+					setUser={setUser}
 				/>
 			)}
 		</div>
 	);
 };
 
-export const Sidebar = ({ user, setUserSideBar, authKey }) => {
+export const Sidebar = ({ user, setUser, setUserSideBar, authKey }) => {
 	const router = useRouter();
 
 	const wrapperRef = useRef(null);

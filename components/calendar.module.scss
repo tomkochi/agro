@@ -1,6 +1,10 @@
 .calendar {
-  width: 337px;
+  width: 100%;
   position: relative;
+
+  @media (min-width: 992px) {
+    width: 337px;
+  }
 }
 
 .controls {

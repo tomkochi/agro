@@ -220,6 +220,44 @@ const Dashboard = ({ authKey }) => {
 			.catch((e) => console.log(e));
 	};
 
+	// [router.query]
+	useEffect(() => {
+		const newDate =
+			router.query.d === undefined
+				? moment().startOf("day").utc().unix() * 1000
+				: parseInt(router.query.d);
+
+		setSelectedDate(newDate);
+		getMonthData(newDate);
+		fetchDateData(newDate, true);
+	}, [router.query]);
+
+	// selectedFieldFilter
+	useEffect(() => {
+		if (router.query.d) {
+			fetchDateData(parseInt(router.query.d), true);
+		} else {
+			fetchDateData(selectedDate, true);
+		}
+	}, [selectedFieldFilter]);
+
+	// [user]
+	useEffect(() => {
+		if (user) {
+			setFields(user.fields);
+			setCrops(user.croptype);
+			setSelectedField(user.fields[0]);
+			setSelectedCrop(user.croptype[0]);
+		}
+	}, [user]);
+
+	useEffect(() => {
+		if (!uploadOverlay) {
+			fileInput.current.value = "";
+		}
+	}, [uploadOverlay]);
+
+	// []
 	useEffect(() => {
 		getMonthData(moment.utc().unix() * 1000);
 
@@ -236,35 +274,12 @@ const Dashboard = ({ authKey }) => {
 		};
 	}, []);
 
-	useEffect(() => {
-		if (router.query.d) {
-			fetchDateData(parseInt(router.query.d), true);
-		} else {
-			fetchDateData(selectedDate, true);
-		}
-	}, [selectedFieldFilter]);
-
-	useEffect(() => {
-		if (user) {
-			setFields(user.fields);
-			setCrops(user.croptype);
-			setSelectedField(user.fields[0]);
-			setSelectedCrop(user.croptype[0]);
-		}
-	}, [user]);
-
-	useEffect(() => {
-		if (!uploadOverlay) {
-			fileInput.current.value = "";
-		}
-	}, [uploadOverlay]);
-
 	return (
 		<Layout title="Dashboard" bg="#F3F3F3">
 			<PageHeader title="Dashboard" authKey={authKey}>
 				{uploading ? (
 					<button onClick={abortUploading} className={style.abortUploadButton}>
-						Abort uploading
+						<span>Abort uploading</span>
 					</button>
 				) : (
 					<button
@@ -272,17 +287,19 @@ const Dashboard = ({ authKey }) => {
 						className={style.selectVideoButton}
 						disabled={uploading}
 					>
-						Select video
+						<span>Select video</span>
 					</button>
 				)}
 			</PageHeader>
 			<div className={style.dashboard}>
-				<header>
-					<div className={style.status}>
-						{uploading && <Progress size={totalSize} done={upSize} />}
-					</div>
-					<input ref={fileInput} type="file" hidden onChange={handleFile} />
-				</header>
+				{uploading && (
+					<header>
+						<div className={style.status}>
+							<Progress size={totalSize} done={upSize} />
+						</div>
+					</header>
+				)}
+				<input ref={fileInput} type="file" hidden onChange={handleFile} />
 				<main>
 					<div className={style.leftPanel}>
 						<div className={style.fieldFilter}>
@@ -368,6 +385,7 @@ const Dashboard = ({ authKey }) => {
 										})}
 								</div>
 							</div>
+							// .cardsWrappers
 						)}
 					</div>
 					{/* .reports */}
