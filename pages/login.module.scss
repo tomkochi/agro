@@ -37,19 +37,19 @@
       }
 
       &:-moz-placeholder {
-        background: #ffffff;
+        opacity: 0.6;
       }
 
       &::-moz-placeholder {
-        background: #ffffff;
+        opacity: 0.6;
       }
 
       &:-ms-input-placeholder {
-        background: #ffffff;
+        opacity: 0.6;
       }
 
       &::-webkit-input-placeholder {
-        background: #ffffff;
+        opacity: 0.6;
       }
     }
 

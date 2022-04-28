@@ -11,8 +11,6 @@ const FieldCard = ({ data }) => {
 
 	const openGallery = (id, e) => {
 		e.preventDefault();
-		// currently there's no api to fetch gallery date for a particular result
-		// need to chenge once we get the api
 		router.push(`/inspection/${id}`);
 	};
 

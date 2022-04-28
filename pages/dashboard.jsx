@@ -253,7 +253,7 @@ const Dashboard = ({ authKey }) => {
 
 	useEffect(() => {
 		if (!uploadOverlay) {
-			fileInput.current.value = "";
+			// fileInput.current.value = "";
 		}
 	}, [uploadOverlay]);
 
@@ -276,123 +276,132 @@ const Dashboard = ({ authKey }) => {
 
 	return (
 		<Layout title="Dashboard" bg="#F3F3F3">
-			<PageHeader title="Dashboard" authKey={authKey}>
-				{uploading ? (
-					<button onClick={abortUploading} className={style.abortUploadButton}>
-						<span>Abort uploading</span>
-					</button>
-				) : (
-					<button
-						onClick={openFileDialog}
-						className={style.selectVideoButton}
-						disabled={uploading}
-					>
-						<span>Select video</span>
-					</button>
-				)}
-			</PageHeader>
-			<div className={style.dashboard}>
-				{uploading && (
-					<header>
-						<div className={style.status}>
-							<Progress size={totalSize} done={upSize} />
-						</div>
-					</header>
-				)}
-				<input ref={fileInput} type="file" hidden onChange={handleFile} />
-				<main>
-					<div className={style.leftPanel}>
-						<div className={style.fieldFilter}>
-							<Dropdown
-								data={[allFields, ...fields]}
-								value={selectedFieldFilter}
-								onSelection={setSelectedFieldFilter}
-								label="Fields"
-							/>
-						</div>
-						{/* .inputGroup */}
-						<Calendar
-							selectedDate={selectedDate}
-							setSelectedDate={setSelectedDate}
-							monthData={monthData}
-							getMonthData={getMonthData}
-							fetchDateData={fetchDateData}
-							inDashboard={true}
-						/>
-						{Object.entries(inspectionData).length > 0 && (
-							<div className={style.inspectionStatus}>
-								{Object.entries(inspectionData).map((id, idi) => {
-									return (
-										<div className={style.inspection} key={idi}>
-											{id[1].status === "Analysis Completed" ? (
-												<>
-													<h4>Inspection completed</h4>
-													<Link href={`/inspection/${id[0]}`} passHref>
-														<a>VIEW</a>
-													</Link>
-												</>
-											) : (
-												<>
-													<h4>Inspection in progress</h4>
-													<span className={style.blinkingDot}></span>
-												</>
-											)}
+			<div className={style.wrapper}>
+				<PageHeader title="Dashboard" authKey={authKey}>
+					{uploading ? (
+						<button
+							onClick={abortUploading}
+							className={style.abortUploadButton}
+						>
+							<span>Abort uploading</span>
+						</button>
+					) : (
+						<button
+							onClick={openFileDialog}
+							className={style.selectVideoButton}
+							disabled={uploading}
+						>
+							<span>Select video</span>
+						</button>
+					)}
+				</PageHeader>
+				<div className={style.dashboard}>
+					{uploading && (
+						<header>
+							<div className={style.status}>
+								<Progress size={totalSize} done={upSize} />
+							</div>
+						</header>
+					)}
+					<input ref={fileInput} type="file" hidden onChange={handleFile} />
+					<main>
+						<div className={style.leftPanel}>
+							<div className={style.dataControls}>
+								<div className={style.fieldFilter}>
+									<Dropdown
+										data={[allFields, ...fields]}
+										value={selectedFieldFilter}
+										onSelection={setSelectedFieldFilter}
+										label="Fields"
+									/>
+								</div>
+								{/* .inputGroup */}
+								<Calendar
+									selectedDate={selectedDate}
+									setSelectedDate={setSelectedDate}
+									monthData={monthData}
+									getMonthData={getMonthData}
+									fetchDateData={fetchDateData}
+									inDashboard={true}
+								/>
+							</div>
+							{/* .dataControls */}
+							<div className={style.inspectionWrapper}>
+								<div className={style.inspections}>
+									{Object.entries(inspectionData).length > 0 && (
+										<div className={style.inspectionStatus}>
+											{Object.entries(inspectionData).map((id, idi) => {
+												return (
+													<div className={style.inspection} key={idi}>
+														{id[1].status === "Analysis Completed" ? (
+															<>
+																<h4>Inspection completed</h4>
+																<Link href={`/inspection/${id[0]}`} passHref>
+																	<a>VIEW</a>
+																</Link>
+															</>
+														) : (
+															<>
+																<h4>Inspection in progress</h4>
+																<span className={style.blinkingDot}></span>
+															</>
+														)}
+													</div>
+												);
+											})}
 										</div>
-									);
-								})}
+									)}
+								</div>
+								{/* .inspections */}
 							</div>
-						)}
-					</div>
-					{/* .leftPanel */}
-					<div className={style.reports}>
-						<div className={style.header}>
-							<div className={style.headerLeft}>
-								<h4>{dateData.length}</h4>
-								<h5>Reports found</h5>
-							</div>
-							{/* .left */}
-							<div className={style.headerRight}>
-								<Link
-									href={{
-										pathname: "/chart",
-										query: {
-											d:
-												moment(selectedDate).startOf("day").utc().unix() * 1000,
-										},
-									}}
-									passHref
-								>
-									<a>{moment(selectedDate).format("DD MMMM YYYY")}</a>
-								</Link>
-							</div>
-							{/* .right */}
 						</div>
-						{/* .header */}
-						{busy ? (
-							<div
-								className={style.loadingWrapper}
-								style={{ marginTop: "100px" }}
-							>
-								<Loading height={15} />
+						{/* .leftPanel */}
+						<div className={style.reports}>
+							<div className={style.header}>
+								<div className={style.headerLeft}>
+									<h4>{dateData.length}</h4>
+									<h5>Reports found</h5>
+								</div>
+								{/* .left */}
+								<div className={style.headerRight}>
+									<Link
+										href={{
+											pathname: "/chart",
+											query: {
+												d:
+													moment(selectedDate).startOf("day").utc().unix() *
+													1000,
+											},
+										}}
+										passHref
+									>
+										<a>{moment(selectedDate).format("DD MMMM YYYY")}</a>
+									</Link>
+								</div>
+								{/* .right */}
 							</div>
-						) : (
+							{/* .header */}
 							<div className={style.cardsWrapper}>
 								<div className={style.cards}>
-									{dateData
-										.sort((a, b) => (a.date > b.date ? -1 : 1))
-										.map((d, di) => {
-											return <FieldCard key={di} data={d} />;
-										})}
+									<div className={style.dummy}>
+										{dateData
+											.sort((a, b) => (a.date > b.date ? -1 : 1))
+											.map((d, di) => {
+												return <FieldCard key={di} data={d} />;
+											})}
+									</div>
+									{/* .dummy */}
 								</div>
+								{/* .cards */}
 							</div>
-							// .cardsWrappers
-						)}
-					</div>
-					{/* .reports */}
-				</main>
+							{/* .cardsWrappers */}
+						</div>
+						{/* .reports */}
+					</main>
+				</div>
+				{/* .dashboard */}
 			</div>
-			{/* .dashboard */}
-
+			{/* .wrapper */}
 			{uploadOverlay && file && (
 				<div onClick={handleOverlay} className={style.uploadOverlay}>
 					<div ref={uploadWindow} className={style.uploadWindow}>

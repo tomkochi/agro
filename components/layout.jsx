@@ -8,13 +8,9 @@ export default function Layout({ title, bg, children }) {
 			</Head>
 			<main>{children}</main>
 			<style jsx>{`
-				html,
 				.layout {
 					background: ${bg};
-					@media (min-width: 992px) {
-						height: 100vh;
-						overflow-y: hidden;
-					}
+					height: 100%;
 				}
 			`}</style>
 		</div>
