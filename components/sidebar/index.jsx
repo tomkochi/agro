@@ -5,6 +5,7 @@ import axios from "axios";
 import Link from "next/link";
 import { userStore } from "../../store";
 import Field from "./manage-field";
+import Loading from "../loading";
 
 const Sidebar = ({ user, setUser, setUserSideBar, authKey }) => {
 	const router = useRouter();
@@ -176,9 +177,10 @@ const Sidebar = ({ user, setUser, setUserSideBar, authKey }) => {
 							{/* .header */}
 							<div className={style.contents}>
 								<div className={style.fields}>
-									{fields.map((f) => {
+									{fields.map((f, i) => {
 										return (
 											<Field
+												key={i}
 												editId={editId}
 												setEditId={setEditId}
 												field={f}
