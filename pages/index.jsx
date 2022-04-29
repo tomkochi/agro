@@ -55,6 +55,25 @@ const Home = ({ authKey }) => {
 						{/* .points */}
 					</section>
 					{/* .whyAgrofocal */}
+					<section className={style.supportedCrops}>
+						<h3>Crops we support</h3>
+						<div className={style.crops}>
+							<div className={style.crop}>
+								<img src="/images/crop-1.png" alt="" />
+							</div>
+							{/* .crop */}
+							<div className={style.crop}>
+								<img src="/images/crop-2.png" alt="" />
+							</div>
+							{/* .crop */}
+							<div className={style.crop}>
+								<img src="/images/crop-3.png" alt="" />
+							</div>
+							{/* .crop */}
+						</div>
+						{/* .crops */}
+					</section>
+					{/* .supportedCrops */}
 				</div>
 				{/* .container */}
 				<div className={style.learnMore}>

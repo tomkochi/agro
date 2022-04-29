@@ -1,6 +1,7 @@
 .home {
   height: 100vh;
   overflow-y: auto;
+
   @media screen and (max-width: 600px) {
     max-width: 70vh;
   }
@@ -30,6 +31,7 @@
 
       img {
         width: 284px;
+
         @media screen and (max-width: 600px) {
           max-width: 220px;
         }
@@ -39,16 +41,18 @@
     h1 {
       font-family: 'Noto Serif', serif;
       font-weight: 400;
-      font-size: 32px;
+      font-size: 20px;
       line-height: 141.02%;
       letter-spacing: 1px;
       text-align: center;
       color: #FFFFFF;
       max-width: 770px;
       margin: 0 auto;
-      @media screen and (max-width: 600px) {
-        font-size: 28px;
+
+      @media (min-width: 992px) {
+        font-size: 32px;
       }
+
     }
   }
 }
@@ -63,6 +67,7 @@
     text-align: center;
     color: #69AA72;
     margin-bottom: 18px;
+
     @media screen and (max-width: 600px) {
       font-size: 26px;
     }
@@ -77,8 +82,9 @@
     // max-width: 846px;
     margin: auto;
     padding-bottom: 28px;
+
     @media screen and (max-width: 600px) {
-      font-size: 20px;
+      font-size: 18px;
     }
 
     &:last-of-type:after {
@@ -127,6 +133,53 @@
   }
 }
 
+.supportedCrops {
+  background: #F1F7ED;
+  border-radius: 22px;
+  padding: 24px;
+  margin-bottom: 77px;
+
+  @media (min-width: 992px) {
+    padding: 30px 68px 60px;
+    border-radius: 40px;
+  }
+
+  h3 {
+    font-family: 'Noto Serif', serif;
+    font-weight: 600;
+    font-size: 32px;
+    color: #69AA72;
+    padding-bottom: 38px;
+    text-align: center;
+  }
+
+  .crops {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 22px;
+
+    @media (min-width: 992px) {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0 74px;
+    }
+  }
+
+  .crop {
+    border-radius: 12px;
+    overflow-y: hidden;
+
+    @media (min-width: 992px) {
+      border-radius: 25px;
+    }
+  }
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
 .learnMore {
   text-align: center;
   margin-bottom: 62px;
@@ -156,7 +209,12 @@
 .home {
   footer {
     .image {
-      padding: 0 124px;
+      text-align: center;
+
+      @media (min-width: 992px) {
+        padding: 0 124px;
+        text-align: left;
+      }
     }
 
     img {
@@ -170,7 +228,13 @@
       font-size: 16px;
       line-height: 141.02%;
       color: #6A6A6A;
-      padding: 22px 124px;
+      padding: 22px;
+      text-align: center;
+
+      @media (min-width: 992px) {
+        padding: 22px 124px;
+        text-align: left;
+      }
     }
   }
 }
