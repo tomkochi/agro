@@ -1,6 +1,6 @@
 import style from "./login.module.scss";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import { useRouter } from "next/router";
 import Loading from "../components/loading";
@@ -62,6 +62,10 @@ const Login = () => {
 				setBusy(false);
 			});
 	};
+
+	useEffect(() => {
+		setUser(null);
+	}, []);
 
 	return (
 		<div className={style.signin}>

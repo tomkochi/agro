@@ -20,7 +20,6 @@ const Contact = ({ authKey }) => {
 	};
 
 	const submit = (e) => {
-		setBusy(true);
 		e.preventDefault();
 		const fd = document.getElementById("fd").value;
 		if (fd.length > 0) {
@@ -44,6 +43,8 @@ const Contact = ({ authKey }) => {
 			displayMessage("error", "All fields are required.");
 			return;
 		}
+
+		setBusy(true);
 
 		axios({
 			url: `${process.env.NEXT_PUBLIC_BASE_URL}/contact/form`,

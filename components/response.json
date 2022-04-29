@@ -1,77 +1,76 @@
 {
-	"data": {
-		"data": {
-			"area": 400,
-			"croptype": "Strawberry",
-			"date": 1649789328,
-			"field": "Unknown",
-			"inspectionid": "53f6ea43af7b4249a63a66056475d400",
-			"result": {
-				"eoi": 0,
-				"gpsid": {
-					"lat": 34.210233407267246,
-					"lng": -119.15660152046519
-				},
-				"images": [
-					{
-						"link": "/display/53f6ea43af7b4249a63a66056475d400/frame0001.jpg",
-						"name": "frame0001.jpg",
-						"stream": ""
-					}
-				],
-				"objects": {
-					"name": [
-						"ripe",
-						"full",
-						"mid",
-						"small",
-						"tiny",
-						"flower",
-						"damage",
-						"chlorosis",
-						"dieoff"
-					],
-					"unit": ["", "", "", "", "", "", "", "", ""],
-					"value": [0, 0, 0, 0, 0, 0, 0, 0, 0]
-				},
-				"tot-objects": null
-			},
-			"status": "{\"inspectionid\": \"53f6ea43af7b4249a63a66056475d400\", \"username\": \"admin@agrofocal.ai\", \"status\": \"Analyzing Inspection\", \"doi\": 1649789325, \"lastupdated\": 1649789325}"
+	"loginFields": [
+		{
+			"_id": "1e3d7b3dd8934e0a94e60be315556534",
+			"acres": 0,
+			"analysis": 0,
+			"name": "Unknown 1",
+			"userid": "bd07773a1ef246b790103f7b6fd651c5"
 		},
-		"msg": {
-			"code": 2000,
-			"msg": "OK"
+		{
+			"_id": "50a2a38a33d84149b0215460ff541bb8",
+			"acres": 0,
+			"analysis": 0,
+			"name": "Main",
+			"userid": "bd07773a1ef246b790103f7b6fd651c5"
 		},
-		"success": true
-	},
-	"status": 200,
-	"statusText": "OK",
-	"headers": {
-		"content-length": "1356",
-		"content-type": "application/json"
-	},
-	"config": {
-		"transitional": {
-			"silentJSONParsing": true,
-			"forcedJSONParsing": true,
-			"clarifyTimeoutError": false
+		{
+			"_id": "367b40db84db40a19b5d717caaaec110",
+			"acres": 0,
+			"analysis": 0,
+			"name": "Annex",
+			"userid": "bd07773a1ef246b790103f7b6fd651c5"
 		},
-		"transformRequest": [null],
-		"transformResponse": [null],
-		"timeout": 0,
-		"xsrfCookieName": "XSRF-TOKEN",
-		"xsrfHeaderName": "X-XSRF-TOKEN",
-		"maxContentLength": -1,
-		"maxBodyLength": -1,
-		"headers": {
-			"Accept": "application/json, text/plain, */*",
-			"Content-Type": "application/json",
-			"content_type": "application/json",
-			"authKey": "agroQ1dr$sA"
+		{
+			"_id": "5cf1f10c76434257b627315d8f2b4867",
+			"acres": 0,
+			"analysis": 0,
+			"name": "NewField",
+			"userid": "bd07773a1ef246b790103f7b6fd651c5"
 		},
-		"method": "post",
-		"url": "http://54.219.244.64:9020/data/inspection",
-		"data": "{\"inspectionid\":\"53f6ea43af7b4249a63a66056475d400\"}"
-	},
-	"request": {}
+		{
+			"_id": "bea58e1829bb4562868467336ef96e88",
+			"acres": 0,
+			"analysis": 0,
+			"name": "New field",
+			"userid": "bd07773a1ef246b790103f7b6fd651c5"
+		},
+		{
+			"_id": "be9f5a5eba4b4889acfcd2ae56d3ccc0",
+			"acres": 0,
+			"analysis": 0,
+			"name": "Base",
+			"userid": "bd07773a1ef246b790103f7b6fd651c5"
+		},
+		{
+			"_id": "a45da1218e954e119945071a51630097",
+			"acres": 0,
+			"analysis": 0,
+			"name": "Test",
+			"userid": "bd07773a1ef246b790103f7b6fd651c5"
+		}
+	],
+	"validationFields": [
+		{
+			"_id": "1e3d7b3dd8934e0a94e60be315556534",
+			"acres": 0,
+			"analysis": 0,
+			"name": "Unknown",
+			"userid": "bd07773a1ef246b790103f7b6fd651c5"
+		},
+		{
+			"_id": "50a2a38a33d84149b0215460ff541bb8",
+			"acres": 0,
+			"analysis": 0,
+			"name": "Main",
+			"userid": "bd07773a1ef246b790103f7b6fd651c5"
+		},
+		{
+			"_id": "367b40db84db40a19b5d717caaaec110",
+			"acres": 0,
+			"analysis": 0,
+			"name": "Annex",
+			"userid": "bd07773a1ef246b790103f7b6fd651c5"
+		}
+	]
 }

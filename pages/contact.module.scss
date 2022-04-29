@@ -125,10 +125,11 @@
   }
 
   :disabled {
-    opacity: 0.4;
+    background: rgba(105, 170, 114, 0.3);
 
-    svg * {
-      fill: #ffffff;
+    svg {
+      width: 104px;
+      margin-top: 12px;
     }
   }
 }
@@ -170,6 +171,6 @@
 
 .fraud {
   position: fixed;
-  opacity: 0;
-  z-index: -1;
+  // opacity: 0;
+  // z-index: -1;
 }

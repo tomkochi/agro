@@ -1,9 +1,10 @@
-import style from "./sidebar.module.scss";
+import style from "./index.module.scss";
 import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/router";
 import axios from "axios";
 import Link from "next/link";
-import { userStore } from "../store";
+import { userStore } from "../../store";
+import Field from "./manage-field";
 
 const Sidebar = ({ user, setUser, setUserSideBar, authKey }) => {
 	const router = useRouter();
@@ -15,6 +16,7 @@ const Sidebar = ({ user, setUser, setUserSideBar, authKey }) => {
 	const [display, setDisplay] = useState("main");
 	const [editId, setEditId] = useState(null);
 	const [newField, setNewField] = useState("");
+	const [busy, setBusy] = useState(false);
 
 	const logout = () => {
 		axios({
@@ -38,7 +40,6 @@ const Sidebar = ({ user, setUser, setUserSideBar, authKey }) => {
 					.then((res) => res.json())
 					.then((data) => {
 						router.push("/login");
-						setUser(null);
 					})
 					.catch((e) => {
 						console.log(e);
@@ -49,9 +50,30 @@ const Sidebar = ({ user, setUser, setUserSideBar, authKey }) => {
 			});
 	};
 
-	const addField = () => {
-		alert("New field added");
-		setDisplay("manage fields");
+	const addField = (e) => {
+		e.preventDefault();
+		setBusy(true);
+		axios({
+			url: `${process.env.NEXT_PUBLIC_BASE_URL}/field/save`,
+			method: "post",
+			data: {
+				name: newField,
+			},
+			headers: {
+				"Content-type": "application/json",
+				authKey,
+			},
+		})
+			.then((r) => {
+				console.log(r);
+			})
+			.catch((e) => {
+				console.log(e);
+			})
+			.finally(() => {
+				setDisplay("manage fields");
+				setBusy(false);
+			});
 	};
 
 	// const documentClick = (e) => {
@@ -161,6 +183,7 @@ const Sidebar = ({ user, setUser, setUserSideBar, authKey }) => {
 												setEditId={setEditId}
 												field={f}
 												display={display}
+												authKey={authKey}
 											/>
 										);
 									})}
@@ -185,10 +208,13 @@ const Sidebar = ({ user, setUser, setUserSideBar, authKey }) => {
 							</div>
 							{/* .header */}
 							<div className={style.contents}>
-								<div className={style.editField}>
+								<div className={style.addField}>
 									<div className={style.header}>
 										<h3>Add new field</h3>
-										<button onClick={() => setDisplay("manage fields")}>
+										<button
+											disabled={busy}
+											onClick={() => setDisplay("manage fields")}
+										>
 											Cancel
 										</button>
 									</div>
@@ -199,10 +225,12 @@ const Sidebar = ({ user, setUser, setUserSideBar, authKey }) => {
 											placeholder="New name"
 											value={newField}
 											onChange={(e) => setNewField(e.target.value)}
+											disabled={busy}
 										/>
-										<button>Save</button>
+										<button disabled={busy}>Save</button>
 									</form>
 								</div>
+								{/* .addField */}
 							</div>
 							{/* .contents */}
 						</div>
@@ -214,60 +242,6 @@ const Sidebar = ({ user, setUser, setUserSideBar, authKey }) => {
 				</div>
 			)}
 		</div>
-	);
-};
-
-export const Field = ({ editId, setEditId, field, display }) => {
-	const editable = editId === field._id;
-	const [fieldName, setFieldName] = useState(field.name);
-
-	const saveField = () => {
-		alert("Field saved");
-		setEditId(null);
-	};
-
-	useEffect(() => {
-		setFieldName(field.name);
-	}, [editId]);
-
-	return (
-		<>
-			{!editable ? (
-				<div className={style.field}>
-					<div className={style.fieldInfo}>
-						<h4>{field.name}</h4>
-						<h5>{field.acres} acres</h5>
-					</div>
-					{/* .fieldInfo */}
-					<div className={style.fieldAction}>
-						<button onClick={() => setEditId(field._id)}>
-							<img src="/images/edit.svg" alt="" />
-						</button>
-						<button>
-							<img src="/images/trash.svg" alt="" />
-						</button>
-					</div>
-					{/* .fieldAction */}
-				</div>
-			) : (
-				<div className={style.editField}>
-					<div className={style.header}>
-						<h3>Edit field name</h3>
-						<button onClick={() => setEditId(null)}>Cancel</button>
-					</div>
-					{/* .header */}
-					<form onSubmit={saveField}>
-						<input
-							type="text"
-							placeholder="Name"
-							value={fieldName}
-							onChange={(e) => setFieldName(e.target.value)}
-						/>
-						<button>Save</button>
-					</form>
-				</div>
-			)}
-		</>
 	);
 };
 

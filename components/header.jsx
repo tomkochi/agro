@@ -2,13 +2,13 @@ import style from "./header.module.scss";
 import Link from "next/link";
 import { useState } from "react";
 import { userStore } from "../store";
-import Sidebar from "./sidebar";
+import Sidebar from "../components/sidebar";
 
 const Header = ({ title, authKey, children }) => {
 	const user = userStore((state) => state.user);
 	const setUser = userStore((state) => state.setUser);
 
-	const [userSideBar, setUserSideBar] = useState(true);
+	const [userSideBar, setUserSideBar] = useState(false);
 
 	return (
 		<div className={style.header}>
