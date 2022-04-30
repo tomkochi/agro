@@ -167,6 +167,7 @@
   .crop {
     border-radius: 12px;
     overflow-y: hidden;
+    height: 240px;
 
     @media (min-width: 992px) {
       border-radius: 25px;

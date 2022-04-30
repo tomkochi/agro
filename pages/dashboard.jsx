@@ -42,6 +42,9 @@ const Dashboard = ({ authKey }) => {
 	const [fields, setFields] = useState([]); // got while logging in
 	const [crops, setCrops] = useState([]); // got while logging in
 
+	const [uploadArea, setUploadArea] = useState("");
+	const [uploadDate, setUploadDate] = useState(moment().unix() * 1000);
+
 	const [uploading, setUploading] = useState(false); // decides whether to show upload status indicator
 	const [upSize, setUpSize] = useState(0); // uploaded size - from upload progress
 	const [totalSize, setTotalSize] = useState(0); // size of the file from upload progress
@@ -111,12 +114,18 @@ const Dashboard = ({ authKey }) => {
 		return bytes.toFixed(dp) + " " + units[u];
 	};
 
+	const uploadDateChange = (e) => {
+		setUploadDate(moment(e.target.value).unix() * 1000);
+	};
+
 	const upload = (e) => {
 		let formData = new FormData();
 		formData.append("file", file);
 		formData.append("cropid", selectedCrop._id);
 		formData.append("cropname", selectedCrop.name);
 		formData.append("fieldid", selectedField._id);
+		formData.append("acres", uploadArea);
+		formData.append("date", uploadDate);
 
 		controller.current = new AbortController();
 
@@ -218,6 +227,13 @@ const Dashboard = ({ authKey }) => {
 				setInspectionData(r.data.data);
 			})
 			.catch((e) => console.log(e));
+	};
+
+	const areaChange = (e) => {
+		const re = /^[0-9\b]+$/;
+		if (e.target.value === "" || re.test(e.target.value)) {
+			setUploadArea(e.target.value);
+		}
 	};
 
 	// [router.query]
@@ -422,6 +438,7 @@ const Dashboard = ({ authKey }) => {
 								/>
 							</div>
 							{/* .inputGroup */}
+
 							<div className={style.inputGroup}>
 								<label>Crop Type</label>
 								<Dropdown
@@ -431,6 +448,30 @@ const Dashboard = ({ authKey }) => {
 								/>
 							</div>
 							{/* .inputGroup */}
+
+							<div className={style.inputGroup}>
+								<label>Acre</label>
+								<input
+									type="text"
+									name="acres"
+									className={style.area}
+									value={uploadArea}
+									onChange={areaChange}
+								/>
+							</div>
+							{/* .inputGroup */}
+
+							<div className={style.inputGroup}>
+								<input
+									type="datetime-local"
+									name="date"
+									className={style.datetime}
+									defaultValue={moment().format("YYYY-MM-DD[T]HH:mm")}
+									onChange={uploadDateChange}
+								/>
+							</div>
+							{/* .inputGroup */}
+
 							<div className={style.changeVideo}>
 								<div className={style.fileDetails}>
 									<h4>{file.name}</h4>
@@ -445,6 +486,7 @@ const Dashboard = ({ authKey }) => {
 								</button>
 							</div>
 							{/* .changeVideo */}
+
 							<button
 								type="button"
 								onClick={upload}

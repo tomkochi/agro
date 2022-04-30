@@ -1,5 +1,6 @@
 import style from "./manage-field.module.scss";
 import { useState, useEffect } from "react";
+import axios from "axios";
 
 const Field = ({ editId, setEditId, field, authKey }) => {
 	const edit = editId === field._id;
@@ -33,6 +34,30 @@ const Field = ({ editId, setEditId, field, authKey }) => {
 			});
 	};
 
+	const deleteField = (fieldId) => {
+		setbusy(true);
+		axios({
+			url: `${process.env.NEXT_PUBLIC_BASE_URL}/field/delete`,
+			method: "post",
+			data: {
+				_id: fieldId,
+			},
+			headers: {
+				"Content-type": "application/json",
+				authKey,
+			},
+		})
+			.then((r) => {
+				alert("Field deleted.");
+			})
+			.catch((e) => {
+				console.log(e);
+			})
+			.finally(() => {
+				setbusy(false);
+			});
+	};
+
 	useEffect(() => {
 		setFieldName(field.name);
 	}, [editId]);
@@ -53,7 +78,10 @@ const Field = ({ editId, setEditId, field, authKey }) => {
 						>
 							<img src="/images/edit.svg" alt="" />
 						</button>
-						<button disabled={busy || editId}>
+						<button
+							disabled={busy || editId}
+							onClick={() => deleteField(field._id)}
+						>
 							<img src="/images/trash.svg" alt="" />
 						</button>
 					</div>
