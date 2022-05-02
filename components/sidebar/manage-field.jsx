@@ -48,7 +48,11 @@ const Field = ({ editId, setEditId, field, authKey }) => {
 			},
 		})
 			.then((r) => {
-				alert("Field deleted.");
+				if (r.data.success) {
+					alert("Field deleted.");
+				} else {
+					alert(r.data.msg.msg);
+				}
 			})
 			.catch((e) => {
 				console.log(e);

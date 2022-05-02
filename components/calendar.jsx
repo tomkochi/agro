@@ -11,6 +11,7 @@ const Calendar = ({
 	monthData = [],
 	getMonthData,
 	fetchDateData,
+	calendarDisplay = null,
 	gap = 18,
 	inDashboard = false,
 }) => {
@@ -27,10 +28,12 @@ const Calendar = ({
 
 	const [busy, setBusy] = useState(false);
 
-	const [display, setDisplay] = useState({
-		year: parseInt(moment().format("YYYY")),
-		month: parseInt(moment().format("M")),
-	});
+	const [display, setDisplay] = useState(
+		calendarDisplay || {
+			year: parseInt(moment().format("YYYY")),
+			month: parseInt(moment().format("M")),
+		}
+	);
 
 	const [yearMonthSelector, setYearMonthSelector] = useState(false);
 
@@ -144,6 +147,7 @@ const Calendar = ({
 		setYearMonthSelector(false);
 	};
 
+	// yearMonthSelector
 	useEffect(() => {
 		if (yearMonthSelector) {
 			document.addEventListener("click", handleOutsideClick);
@@ -154,14 +158,8 @@ const Calendar = ({
 	}, [yearMonthSelector]);
 
 	useEffect(() => {
-		const year = parseInt(moment().format("YYYY"));
-		const month = parseInt(moment().format("MM"));
-		setDisplay({
-			year,
-			month,
-		});
-		displayCalendar(year, month);
-	}, []);
+		displayCalendar(display.year, display.month);
+	}, [display]);
 
 	return (
 		<div className={style.calendar}>

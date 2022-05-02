@@ -157,24 +157,26 @@
   }
 
   form {
-    border-radius: 8px;
+    border-radius: 10px;
     height: 49px;
     display: flex;
-    width: 100%;
-
+    border: 2px solid #6AAB72;
+    padding: 0;
+    overflow: hidden;
+    background: #6AAB72;
 
     input {
-      border: 2px solid #6AAB72;
+      border: none;
       font-weight: 400;
       font-size: 14px;
       color: #193550;
       padding: 16px;
-      width: auto;
-      flex-grow: 1;
       height: 49px;
       border-radius: 10px 0 0 10px;
       margin-bottom: 15px;
-      background: transparent;
+      background: #fff;
+      width: 75%;
+      box-sizing: border-box;
 
       &:disabled {
         border-color: rgba(106, 171, 114, 0.4);
@@ -204,17 +206,20 @@
     }
 
     button {
-      width: 93px;
+      flex: 1;
       font-weight: 600;
       font-size: 16px;
       color: #F2F2F2;
       background: #69AA72;
-      border-radius: 0 10px 10px 0;
+      border-radius: 0;
+      border: 2px solid #6AAB72;
+      height: 100%;
     }
   }
 }
 
 .addField {
+  width: 100%;
   padding: 14px 22px;
   background: 10px;
   background: #ffffff;

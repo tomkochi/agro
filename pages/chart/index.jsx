@@ -9,6 +9,7 @@ import Calendar from "../../components/calendar";
 import { useState, useEffect, useRef } from "react";
 import { userStore } from "../../store";
 import { useRouter } from "next/router";
+import Link from "next/link";
 // import { useWindowDimensions } from "../../components/useWindowDimension";
 //chart
 import {
@@ -35,7 +36,7 @@ const Chart = ({ authKey, date }) => {
 	const [forecast, setForecast] = useState([]); // data for charts
 
 	const [selectedPeriod, setSelectedPeriod] = useState("day"); // 'day', 'month' or 'year'
-	const [selectedDate, setSelectedDate] = useState(date / 1000); // epoch
+	const [selectedDate, setSelectedDate] = useState(date); // epoch
 
 	const [monthData, setMonthData] = useState([]); // which all dates of this month has data
 	const [dateData, setDateData] = useState([]); // selected day's data
@@ -45,41 +46,12 @@ const Chart = ({ authKey, date }) => {
 	const [calendar, setCalendar] = useState(false); // whether to show calendar or not
 	const calendarWrapper = useRef(null); // mainly for outside click tracking
 
-	// Fetching the data for a particular date
-	const fetchDateData = (date, hasData) => {
-		// if this date has no data clear dateData and return
-		if (!hasData) {
-			setDateData([]);
-			return;
-		}
-
-		setBusy(true); // show loading component
-
-		axios({
-			url: `${process.env.NEXT_PUBLIC_BASE_URL}/data/list`,
-			method: "post",
-			headers: {
-				"Content-Type": "application/json",
-				authKey,
-			},
-			data: {
-				date,
-				field: selectedFieldFilter._id === 0 ? [] : [selectedFieldFilter._id], // if all is selected pass no value.
-			},
-		})
-			.then((r) => {
-				setDateData(r.data.data); // set the result
-			})
-			.catch((e) => {
-				// console.log(e);
-			})
-			.finally(() => {
-				setBusy(false); // hide loading component
-			});
-	};
+	const [calendarDisplay, setCalendarDisplay] = useState(null);
 
 	// get which all days has data
 	const getMonthData = (date) => {
+		console.log("Month data");
+		console.log(date);
 		axios({
 			url: `${process.env.NEXT_PUBLIC_BASE_URL}/data/month/list`,
 			method: "post",
@@ -93,6 +65,7 @@ const Chart = ({ authKey, date }) => {
 		})
 			.then((r) => {
 				setMonthData(r.data.data);
+				console.log(r.data);
 			})
 			.catch((e) => alert(e));
 	};
@@ -139,7 +112,6 @@ const Chart = ({ authKey, date }) => {
 	useEffect(() => {
 		const field =
 			selectedFieldFilter.name === "All" ? [] : [selectedFieldFilter._id];
-
 		axios({
 			url: `${process.env.NEXT_PUBLIC_BASE_URL}/data/graph`,
 			method: "post",
@@ -166,7 +138,6 @@ const Chart = ({ authKey, date }) => {
 	useEffect(() => {
 		const field =
 			selectedFieldFilter.name === "All" ? [] : [selectedFieldFilter._id];
-
 		if (selectedPeriod == "day") {
 			axios({
 				url: `${process.env.NEXT_PUBLIC_BASE_URL}/data/forecast`,
@@ -186,21 +157,29 @@ const Chart = ({ authKey, date }) => {
 		}
 	}, [selectedPeriod, selectedFieldFilter, selectedDate]);
 
+	useEffect(() => {
+		setCalendarDisplay({
+			year: parseInt(moment(selectedDate).format("YYYY")),
+			month: parseInt(moment(selectedDate).format("M")),
+		});
+	}, [selectedDate]);
+
 	// [router.query]
 	useEffect(() => {
 		const newDate =
 			router.query.d === undefined
 				? moment().startOf("day").utc().unix() * 1000
 				: parseInt(router.query.d);
-
 		setSelectedDate(newDate);
 	}, [router.query]);
+
+	useEffect(() => {
+		getMonthData(selectedDate);
+	}, [calendar]);
 
 	// []
 	useEffect(() => {
 		windowResized(); // runs initially to get the windowWidth
-
-		getMonthData(moment(selectedDate).utc().unix() * 1000); // get months data
 
 		window.addEventListener("resize", windowResized); // track window resize
 		return () => {
@@ -208,23 +187,45 @@ const Chart = ({ authKey, date }) => {
 		};
 	}, []);
 
+	const renderLegend = (props) => {
+		const { payload } = props;
+
+		return (
+			<div className={style.legend}>
+				<ul>
+					{payload.map((entry, index) => (
+						<li key={`item-${index}`}>{entry.value}</li>
+					))}
+				</ul>
+			</div>
+		);
+	};
+
 	return (
 		<Layout
 			title={`Chart - ${moment(selectedDate).format("DD MM, YYYY")}`}
 			bg="#F3F3F3"
 		>
-			<PageHeader title={"Chart"} authKey={authKey} />
+			<PageHeader title="Chart" authKey={authKey} />
 			<div className={style.chart}>
 				<div className={style.dataControls}>
-					<div className={style.dropdownWrapper}>
-						<Dropdown
-							data={[allFields, ...fields]}
-							value={selectedFieldFilter}
-							onSelection={fieldChange}
-							label="Fields"
-						/>
+					<div className={style.left}>
+						<Link href={`/dashboard?d=${selectedDate}`} passHref>
+							<a>
+								<img src="/images/left-arrow-with-tail.svg" alt="" />
+							</a>
+						</Link>
+						<div className={style.dropdownWrapper}>
+							<Dropdown
+								data={[allFields, ...fields]}
+								value={selectedFieldFilter}
+								onSelection={fieldChange}
+								label="Fields"
+							/>
+						</div>
+						{/* .dropdownWrapper */}
 					</div>
-					{/* .dropdownWrapper */}
+					{/* .left */}
 					<div className={style.timeSpan}>
 						<div className={style.calendarSelector}>
 							<button onClick={() => setCalendar(true)}>
@@ -240,7 +241,7 @@ const Chart = ({ authKey, date }) => {
 										setSelectedDate={setSelectedDate}
 										monthData={monthData}
 										getMonthData={getMonthData}
-										fetchDateData={fetchDateData}
+										calendarDisplay={calendarDisplay}
 										gap={12}
 									/>
 								</div>
@@ -296,6 +297,7 @@ const Chart = ({ authKey, date }) => {
 							<XAxis dataKey={(d) => moment.unix(d.date).format("DD MMM")} />
 							<YAxis />
 							<Tooltip />
+							{/* <Legend content={renderLegend} /> */}
 							<Bar dataKey="ripe" fill={BarColors.ripe} />
 							<Bar dataKey="full" fill={BarColors.full} />
 							<Bar dataKey="mid" fill={BarColors.mid} />
@@ -364,7 +366,7 @@ export async function getServerSideProps(ctx) {
 			props: {
 				authKey: authKey || null,
 				date:
-					d === undefined ? moment().startOf("day").unix() * 1000 : d * 1000,
+					d === undefined ? moment().startOf("day").unix() * 1000 : parseInt(d),
 			},
 		};
 	} else {
