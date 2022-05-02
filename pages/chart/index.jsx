@@ -174,7 +174,16 @@ const Chart = ({ authKey, date }) => {
 	}, [router.query]);
 
 	useEffect(() => {
-		getMonthData(selectedDate);
+		if (calendar) {
+			const y = moment(selectedDate).format("YYYY");
+			const m = moment(selectedDate).format("M");
+			const newDate = moment(
+				`${y}/${m}/1 14:00:00`,
+				"YYYY/M/D HH:mm:ss"
+			).unix();
+
+			getMonthData(newDate);
+		}
 	}, [calendar]);
 
 	// []
