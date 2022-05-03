@@ -161,6 +161,13 @@ const Calendar = ({
 		displayCalendar(display.year, display.month);
 	}, [display]);
 
+	useEffect(() => {
+		const y = moment(selectedDate).format("YYYY");
+		const m = moment(selectedDate).format("M");
+		const newDate = moment(`${y}/${m}/1 14:00:00`, "YYYY/M/D HH:mm:ss").unix();
+		getMonthData(newDate);
+	}, []);
+
 	return (
 		<div className={style.calendar}>
 			<div className={style.controls} style={{ marginBottom: gap }}>

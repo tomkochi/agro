@@ -13,7 +13,6 @@ import Link from "next/link";
 // import { useWindowDimensions } from "../../components/useWindowDimension";
 //chart
 import {
-	ResponsiveContainer,
 	BarChart,
 	CartesianGrid,
 	YAxis,
@@ -32,14 +31,20 @@ const Chart = ({ authKey, date }) => {
 	const allFields = { _id: 0, name: "All" }; // for default selection
 	const [fields, setFields] = useState([]); // this will be populated in useEffect[user]
 	const [selectedFieldFilter, setSelectedFieldFilter] = useState(allFields); // defaultly set to all fields
-	const [bardata, setBardata] = useState([]); // data for charts
 	const [forecast, setForecast] = useState([]); // data for charts
 
-	const [selectedPeriod, setSelectedPeriod] = useState("day"); // 'day', 'month' or 'year'
+	const [dayGraphData, setDayGraphData] = useState([]); // data for charts
+	const [otherGraphData, setOtherGraphData] = useState([]);
+
+	const [selectedPeriod, setSelectedPeriod] = useState("week"); // 'day', 'month' or 'year'
 	const [selectedDate, setSelectedDate] = useState(date); // epoch
 
+	const [dateFromGraph, setDateFromGraph] = useState(date); // date set by clicking the graph
+
 	const [monthData, setMonthData] = useState([]); // which all dates of this month has data
-	const [dateData, setDateData] = useState([]); // selected day's data
+	// const [dateData, setDateData] = useState([]); // selected day's data
+
+	const [yAxisType, setYAxisType] = useState("count");
 
 	const [windowWidth, setwindowWidth] = useState(0); // for calculating chart size
 
@@ -48,10 +53,31 @@ const Chart = ({ authKey, date }) => {
 
 	const [calendarDisplay, setCalendarDisplay] = useState(null);
 
+	const [barTypes, setBarTypes] = useState([
+		{
+			type: "ripe",
+			show: true,
+		},
+		{
+			type: "full",
+			show: true,
+		},
+		{
+			type: "mid",
+			show: true,
+		},
+		{
+			type: "small",
+			show: true,
+		},
+		{
+			type: "flower",
+			show: true,
+		},
+	]);
+
 	// get which all days has data
 	const getMonthData = (date) => {
-		console.log("Month data");
-		console.log(date);
 		axios({
 			url: `${process.env.NEXT_PUBLIC_BASE_URL}/data/month/list`,
 			method: "post",
@@ -65,7 +91,6 @@ const Chart = ({ authKey, date }) => {
 		})
 			.then((r) => {
 				setMonthData(r.data.data);
-				console.log(r.data);
 			})
 			.catch((e) => alert(e));
 	};
@@ -89,6 +114,35 @@ const Chart = ({ authKey, date }) => {
 		setwindowWidth(window.innerWidth);
 	};
 
+	const getGraphData = (type) => {
+		const field =
+			selectedFieldFilter.name === "All" ? [] : [selectedFieldFilter._id];
+		axios({
+			url: `${process.env.NEXT_PUBLIC_BASE_URL}/data/graph`,
+			method: "post",
+			headers: {
+				content_type: "application/json",
+				authKey,
+			},
+			data: {
+				date: selectedDate,
+				field,
+				type,
+				counttype: yAxisType,
+			},
+		})
+			.then((r) => {
+				if (type === "day") {
+					setDayGraphData(r.data.data);
+				} else {
+					setOtherGraphData(r.data.data);
+				}
+			})
+			.catch((e) => {
+				console.log(e);
+			});
+	};
+
 	// [user]
 	useEffect(() => {
 		// set fields on user change (ie, initially)
@@ -110,52 +164,35 @@ const Chart = ({ authKey, date }) => {
 
 	// [selectedPeriod, selectedFieldFilter, selectedDate]
 	useEffect(() => {
-		const field =
-			selectedFieldFilter.name === "All" ? [] : [selectedFieldFilter._id];
-		axios({
-			url: `${process.env.NEXT_PUBLIC_BASE_URL}/data/graph`,
-			method: "post",
-			headers: {
-				content_type: "application/json",
-				authKey,
-			},
-			data: {
-				date: selectedDate,
-				field,
-				type: selectedPeriod,
-				counttype: "acre",
-			},
-		})
-			.then((r) => {
-				setBardata(r.data.data);
-			})
-			.catch((e) => {
-				console.log(e);
-			});
-	}, [selectedPeriod, selectedFieldFilter, selectedDate]);
+		getGraphData("day");
+		getGraphData(selectedPeriod);
+	}, [selectedFieldFilter, selectedDate, yAxisType]);
 
 	// [selectedPeriod, selectedFieldFilter, selectedDate]
 	useEffect(() => {
 		const field =
 			selectedFieldFilter.name === "All" ? [] : [selectedFieldFilter._id];
-		if (selectedPeriod == "day") {
-			axios({
-				url: `${process.env.NEXT_PUBLIC_BASE_URL}/data/forecast`,
-				method: "post",
-				headers: {
-					content_type: "application/json",
-					authKey,
-				},
-				data: { date: selectedDate, field },
+		axios({
+			url: `${process.env.NEXT_PUBLIC_BASE_URL}/data/forecast`,
+			method: "post",
+			headers: {
+				content_type: "application/json",
+				authKey,
+			},
+			data: { date: selectedDate, field },
+		})
+			.then((r) => {
+				setForecast(r.data.data);
 			})
-				.then((r) => {
-					setForecast(r.data.data);
-				})
-				.catch((e) => {
-					console.log(e);
-				});
-		}
-	}, [selectedPeriod, selectedFieldFilter, selectedDate]);
+			.catch((e) => {
+				console.log(e);
+			});
+	}, [selectedFieldFilter, selectedDate]);
+
+	// [selectedPeriod]
+	useEffect(() => {
+		getGraphData(selectedPeriod);
+	}, [selectedPeriod, yAxisType]);
 
 	useEffect(() => {
 		setCalendarDisplay({
@@ -173,19 +210,6 @@ const Chart = ({ authKey, date }) => {
 		setSelectedDate(newDate);
 	}, [router.query]);
 
-	useEffect(() => {
-		if (calendar) {
-			const y = moment(selectedDate).format("YYYY");
-			const m = moment(selectedDate).format("M");
-			const newDate = moment(
-				`${y}/${m}/1 14:00:00`,
-				"YYYY/M/D HH:mm:ss"
-			).unix();
-
-			getMonthData(newDate);
-		}
-	}, [calendar]);
-
 	// []
 	useEffect(() => {
 		windowResized(); // runs initially to get the windowWidth
@@ -196,15 +220,49 @@ const Chart = ({ authKey, date }) => {
 		};
 	}, []);
 
-	const renderLegend = (props) => {
-		const { payload } = props;
-
+	// custom legend for day graph
+	const dayLegend = (props) => {
 		return (
 			<div className={style.legend}>
 				<ul>
-					{payload.map((entry, index) => (
-						<li key={`item-${index}`}>{entry.value}</li>
-					))}
+					{barTypes.map((b, i) => {
+						return (
+							<li key={`item-${i}`}>
+								<span style={{ backgroundColor: BarColors[b.type] }}></span>{" "}
+								{b.type}
+							</li>
+						);
+					})}
+				</ul>
+			</div>
+		);
+	};
+
+	// custom legend for other graphs
+	const otherLegend = (props) => {
+		return (
+			<div className={style.legend}>
+				<ul>
+					{barTypes.map((b, i) => {
+						return (
+							<li key={`item-${i}`}>
+								<label htmlFor={b.type}>
+									<span style={{ backgroundColor: BarColors[b.type] }}></span>
+									<input
+										type="checkbox"
+										checked={b.show}
+										id={b.type}
+										onChange={() => {
+											const tmpTypes = [...barTypes];
+											tmpTypes[i].show = !tmpTypes[i].show;
+											setBarTypes(tmpTypes);
+										}}
+									/>
+									{b.type}
+								</label>
+							</li>
+						);
+					})}
 				</ul>
 			</div>
 		);
@@ -215,131 +273,222 @@ const Chart = ({ authKey, date }) => {
 			title={`Chart - ${moment(selectedDate).format("DD MM, YYYY")}`}
 			bg="#F3F3F3"
 		>
-			<PageHeader title="Chart" authKey={authKey} />
-			<div className={style.chart}>
-				<div className={style.dataControls}>
-					<div className={style.left}>
-						<Link href={`/dashboard?d=${selectedDate}`} passHref>
-							<a>
-								<img src="/images/left-arrow-with-tail.svg" alt="" />
-							</a>
-						</Link>
-						<div className={style.dropdownWrapper}>
-							<Dropdown
-								data={[allFields, ...fields]}
-								value={selectedFieldFilter}
-								onSelection={fieldChange}
-								label="Fields"
-							/>
-						</div>
-						{/* .dropdownWrapper */}
-					</div>
-					{/* .left */}
-					<div className={style.timeSpan}>
-						<div className={style.calendarSelector}>
-							<button onClick={() => setCalendar(true)}>
-								{moment(selectedDate).format("DD MMM YYYY")}
-								<span>
-									<img src="/images/calendar.svg" alt="" />
-								</span>
-							</button>
-							{calendar && (
-								<div ref={calendarWrapper} className={style.calendarWrapper}>
-									<Calendar
-										selectedDate={selectedDate}
-										setSelectedDate={setSelectedDate}
-										monthData={monthData}
-										getMonthData={getMonthData}
-										calendarDisplay={calendarDisplay}
-										gap={12}
-									/>
-								</div>
-							)}
-						</div>
-						{/* .calendarSelector */}
-						<div className={style.periodSelector}>
-							<button
-								className={selectedPeriod === "day" ? style.active : ""}
-								onClick={() => setSelectedPeriod("day")}
-							>
-								Day
-							</button>
-							<button
-								className={selectedPeriod === "week" ? style.active : ""}
-								onClick={() => setSelectedPeriod("week")}
-							>
-								Week
-							</button>
-							<button
-								className={selectedPeriod === "month" ? style.active : ""}
-								onClick={() => setSelectedPeriod("month")}
-							>
-								Month
-							</button>
-							<button
-								className={selectedPeriod === "year" ? style.active : ""}
-								onClick={() => setSelectedPeriod("year")}
-							>
-								Year
-							</button>
-						</div>
-						{/* .periodSelector */}
-					</div>
-					{/* .timeSpan */}
-				</div>
-				{/* .dataControl */}
-			</div>
-			<div className={style.chartContainer}>
-				<div className={style.cardWrapper}>
-					<h4>Count/Acre</h4>
-					<div className={style.chartCard}>
-						<BarChart
-							data={bardata}
-							width={
-								selectedPeriod === "day"
-									? windowWidth / 2 - 160
-									: windowWidth - 170
-							}
-							height={400}
-						>
-							<CartesianGrid strokeDasharray="3 3" />
-							<XAxis dataKey={(d) => moment.unix(d.date).format("DD MMM")} />
-							<YAxis />
-							<Tooltip />
-							{/* <Legend content={renderLegend} /> */}
-							<Bar dataKey="ripe" fill={BarColors.ripe} />
-							<Bar dataKey="full" fill={BarColors.full} />
-							<Bar dataKey="mid" fill={BarColors.mid} />
-							<Bar dataKey="small" fill={BarColors.small} />
-							<Bar dataKey="flower" fill={BarColors.flower} />
-						</BarChart>
-					</div>
-				</div>
-				{selectedPeriod == "day" ? (
-					<div className={style.cardWrapper}>
-						<h4>Forecast for ripe</h4>
-						<div className={style.chartCard}>
-							<LineChart
-								data={dataConvert(forecast, selectedDate)}
-								width={windowWidth / 2 - 160}
-								height={400}
-							>
-								<CartesianGrid strokeDasharray="3 3" />
-								<XAxis dataKey="date" interval={7} />
-								<YAxis />
-								<Line
-									dot={false}
-									type="monotone"
-									dataKey="value"
-									stroke={BarColors.ripe}
-									strokeWidth={3}
+			<div className={style.wrapper}>
+				<PageHeader title="Chart" authKey={authKey} />
+				<div className={style.chart}>
+					<div className={style.dataControls}>
+						<div className={style.left}>
+							<Link href={`/dashboard?d=${selectedDate}`} passHref>
+								<a>
+									<img src="/images/left-arrow-with-tail.svg" alt="" />
+								</a>
+							</Link>
+							<div className={style.dropdownWrapper}>
+								<Dropdown
+									data={[allFields, ...fields]}
+									value={selectedFieldFilter}
+									onSelection={fieldChange}
+									label="Fields"
 								/>
-							</LineChart>
+							</div>
+							{/* .dropdownWrapper */}
+							<div className={style.yAxisTypes}>
+								<button
+									className={yAxisType === "count" ? style.active : ""}
+									onClick={() => setYAxisType("count")}
+								>
+									Count
+								</button>
+								<button
+									className={yAxisType === "acre" ? style.active : ""}
+									onClick={() => setYAxisType("acre")}
+								>
+									Count/Acre
+								</button>
+							</div>
+							{/* .yAxisTypes */}
 						</div>
+						{/* .left */}
+						<div className={style.timeSpan}>
+							<div className={style.calendarSelector}>
+								<button onClick={() => setCalendar(true)}>
+									{moment(selectedDate).format("DD MMM YYYY")}
+									<span>
+										<img src="/images/calendar.svg" alt="" />
+									</span>
+								</button>
+								{calendar && (
+									<div ref={calendarWrapper} className={style.calendarWrapper}>
+										<Calendar
+											selectedDate={selectedDate}
+											setSelectedDate={setSelectedDate}
+											monthData={monthData}
+											getMonthData={getMonthData}
+											calendarDisplay={calendarDisplay}
+											gap={12}
+										/>
+									</div>
+								)}
+							</div>
+						</div>
+						{/* .timeSpan */}
 					</div>
-				) : null}
+					{/* .dataControl */}
+				</div>
+				<div className={style.chartContainer}>
+					<div className={style.cardWrapper}>
+						<div className={style.chartCard}>
+							<div className={style.chartHeader}>
+								<div className={style.headerLeft}>
+									<h4>Yield</h4>
+									<h5>{moment(selectedDate).format("DD MMM YYYY")}</h5>
+								</div>
+								{/* .headerLeft */}
+							</div>
+							{/* .chartHeader */}
+							<h6>{yAxisType}</h6>
+							<div className={style.chartElm}>
+								<BarChart
+									data={dayGraphData}
+									width={(windowWidth * 30) / 100 - 60}
+									height={400}
+								>
+									<CartesianGrid strokeDasharray="3 3" />
+									<XAxis
+										dataKey={(d) => moment.unix(d.date).format("DD MMM")}
+									/>
+									<YAxis />
+									<Tooltip cursor={{ fill: "transparent" }} />
+									<Legend content={dayLegend} layout="vertical" align="right" />
+									{barTypes.map((d, i) =>
+										d.show ? (
+											<Bar
+												dataKey={d.type}
+												key={i}
+												fill={BarColors[d.type]}
+												barSize={20}
+											/>
+										) : null
+									)}
+								</BarChart>
+							</div>
+							{/* .chartElm */}
+						</div>
+						{/* .chartCard */}
+					</div>
+					{/* .cardWrapper */}
+					<div className={style.cardWrapper}>
+						<div className={style.chartCard}>
+							<div className={style.chartHeader}>
+								<div className={style.headerLeft}>
+									<h4>Forecast</h4>
+									<h5>{moment(selectedDate).format("DD MMM YYYY")}</h5>
+								</div>
+								{/* .headerLeft */}
+							</div>
+							{/* .chartHeader */}
+							<h6>Forecast for ripe</h6>
+							<div className={style.chartElm}>
+								<LineChart
+									data={dataConvert(forecast, selectedDate)}
+									width={(windowWidth * 60) / 100 - 60}
+									height={400}
+								>
+									<CartesianGrid strokeDasharray="3 3" />
+									<XAxis dataKey="date" interval={7} />
+									<YAxis />
+									<Line
+										dot={false}
+										type="monotone"
+										dataKey="value"
+										stroke={BarColors.ripe}
+										strokeWidth={3}
+									/>
+								</LineChart>
+							</div>
+							{/* .chartElm */}
+						</div>
+						{/* .chartCard */}
+					</div>
+					{/* .cardWrapper */}
+				</div>
+				{/* .chartContainer */}
+				<div className={style.chartContainer}>
+					<div className={style.cardWrapper}>
+						<div className={style.chartCard}>
+							<div className={style.chartHeader}>
+								<div className={style.headerLeft}>
+									<h4>Yield</h4>
+									<h5>{moment(selectedDate).format("DD MMM YYYY")}</h5>
+								</div>
+								{/* .headerLeft */}
+								<div className={style.headerRight}>
+									<div className={style.periodSelector}>
+										<button
+											className={selectedPeriod === "week" ? style.active : ""}
+											onClick={() => setSelectedPeriod("week")}
+										>
+											Week
+										</button>
+										<button
+											className={selectedPeriod === "month" ? style.active : ""}
+											onClick={() => setSelectedPeriod("month")}
+										>
+											Month
+										</button>
+										<button
+											className={selectedPeriod === "year" ? style.active : ""}
+											onClick={() => setSelectedPeriod("year")}
+										>
+											Year
+										</button>
+									</div>
+								</div>
+								{/* .headerRight */}
+							</div>
+							{/* .chartHeader */}
+							<h6>{yAxisType}</h6>
+							<div className={style.chartElm}>
+								<BarChart
+									data={otherGraphData}
+									width={windowWidth - 180}
+									height={400}
+									onClick={(c) =>
+										setDateFromGraph(c.activePayload[0].payload.date * 1000)
+									}
+								>
+									<CartesianGrid strokeDasharray="3 3" />
+									<XAxis
+										dataKey={(d) => moment.unix(d.date).format("DD MMM")}
+									/>
+									<YAxis />
+									<Tooltip />
+									<Legend
+										content={otherLegend}
+										layout="vertical"
+										align="right"
+									/>
+									{barTypes.map((d, i) =>
+										d.show ? (
+											<Bar
+												dataKey={d.type}
+												key={i}
+												fill={BarColors[d.type]}
+												barSize={20}
+											/>
+										) : null
+									)}
+								</BarChart>
+							</div>
+							{/* .chartElm */}
+						</div>
+						{/* .chartCard */}
+					</div>
+					{/* .cardWrapper */}
+				</div>
+				{/* .chartContainer */}
 			</div>
-			{/* .chart */}
+			{/* .wrapper */}
 		</Layout>
 	);
 };

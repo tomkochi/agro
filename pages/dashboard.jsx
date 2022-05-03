@@ -249,13 +249,13 @@ const Dashboard = ({ authKey }) => {
 	}, [router.query]);
 
 	// selectedFieldFilter
-	useEffect(() => {
-		if (router.query.d) {
-			fetchDateData(parseInt(router.query.d), true);
-		} else {
-			fetchDateData(selectedDate, true);
-		}
-	}, [selectedFieldFilter]);
+	// useEffect(() => {
+	// 	if (router.query.d) {
+	// 		fetchDateData(parseInt(router.query.d), true);
+	// 	} else {
+	// 		fetchDateData(selectedDate, true);
+	// 	}
+	// }, [selectedFieldFilter]);
 
 	// [user]
 	useEffect(() => {
@@ -275,8 +275,6 @@ const Dashboard = ({ authKey }) => {
 
 	// []
 	useEffect(() => {
-		getMonthData(moment.utc().unix() * 1000);
-
 		checkInspections();
 
 		document.addEventListener("click", documentClick);

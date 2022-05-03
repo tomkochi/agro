@@ -1,3 +1,7 @@
+.wrapper {
+  min-height: 100vh;
+}
+
 .chart {
   padding: 35px 55px;
 }
@@ -5,9 +9,11 @@
 .dataControls {
   display: flex;
   justify-content: space-between;
+  align-items: center;
 
   .left {
     display: flex;
+    align-items: center;
 
     a {
       height: 45px;
@@ -28,12 +34,42 @@
   width: 337px;
 }
 
+.yAxisTypes {
+  display: flex;
+  margin-left: 40px;
+
+  >button {
+    height: 45px;
+    border: none;
+    background: #ffffff;
+    font-weight: 500;
+    font-size: 12px;
+    color: #686868;
+    border: 2px solid #69AA72;
+    padding: 0 14px;
+
+    &:first-of-type {
+      border-radius: 10px 0 0 10px;
+      border-right: none;
+    }
+
+    &:last-of-type {
+      border-radius: 0 10px 10px 0;
+      border-left: none;
+    }
+
+    &.active {
+      background: #69AA72;
+      color: #ffffff;
+    }
+  }
+}
+
 .timeSpan {
   display: flex;
 }
 
 .calendarSelector {
-  margin-right: 27px;
   position: relative;
 
   >button {
@@ -64,7 +100,7 @@
 .calendarWrapper {
   background: #ffffff;
   position: absolute;
-  left: 0;
+  right: 0;
   top: 52px;
   box-shadow: 0px 4px 8px rgba(217, 220, 231, 0.58);
   border-radius: 10px;
@@ -77,16 +113,27 @@
   border-radius: 10px;
 
   button {
-    width: 107px;
-    height: 45px;
+    height: 30px;
     border: none;
     background: #ffffff;
-    font-weight: 600;
-    font-size: 16px;
-    color: #69AA72;
+    font-weight: 500;
+    font-size: 12px;
+    color: #686868;
+    border: 2px solid #69AA72;
+    padding: 0 14px;
 
     &:not(:first-of-type) {
-      border-left: 1px solid #E0E0E0;
+      border-left: 2px solid #69AA72;
+    }
+
+    &:first-of-type {
+      border-radius: 8px 0 0 8px;
+      border-right: none;
+    }
+
+    &:last-of-type {
+      border-radius: 0 8px 8px 0;
+      border-left: none;
     }
 
     &.active {
@@ -101,8 +148,7 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 20px;
-  padding: 20px;
-  padding: 35px 55px;
+  padding: 35px 55px 0;
 }
 
 .cardWrapper {
@@ -115,12 +161,50 @@
 }
 
 .chartCard {
-  padding: 30px;
   background: #FFFFFF;
   box-shadow: 0px 4px 8px rgba(217, 220, 231, 0.58);
   border-radius: 10px;
   height: auto;
-  padding-top: 80px;
+
+  h6 {
+    font-weight: 400;
+    font-size: 14px;
+    color: #343A40;
+    padding-left: 44px;
+  }
+}
+
+.chartHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #EBEBEB;
+  padding: 16px 18px;
+  margin-bottom: 24px;
+
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+
+  h4 {
+    font-weight: 600;
+    font-size: 18px;
+    color: #343A40;
+    margin-right: 22px;
+    margin-bottom: 0;
+  }
+
+  h5 {
+    font-weight: 400;
+    font-size: 16px;
+    color: #78828C;
+  }
+}
+
+.chartElm {
+  padding: 28px;
 }
 
 .legend {
@@ -128,8 +212,41 @@
   justify-content: center;
 
   ul {
-    display: flex;
+    margin-bottom: 30px;
+    margin-left: 50px;
   }
 
-  li {}
+  li {
+    font-weight: 400;
+    font-size: 12px;
+    color: #595959;
+    text-transform: capitalize;
+    display: flex;
+    align-items: center;
+
+    &:not(:last-of-type) {
+      margin-bottom: 14px;
+    }
+
+    input {
+      appearance: none;
+      transform: translate(-8px, 3px);
+
+      &:before {
+        content: url(/images/checbox-unchecked.svg)
+      }
+
+      &:checked:before {
+        content: url(/images/checbox-checked.svg);
+      }
+    }
+
+    span {
+      display: inline-block;
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      margin-right: 14px;
+    }
+  }
 }
