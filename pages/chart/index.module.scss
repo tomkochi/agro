@@ -71,8 +71,10 @@
 
 .calendarSelector {
   position: relative;
+  display: flex;
 
-  >button {
+  button.selectedDate,
+  button.resetDate {
     height: 45px;
     width: 240px;
     background: white;
@@ -94,6 +96,12 @@
       height: 100%;
       border-left: 1px solid #E0E0E0;
     }
+  }
+
+  button.resetDate {
+    width: auto;
+    margin-right: 16px;
+    padding: 0 16px;
   }
 }
 

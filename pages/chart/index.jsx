@@ -114,7 +114,7 @@ const Chart = ({ authKey, date }) => {
 		setwindowWidth(window.innerWidth);
 	};
 
-	const getGraphData = (type) => {
+	const getGraphData = (type, date) => {
 		const field =
 			selectedFieldFilter.name === "All" ? [] : [selectedFieldFilter._id];
 		axios({
@@ -125,7 +125,7 @@ const Chart = ({ authKey, date }) => {
 				authKey,
 			},
 			data: {
-				date: selectedDate,
+				date: date,
 				field,
 				type,
 				counttype: yAxisType,
@@ -164,9 +164,14 @@ const Chart = ({ authKey, date }) => {
 
 	// [selectedPeriod, selectedFieldFilter, selectedDate]
 	useEffect(() => {
-		getGraphData("day");
-		getGraphData(selectedPeriod);
+		getGraphData("day", dateFromGraph);
+		getGraphData(selectedPeriod, selectedDate);
 	}, [selectedFieldFilter, selectedDate, yAxisType]);
+
+	// [selectedPeriod]
+	useEffect(() => {
+		getGraphData(selectedPeriod, selectedDate);
+	}, [selectedPeriod]);
 
 	// [selectedPeriod, selectedFieldFilter, selectedDate]
 	useEffect(() => {
@@ -179,7 +184,7 @@ const Chart = ({ authKey, date }) => {
 				content_type: "application/json",
 				authKey,
 			},
-			data: { date: selectedDate, field },
+			data: { date: dateFromGraph, field },
 		})
 			.then((r) => {
 				setForecast(r.data.data);
@@ -187,11 +192,11 @@ const Chart = ({ authKey, date }) => {
 			.catch((e) => {
 				console.log(e);
 			});
-	}, [selectedFieldFilter, selectedDate]);
+	}, [selectedFieldFilter, selectedDate, dateFromGraph]);
 
 	// [selectedPeriod]
 	useEffect(() => {
-		getGraphData(selectedPeriod);
+		getGraphData(selectedPeriod, selectedDate);
 	}, [selectedPeriod, yAxisType]);
 
 	useEffect(() => {
@@ -311,7 +316,19 @@ const Chart = ({ authKey, date }) => {
 						{/* .left */}
 						<div className={style.timeSpan}>
 							<div className={style.calendarSelector}>
-								<button onClick={() => setCalendar(true)}>
+								{dateFromGraph !== selectedDate && (
+									<button
+										className={style.resetDate}
+										onClick={() => setDateFromGraph(selectedDate)}
+									>
+										Reset to{" "}
+									</button>
+								)}
+								<button
+									className={style.selectedDate}
+									disabled={dateFromGraph !== selectedDate}
+									onClick={() => setCalendar(true)}
+								>
 									{moment(selectedDate).format("DD MMM YYYY")}
 									<span>
 										<img src="/images/calendar.svg" alt="" />
@@ -341,7 +358,7 @@ const Chart = ({ authKey, date }) => {
 							<div className={style.chartHeader}>
 								<div className={style.headerLeft}>
 									<h4>Yield</h4>
-									<h5>{moment(selectedDate).format("DD MMM YYYY")}</h5>
+									<h5>{moment(dateFromGraph).format("DD MMM YYYY")}</h5>
 								</div>
 								{/* .headerLeft */}
 							</div>
@@ -453,9 +470,11 @@ const Chart = ({ authKey, date }) => {
 									data={otherGraphData}
 									width={windowWidth - 180}
 									height={400}
-									onClick={(c) =>
-										setDateFromGraph(c.activePayload[0].payload.date * 1000)
-									}
+									onClick={(c) => {
+										const newDate = c?.activePayload[0].payload.date * 1000;
+										setDateFromGraph(newDate);
+										getGraphData("day", newDate);
+									}}
 								>
 									<CartesianGrid strokeDasharray="3 3" />
 									<XAxis
