@@ -229,7 +229,7 @@ const Chart = ({ authKey, date }) => {
 	}, []);
 
 	// custom legend for day graph
-	const dayLegend = (props) => {
+	const dayLegend = () => {
 		return (
 			<div className={style.legend}>
 				<ul>
@@ -247,7 +247,7 @@ const Chart = ({ authKey, date }) => {
 	};
 
 	// custom legend for other graphs
-	const otherLegend = (props) => {
+	const otherLegend = () => {
 		return (
 			<div className={style.legend}>
 				<ul>
@@ -300,6 +300,9 @@ const Chart = ({ authKey, date }) => {
 								/>
 							</div>
 							{/* .dropdownWrapper */}
+						</div>
+						{/* .left */}
+						<div className={style.right}>
 							<div className={style.yAxisTypes}>
 								<button
 									className={yAxisType === "count" ? style.active : ""}
@@ -315,9 +318,6 @@ const Chart = ({ authKey, date }) => {
 								</button>
 							</div>
 							{/* .yAxisTypes */}
-						</div>
-						{/* .left */}
-						<div className={style.timeSpan}>
 							<div className={style.calendarSelector}>
 								{dateFromGraph !== selectedDate && (
 									<button
@@ -353,8 +353,9 @@ const Chart = ({ authKey, date }) => {
 									</div>
 								)}
 							</div>
+							{/* .calendarSelector */}
 						</div>
-						{/* .timeSpan */}
+						{/* .right */}
 					</div>
 					{/* .dataControl */}
 				</div>
@@ -374,7 +375,11 @@ const Chart = ({ authKey, date }) => {
 							<div className={style.chartElm}>
 								<BarChart
 									data={dayGraphData}
-									width={(windowWidth * 30) / 100 - 60}
+									width={
+										windowWidth < 992
+											? windowWidth - 120
+											: (windowWidth * 30) / 100 - 60
+									}
 									height={400}
 								>
 									<CartesianGrid strokeDasharray="3 3" />
@@ -403,7 +408,6 @@ const Chart = ({ authKey, date }) => {
 						{/* .chartCard */}
 					</div>
 					{/* .cardWrapper */}
-
 					{/* FORECAST CHART */}
 					<div className={style.cardWrapper}>
 						<div className={style.chartCard}>
@@ -419,7 +423,11 @@ const Chart = ({ authKey, date }) => {
 							<div className={style.chartElm}>
 								<LineChart
 									data={dataConvert(forecast, selectedDate)}
-									width={(windowWidth * 60) / 100 - 60}
+									width={
+										windowWidth < 992
+											? windowWidth - 120
+											: (windowWidth * 60) / 100 - 60
+									}
 									height={400}
 								>
 									<CartesianGrid strokeDasharray="3 3" />
@@ -499,7 +507,9 @@ const Chart = ({ authKey, date }) => {
 							<div className={style.chartElm}>
 								<BarChart
 									data={otherGraphData}
-									width={windowWidth - 180}
+									width={
+										windowWidth < 992 ? windowWidth - 120 : windowWidth - 170
+									}
 									height={400}
 									onClick={(c) => {
 										if (c) {
