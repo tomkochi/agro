@@ -166,12 +166,7 @@ const Chart = ({ authKey, date }) => {
 	useEffect(() => {
 		getGraphData("day", dateFromGraph);
 		getGraphData(selectedPeriod, selectedDate);
-	}, [selectedFieldFilter, selectedDate, yAxisType]);
-
-	// [selectedPeriod]
-	useEffect(() => {
-		getGraphData(selectedPeriod, selectedDate);
-	}, [selectedPeriod]);
+	}, [selectedFieldFilter, selectedDate, yAxisType, selectedPeriod]);
 
 	// [selectedPeriod, selectedFieldFilter, selectedDate]
 	useEffect(() => {
@@ -193,11 +188,6 @@ const Chart = ({ authKey, date }) => {
 				console.log(e);
 			});
 	}, [selectedFieldFilter, selectedDate, dateFromGraph]);
-
-	// [selectedPeriod]
-	useEffect(() => {
-		getGraphData(selectedPeriod, selectedDate);
-	}, [selectedPeriod, yAxisType]);
 
 	useEffect(() => {
 		setCalendarDisplay({
@@ -353,6 +343,7 @@ const Chart = ({ authKey, date }) => {
 					{/* .dataControl */}
 				</div>
 				<div className={style.chartContainer}>
+					{/* DAY CHART */}
 					<div className={style.cardWrapper}>
 						<div className={style.chartCard}>
 							<div className={style.chartHeader}>
@@ -373,8 +364,10 @@ const Chart = ({ authKey, date }) => {
 									<CartesianGrid strokeDasharray="3 3" />
 									<XAxis
 										dataKey={(d) => moment.unix(d.date).format("DD MMM")}
+										fontSize={12}
+										stroke="#AFAAAA"
 									/>
-									<YAxis />
+									<YAxis fontSize={12} stroke="#AFAAAA" />
 									<Tooltip cursor={{ fill: "transparent" }} />
 									<Legend content={dayLegend} layout="vertical" align="right" />
 									{barTypes.map((d, i) =>
@@ -394,6 +387,8 @@ const Chart = ({ authKey, date }) => {
 						{/* .chartCard */}
 					</div>
 					{/* .cardWrapper */}
+
+					{/* FORECAST CHART */}
 					<div className={style.cardWrapper}>
 						<div className={style.chartCard}>
 							<div className={style.chartHeader}>
@@ -412,8 +407,13 @@ const Chart = ({ authKey, date }) => {
 									height={400}
 								>
 									<CartesianGrid strokeDasharray="3 3" />
-									<XAxis dataKey="date" interval={7} />
-									<YAxis />
+									<XAxis
+										dataKey="date"
+										interval={7}
+										fontSize={12}
+										stroke="#AFAAAA"
+									/>
+									<YAxis fontSize={12} stroke="#AFAAAA" />
 									<Line
 										dot={false}
 										type="monotone"
@@ -431,6 +431,7 @@ const Chart = ({ authKey, date }) => {
 				</div>
 				{/* .chartContainer */}
 				<div className={style.chartContainer}>
+					{/* WEEK/MONTH/YEAR CHART */}
 					<div className={style.cardWrapper}>
 						<div className={style.chartCard}>
 							<div className={style.chartHeader}>
@@ -471,16 +472,20 @@ const Chart = ({ authKey, date }) => {
 									width={windowWidth - 180}
 									height={400}
 									onClick={(c) => {
-										const newDate = c?.activePayload[0].payload.date * 1000;
-										setDateFromGraph(newDate);
-										getGraphData("day", newDate);
+										if (c) {
+											const newDate = c.activePayload[0].payload.date * 1000;
+											setDateFromGraph(newDate);
+											getGraphData("day", newDate);
+										}
 									}}
 								>
 									<CartesianGrid strokeDasharray="3 3" />
 									<XAxis
 										dataKey={(d) => moment.unix(d.date).format("DD MMM")}
+										fontSize={12}
+										stroke="#AFAAAA"
 									/>
-									<YAxis />
+									<YAxis fontSize={12} stroke="#AFAAAA" />
 									<Tooltip />
 									<Legend
 										content={otherLegend}
