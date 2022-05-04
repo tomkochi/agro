@@ -76,6 +76,19 @@ const Chart = ({ authKey, date }) => {
 		},
 	]);
 
+	const dateSelected = (date) => {
+		setSelectedDate(date);
+		setDateFromGraph(date);
+	};
+
+	const forecastRange = () => {
+		const s = moment(dateFromGraph).format("DD MMM YYYY");
+		const e = moment(dateFromGraph)
+			.add(forecast.length, "days")
+			.format("DD MMM YYYY");
+		return `${s} to ${e}`;
+	};
+
 	// get which all days has data
 	const getMonthData = (date) => {
 		axios({
@@ -309,7 +322,10 @@ const Chart = ({ authKey, date }) => {
 								{dateFromGraph !== selectedDate && (
 									<button
 										className={style.resetDate}
-										onClick={() => setDateFromGraph(selectedDate)}
+										onClick={() => {
+											setDateFromGraph(selectedDate);
+											getGraphData("day", selectedDate);
+										}}
 									>
 										Reset to{" "}
 									</button>
@@ -328,7 +344,7 @@ const Chart = ({ authKey, date }) => {
 									<div ref={calendarWrapper} className={style.calendarWrapper}>
 										<Calendar
 											selectedDate={selectedDate}
-											setSelectedDate={setSelectedDate}
+											setSelectedDate={dateSelected}
 											monthData={monthData}
 											getMonthData={getMonthData}
 											calendarDisplay={calendarDisplay}
@@ -394,7 +410,7 @@ const Chart = ({ authKey, date }) => {
 							<div className={style.chartHeader}>
 								<div className={style.headerLeft}>
 									<h4>Forecast</h4>
-									<h5>{moment(selectedDate).format("DD MMM YYYY")}</h5>
+									<h5>{forecastRange()}</h5>
 								</div>
 								{/* .headerLeft */}
 							</div>
@@ -437,7 +453,21 @@ const Chart = ({ authKey, date }) => {
 							<div className={style.chartHeader}>
 								<div className={style.headerLeft}>
 									<h4>Yield</h4>
-									<h5>{moment(selectedDate).format("DD MMM YYYY")}</h5>
+									<h5>
+										{otherGraphData.length > 0 ? (
+											<span>
+												{moment(otherGraphData[0].date * 1000).format(
+													"DD MMM YYYY"
+												)}{" "}
+												to{" "}
+												{moment(
+													otherGraphData[otherGraphData.length - 1].date * 1000
+												).format("DD MMM YYYY")}
+											</span>
+										) : (
+											""
+										)}
+									</h5>
 								</div>
 								{/* .headerLeft */}
 								<div className={style.headerRight}>

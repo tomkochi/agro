@@ -11,6 +11,7 @@ export default function Layout({ title, bg, children }) {
 				.layout {
 					background: ${bg};
 					height: 100%;
+					min-height: 100vh;
 				}
 			`}</style>
 		</div>

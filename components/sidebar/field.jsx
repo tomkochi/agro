@@ -1,4 +1,4 @@
-import style from "./manage-field.module.scss";
+import style from "./field.module.scss";
 import { useState, useEffect } from "react";
 import axios from "axios";
 

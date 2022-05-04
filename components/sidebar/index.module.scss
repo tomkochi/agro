@@ -91,8 +91,8 @@
     flex-direction: column;
 
     .action {
-      border-top: 1px solid #E0E0E0;
       padding: 24px 0;
+      border-top: 1px solid #E0E0E0;
     }
 
     a,
@@ -116,7 +116,8 @@
   }
 }
 
-.manageFields {
+.manageFields,
+.updatePassword {
   .header {
     display: flex;
     justify-content: space-between;
@@ -150,7 +151,9 @@
       opacity: 0.4;
     }
   }
+}
 
+.manageFields {
   .fields {
     display: flex;
     flex-direction: column;
@@ -234,6 +237,87 @@
     font-weight: 600;
     font-size: 16px;
     color: #343A40;
+  }
+}
+
+.updatePassword {
+  form {
+    display: flex;
+    flex-direction: column;
+
+    input {
+      font-weight: 400;
+      font-size: 14px;
+      color: #78828C;
+      height: 49px;
+      padding: 0 17px;
+      border-radius: 10px;
+      border: none;
+      margin-bottom: 16px;
+
+      &:disabled {
+        border-color: rgba(106, 171, 114, 0.4);
+        color: rgba(25, 53, 80, 0.4);
+      }
+
+      &::placeholder {
+        opacity: 0.6;
+      }
+
+      &:-moz-placeholder {
+        opacity: 0.6;
+      }
+
+      &::-moz-placeholder {
+        opacity: 0.6;
+      }
+
+      &:-ms-input-placeholder {
+        opacity: 0.6;
+      }
+
+      &::-webkit-input-placeholder {
+        opacity: 0.6;
+      }
+    }
+
+    button {
+      height: 49px;
+      background: linear-gradient(172.08deg, #69AA72 -18.15%, #69AA72 120.92%);
+      box-shadow: 4px 4px 6px #C7D5C9;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 16px;
+      color: #F2F2F2;
+    }
+  }
+}
+
+.message {
+  flex-grow: 1;
+  padding: 0 18px;
+  display: flex;
+  height: 49px;
+  align-items: center;
+  border-radius: 8px;
+  opacity: 0;
+  margin-bottom: 16px;
+}
+
+.error {
+  background: #FFF5F4;
+  color: #D43637;
+  opacity: 1;
+}
+
+.success {
+  background: rgba(106, 171, 114, 0.15);
+  color: #6AAB72;
+  opacity: 1;
+
+  &::before {
+    content: url(/images/tick.svg);
+    margin-right: 17px;
   }
 }
 

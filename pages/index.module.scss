@@ -1,6 +1,7 @@
 .home {
   height: 100vh;
   overflow-y: auto;
+  background: #ffff;
 
   @media screen and (max-width: 600px) {
     max-width: 70vh;
