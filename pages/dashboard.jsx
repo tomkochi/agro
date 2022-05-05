@@ -230,7 +230,7 @@ const Dashboard = ({ authKey }) => {
 	};
 
 	const areaChange = (e) => {
-		const re = /^[0-9\b]+$/;
+		const re = /^[0-9\b.]+$/;
 		if (e.target.value === "" || re.test(e.target.value)) {
 			setUploadArea(e.target.value);
 		}
@@ -244,7 +244,7 @@ const Dashboard = ({ authKey }) => {
 				: parseInt(router.query.d);
 
 		setSelectedDate(newDate);
-		getMonthData(newDate);
+		// getMonthData(newDate);
 		fetchDateData(newDate, true);
 	}, [router.query]);
 
@@ -269,7 +269,7 @@ const Dashboard = ({ authKey }) => {
 
 	useEffect(() => {
 		if (!uploadOverlay) {
-			// fileInput.current.value = "";
+			fileInput.current.value = "";
 		}
 	}, [uploadOverlay]);
 
@@ -450,11 +450,12 @@ const Dashboard = ({ authKey }) => {
 							<div className={style.inputGroup}>
 								<label>Acre</label>
 								<input
-									type="text"
+									type="number"
 									name="acres"
 									className={style.area}
 									value={uploadArea}
 									onChange={areaChange}
+									placeholder="0.00"
 								/>
 							</div>
 							{/* .inputGroup */}
@@ -464,7 +465,9 @@ const Dashboard = ({ authKey }) => {
 									type="datetime-local"
 									name="date"
 									className={style.datetime}
-									defaultValue={moment().format("YYYY-MM-DD[T]HH:mm")}
+									defaultValue={moment(selectedDate).format(
+										"YYYY-MM-DD[T]HH:mm"
+									)}
 									onChange={uploadDateChange}
 								/>
 							</div>

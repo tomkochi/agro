@@ -72,6 +72,7 @@
 
   &:disabled {
     opacity: 0.4;
+    cursor: not-allowed;
   }
 
   &:hover {
@@ -404,9 +405,17 @@
   color: #343A40;
   border-radius: 10px;
   border: 1px solid rgba(105, 170, 114, 1);
+
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
 }
 
 .datetime {
+  font-family: "Poppins", sans-serif;
+  font-size: 16px;
   width: 100%;
   height: 45px;
   border: 1px solid rgba(105, 170, 114, 1);

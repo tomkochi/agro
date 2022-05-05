@@ -117,7 +117,7 @@
   flex-direction: column;
   width: 100%;
   align-items: center;
-  margin-bottom: 100px;
+  margin-bottom: 64px;
 
   img {
     margin-bottom: 46px;
@@ -135,8 +135,6 @@
 }
 
 .supportedCrops {
-  background: #F1F7ED;
-  border-radius: 22px;
   padding: 24px;
   margin-bottom: 77px;
 
@@ -155,20 +153,22 @@
   }
 
   .crops {
+    border-radius: 22px;
+    background: #F1F7ED;
     display: grid;
     grid-template-columns: 1fr;
-    gap: 22px;
+    padding: 44px;
 
     @media (min-width: 992px) {
       grid-template-columns: repeat(3, 1fr);
-      gap: 0 74px;
+      gap: 0 44px;
     }
   }
 
   .crop {
     border-radius: 12px;
     overflow-y: hidden;
-    height: 240px;
+    height: 242px;
 
     @media (min-width: 992px) {
       border-radius: 25px;
