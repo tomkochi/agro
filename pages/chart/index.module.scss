@@ -1,5 +1,6 @@
 .wrapper {
   min-height: 100vh;
+  padding-bottom: 55px;
 }
 
 .chart {
@@ -73,6 +74,7 @@
     &:last-of-type {
       border-radius: 0 10px 10px 0;
       border-left: none;
+      margin-left: -2px;
     }
 
     &.active {
@@ -89,7 +91,6 @@
   button.selectedDate,
   button.resetDate {
     height: 45px;
-    width: 240px;
     background: white;
     box-shadow: 0px 4px 8px rgba(217, 220, 231, 0.58);
     border-radius: 10px;
@@ -111,9 +112,21 @@
     }
   }
 
-  button.selectedDate:disabled {
-    opacity: 0.7;
-    cursor: not-allowed;
+  button.selectedDate {
+    width: auto;
+
+    @media (min-width: 992px) {
+      width: 240px;
+    }
+
+    &:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+
+    span {
+      margin-left: 15px;
+    }
   }
 
   button.resetDate {
@@ -139,10 +152,10 @@
   display: flex;
   overflow: hidden;
   border-radius: 10px;
+  overflow: hidden;
 
   button {
     height: 30px;
-    border: none;
     background: #ffffff;
     font-weight: 500;
     font-size: 12px;
@@ -151,23 +164,24 @@
     padding: 0 14px;
 
     &:not(:first-of-type) {
-      border-left: 2px solid #69AA72;
+      // border-left: 2px solid #69AA72;
     }
 
     &:first-of-type {
       border-radius: 8px 0 0 8px;
-      border-right: none;
     }
 
     &:last-of-type {
-      border-radius: 0 8px 8px 0;
-      border-left: none;
+      border-radius: 0 9px 9px 0;
+    }
+
+    &:not(:first-of-type) {
+      margin-left: -3px;
     }
 
     &.active {
       background: #69AA72;
       color: #ffffff;
-      border: none;
     }
   }
 }
@@ -195,7 +209,7 @@
 
   @media (min-width: 992px) {
     grid-template-columns: 1fr 1fr;
-    padding: 35px 55px;
+    padding: 20px 55px 0;
   }
 }
 

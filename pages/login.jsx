@@ -99,7 +99,7 @@ const Login = () => {
 					<button type="submit" disabled={busy}>
 						{busy ? <Loading height={10} /> : "Login"}
 					</button>
-					<Link href="/dashboard" passHref>
+					<Link href="/reset-password" passHref>
 						Forgot Password?
 					</Link>
 				</form>

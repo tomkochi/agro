@@ -97,6 +97,8 @@ const Calendar = ({
 
 	// new date click event
 	const selectNewDate = (date) => {
+		if (moment(date).isAfter(new Date(), "day")) return false;
+
 		const dateString = `${date.date}/${date.month + 1}/${date.year}`;
 		const dateNumber = moment(dateString, "D/M/YYYY").utc().unix() * 1000;
 		setSelectedDate(dateNumber);
