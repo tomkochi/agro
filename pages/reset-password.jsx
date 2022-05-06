@@ -235,7 +235,7 @@ const ResetPassword = () => {
 								strokeWidth="6"
 								strokeLinecap="round"
 								strokeLinejoin="round"
-								class="svg-elem-1"
+								className="svg-elem-1"
 							></path>
 							<path
 								d="M110 14L56.9231 68L41 51.8162"
@@ -243,7 +243,7 @@ const ResetPassword = () => {
 								strokeWidth="6"
 								strokeLinecap="round"
 								strokeLinejoin="round"
-								class="svg-elem-2"
+								className="svg-elem-2"
 							></path>
 						</svg>
 
