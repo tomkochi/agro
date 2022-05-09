@@ -9,17 +9,17 @@ button {
   cursor: pointer;
 }
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 9px;
 }
 /* Track */
 ::-webkit-scrollbar-track {
   background: transparent;
-  border-radius: 6px;
+  border-radius: 9px;
 }
 /* Handle */
 ::-webkit-scrollbar-thumb {
-  background: #e0e0e0;
-  border-radius: 6px;
+  background: #ccc;
+  border-radius: 9px;
 }
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {

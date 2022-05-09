@@ -27,6 +27,8 @@ import {
 const Chart = ({ authKey, date }) => {
 	const router = useRouter();
 
+	const CHART_HEIGHT = 270;
+
 	const user = userStore((state) => state.user); // user from store
 	const allFields = { _id: 0, name: "All" }; // for default selection
 	const [fields, setFields] = useState([]); // this will be populated in useEffect[user]
@@ -156,6 +158,16 @@ const Chart = ({ authKey, date }) => {
 			});
 	};
 
+	const selectDateFromGraph = (d) => {
+		// if yrar view selected
+		// set date to the first day of the month
+		if (d) {
+			const newDate = d.activePayload[0].payload.date * 1000;
+			setDateFromGraph(newDate);
+			getGraphData("day", newDate);
+		}
+	};
+
 	// [user]
 	useEffect(() => {
 		// set fields on user change (ie, initially)
@@ -255,7 +267,6 @@ const Chart = ({ authKey, date }) => {
 						return (
 							<li key={`item-${i}`}>
 								<label htmlFor={b.type}>
-									<span style={{ backgroundColor: BarColors[b.type] }}></span>
 									<input
 										type="checkbox"
 										checked={b.show}
@@ -266,6 +277,7 @@ const Chart = ({ authKey, date }) => {
 											setBarTypes(tmpTypes);
 										}}
 									/>
+									<span style={{ backgroundColor: BarColors[b.type] }}></span>
 									{b.type}
 								</label>
 							</li>
@@ -311,8 +323,8 @@ const Chart = ({ authKey, date }) => {
 									Count
 								</button>
 								<button
-									className={yAxisType === "acre" ? style.active : ""}
-									onClick={() => setYAxisType("acre")}
+									className={yAxisType === "count/acre" ? style.active : ""}
+									onClick={() => setYAxisType("count/acre")}
 								>
 									Count/Acre
 								</button>
@@ -380,7 +392,7 @@ const Chart = ({ authKey, date }) => {
 											? windowWidth - 120
 											: (windowWidth * 30) / 100 - 60
 									}
-									height={400}
+									height={CHART_HEIGHT}
 								>
 									<CartesianGrid strokeDasharray="3 3" />
 									<XAxis
@@ -428,7 +440,7 @@ const Chart = ({ authKey, date }) => {
 											? windowWidth - 120
 											: (windowWidth * 60) / 100 - 60
 									}
-									height={400}
+									height={CHART_HEIGHT}
 								>
 									<CartesianGrid strokeDasharray="3 3" />
 									<XAxis
@@ -510,13 +522,9 @@ const Chart = ({ authKey, date }) => {
 									width={
 										windowWidth < 992 ? windowWidth - 120 : windowWidth - 170
 									}
-									height={400}
+									height={CHART_HEIGHT}
 									onClick={(c) => {
-										if (c) {
-											const newDate = c.activePayload[0].payload.date * 1000;
-											setDateFromGraph(newDate);
-											getGraphData("day", newDate);
-										}
+										selectDateFromGraph(c);
 									}}
 								>
 									<CartesianGrid strokeDasharray="3 3" />
@@ -568,9 +576,16 @@ export const BarColors = {
 
 export const dataConvert = (data, selectedDate) => {
 	return data.map((d, i) => {
-		let date = moment(selectedDate).add(i, "days").format("DD MMM");
-		return (d = { date: date, value: d });
+		const date = moment(Object.entries(d)[0][0])
+			.add(i, "days")
+			.format("DD MMM");
+		const value = Object.entries(d)[0][1];
+		return (d = { date, value });
 	});
+	// return data.map((d, i) => {
+	// 	let date = moment(selectedDate).add(i, "days").format("DD MMM");
+	// 	return (d = { date: date, value: d });
+	// });
 };
 
 export function hasDecimal(num) {

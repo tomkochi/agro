@@ -89,12 +89,6 @@ const Contact = ({ authKey }) => {
 					<h1>Contact us</h1>
 					<form onSubmit={submit}>
 						<div className={style.row}>
-							<input
-								type="text"
-								id="fd"
-								className={style.fraud}
-								tabIndex="-1"
-							/>
 							<div className={style.inputGroup}>
 								<label htmlFor="name">Name</label>
 								<input
@@ -172,6 +166,14 @@ const Contact = ({ authKey }) => {
 							</button>
 						</div>
 						{/* .bottom */}
+						<input
+							type="text"
+							id="fd"
+							className={style.fraud}
+							tabIndex="-1"
+							name="frauddetectioninputtobefilledbybots"
+							autoComplete="off"
+						/>
 					</form>
 				</div>
 				{/* .contentWrapper */}

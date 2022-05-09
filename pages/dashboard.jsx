@@ -336,6 +336,10 @@ const Dashboard = ({ authKey }) => {
 									monthData={monthData}
 									getMonthData={getMonthData}
 									fetchDateData={fetchDateData}
+									calendarDisplay={{
+										year: parseInt(moment(selectedDate).format("YYYY")),
+										month: parseInt(moment(selectedDate).format("M")),
+									}}
 									inDashboard={true}
 								/>
 							</div>
