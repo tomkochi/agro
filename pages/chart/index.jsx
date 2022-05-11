@@ -41,7 +41,7 @@ const Chart = ({ authKey, date }) => {
 	const [selectedPeriod, setSelectedPeriod] = useState("week"); // 'day', 'month' or 'year'
 	const [selectedDate, setSelectedDate] = useState(date); // epoch
 
-	const [dateFromGraph, setDateFromGraph] = useState(date); // date set by clicking the graph
+	const [otherGraphDate, setOtherGraphDate] = useState(date); // other graph data need not be fetched every time the selected date change. Hence this const.
 
 	const [monthData, setMonthData] = useState([]); // which all dates of this month has data
 	// const [dateData, setDateData] = useState([]); // selected day's data
@@ -80,12 +80,12 @@ const Chart = ({ authKey, date }) => {
 
 	const dateSelected = (date) => {
 		setSelectedDate(date);
-		setDateFromGraph(date);
+		setOtherGraphDate(date);
 	};
 
 	const forecastRange = () => {
-		const s = moment(dateFromGraph).format("DD MMM YYYY");
-		const e = moment(dateFromGraph)
+		const s = moment(selectedDate).format("DD MMM YYYY");
+		const e = moment(selectedDate)
 			.add(forecast.length, "days")
 			.format("DD MMM YYYY");
 		return `${s} to ${e}`;
@@ -159,12 +159,47 @@ const Chart = ({ authKey, date }) => {
 	};
 
 	const selectDateFromGraph = (d) => {
-		// if yrar view selected
-		// set date to the first day of the month
 		if (d) {
-			const newDate = d.activePayload[0].payload.date * 1000;
-			setDateFromGraph(newDate);
-			getGraphData("day", newDate);
+			// if yrar view selected
+			if (selectedPeriod === "year") {
+				const startOfMonth =
+					moment(d.activePayload[0].payload.date * 1000)
+						.utc()
+						.startOf("month")
+						.unix() * 1000;
+				// get month data
+				axios({
+					url: `${process.env.NEXT_PUBLIC_BASE_URL}/data/month/list`,
+					method: "post",
+					headers: {
+						"Content-Type": "application/json",
+						authKey,
+					},
+					data: {
+						date: startOfMonth,
+					},
+				})
+					.then((r) => {
+						const firstDay =
+							moment(r.data.data.sort()[0]).startOf("day").unix() * 1000;
+						// set date to the first day of the month
+						setSelectedDate(firstDay);
+						setOtherGraphDate(firstDay);
+						getGraphData("month", firstDay);
+						setSelectedPeriod("month");
+						// setSelectedDate(
+						// 	moment(d.activePayload[0].payload.date * 1000)
+						// 		.startOf("month")
+						// 		.unix() * 1000
+						// );
+						// setSelectedPeriod("month");
+					})
+					.catch((e) => alert(e));
+			} else {
+				const newDate = d.activePayload[0].payload.date * 1000;
+				setSelectedDate(newDate);
+				getGraphData("day", newDate);
+			}
 		}
 	};
 
@@ -187,13 +222,18 @@ const Chart = ({ authKey, date }) => {
 		};
 	}, [calendar]);
 
-	// [selectedPeriod, selectedFieldFilter, selectedDate]
+	// [selectedFieldFilter, selectedDate]
 	useEffect(() => {
-		getGraphData("day", dateFromGraph);
-		getGraphData(selectedPeriod, selectedDate);
-	}, [selectedFieldFilter, selectedDate, yAxisType, selectedPeriod]);
+		getGraphData("day", selectedDate);
+		getGraphData(selectedPeriod, otherGraphDate);
+	}, [selectedFieldFilter, selectedDate]);
 
-	// [selectedPeriod, selectedFieldFilter, selectedDate]
+	// [yAxisType]
+	useEffect(() => {
+		getGraphData("day", selectedDate);
+	}, [yAxisType]);
+
+	// [selectedFieldFilter, selectedDate]
 	useEffect(() => {
 		const field =
 			selectedFieldFilter.name === "All" ? [] : [selectedFieldFilter._id];
@@ -204,7 +244,7 @@ const Chart = ({ authKey, date }) => {
 				content_type: "application/json",
 				authKey,
 			},
-			data: { date: dateFromGraph, field },
+			data: { date: selectedDate, field },
 		})
 			.then((r) => {
 				setForecast(r.data.data);
@@ -212,14 +252,18 @@ const Chart = ({ authKey, date }) => {
 			.catch((e) => {
 				console.log(e);
 			});
-	}, [selectedFieldFilter, selectedDate, dateFromGraph]);
+	}, [selectedFieldFilter, selectedDate]);
 
+	// [selectedDate]
 	useEffect(() => {
 		setCalendarDisplay({
 			year: parseInt(moment(selectedDate).format("YYYY")),
 			month: parseInt(moment(selectedDate).format("M")),
 		});
 	}, [selectedDate]);
+
+	// [otherGraphDate]
+	useEffect(() => {}, [otherGraphDate]);
 
 	// [router.query]
 	useEffect(() => {
@@ -228,6 +272,7 @@ const Chart = ({ authKey, date }) => {
 				? moment().startOf("day").utc().unix() * 1000
 				: parseInt(router.query.d);
 		setSelectedDate(newDate);
+		setOtherGraphDate(newDate);
 	}, [router.query]);
 
 	// []
@@ -331,24 +376,14 @@ const Chart = ({ authKey, date }) => {
 							</div>
 							{/* .yAxisTypes */}
 							<div className={style.calendarSelector}>
-								{dateFromGraph !== selectedDate && (
-									<button
-										className={style.resetDate}
-										onClick={() => {
-											setDateFromGraph(selectedDate);
-											getGraphData("day", selectedDate);
-										}}
-									>
-										Reset to{" "}
-									</button>
-								)}
 								<button
 									className={style.selectedDate}
-									disabled={dateFromGraph !== selectedDate}
 									onClick={() => setCalendar(true)}
 								>
-									{moment(selectedDate).format("DD MMM YYYY")}
-									<span>
+									<span className={style.date}>
+										{moment(selectedDate).format("DD MMM YYYY")}
+									</span>
+									<span className={style.img}>
 										<img src="/images/calendar.svg" alt="" />
 									</span>
 								</button>
@@ -378,7 +413,7 @@ const Chart = ({ authKey, date }) => {
 							<div className={style.chartHeader}>
 								<div className={style.headerLeft}>
 									<h4>Yield</h4>
-									<h5>{moment(dateFromGraph).format("DD MMM YYYY")}</h5>
+									<h5>{moment(selectedDate).format("DD MMM YYYY")}</h5>
 								</div>
 								{/* .headerLeft */}
 							</div>
@@ -494,19 +529,28 @@ const Chart = ({ authKey, date }) => {
 									<div className={style.periodSelector}>
 										<button
 											className={selectedPeriod === "week" ? style.active : ""}
-											onClick={() => setSelectedPeriod("week")}
+											onClick={() => {
+												setSelectedPeriod("week");
+												getGraphData("week", otherGraphDate);
+											}}
 										>
 											Week
 										</button>
 										<button
 											className={selectedPeriod === "month" ? style.active : ""}
-											onClick={() => setSelectedPeriod("month")}
+											onClick={() => {
+												setSelectedPeriod("month");
+												getGraphData("month", otherGraphDate);
+											}}
 										>
 											Month
 										</button>
 										<button
 											className={selectedPeriod === "year" ? style.active : ""}
-											onClick={() => setSelectedPeriod("year")}
+											onClick={() => {
+												setSelectedPeriod("year");
+												getGraphData("year", otherGraphDate);
+											}}
 										>
 											Year
 										</button>
@@ -523,8 +567,8 @@ const Chart = ({ authKey, date }) => {
 										windowWidth < 992 ? windowWidth - 120 : windowWidth - 170
 									}
 									height={CHART_HEIGHT}
-									onClick={(c) => {
-										selectDateFromGraph(c);
+									onClick={(d) => {
+										selectDateFromGraph(d);
 									}}
 								>
 									<CartesianGrid strokeDasharray="3 3" />
@@ -582,10 +626,6 @@ export const dataConvert = (data, selectedDate) => {
 		const value = Object.entries(d)[0][1];
 		return (d = { date, value });
 	});
-	// return data.map((d, i) => {
-	// 	let date = moment(selectedDate).add(i, "days").format("DD MMM");
-	// 	return (d = { date: date, value: d });
-	// });
 };
 
 export function hasDecimal(num) {

@@ -50,6 +50,8 @@ const Calendar = ({
 		return moment.months();
 	};
 
+	console.log({ monthData });
+
 	const changeMonth = (action) => {
 		let newMonth;
 		if (action === monthAction.NEXT) {
