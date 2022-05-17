@@ -2,7 +2,11 @@ const NotFound = () => {
 	return (
 		<div className="notfound">
 			<h1>Opps!</h1>
-			<h2>The page you are looking for doesn&apost exists.</h2>
+			<h2>
+				The page you are looking for does not exist,
+				<br />
+				or having some issues.
+			</h2>
 			<style jsx>{`
 				.notfound {
 					width: 100%;

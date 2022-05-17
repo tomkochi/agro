@@ -21,7 +21,7 @@ function MyApp({ Component, pageProps, user }) {
 export default MyApp;
 
 MyApp.getInitialProps = async ({ ctx }) => {
-	const { authKey } = ctx.req.cookies;
+	const authKey = ctx.req?.cookies?.authKey || null;
 	if (authKey) {
 		const r = await axios({
 			url: `${process.env.NEXT_PUBLIC_BASE_URL}/user/validate`,

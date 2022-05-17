@@ -162,11 +162,6 @@ const Chart = ({ authKey, date }) => {
 		if (d) {
 			// if yrar view selected
 			if (selectedPeriod === "year") {
-				const startOfMonth =
-					moment(d.activePayload[0].payload.date * 1000)
-						.utc()
-						.startOf("month")
-						.unix() * 1000;
 				// get month data
 				axios({
 					url: `${process.env.NEXT_PUBLIC_BASE_URL}/data/month/list`,
@@ -176,7 +171,7 @@ const Chart = ({ authKey, date }) => {
 						authKey,
 					},
 					data: {
-						date: startOfMonth,
+						date: moment(d.activePayload[0].payload.date * 1000).unix() * 1000,
 					},
 				})
 					.then((r) => {
@@ -269,7 +264,7 @@ const Chart = ({ authKey, date }) => {
 	useEffect(() => {
 		const newDate =
 			router.query.d === undefined
-				? moment().startOf("day").utc().unix() * 1000
+				? moment().startOf("day").unix() * 1000
 				: parseInt(router.query.d);
 		setSelectedDate(newDate);
 		setOtherGraphDate(newDate);
@@ -469,7 +464,7 @@ const Chart = ({ authKey, date }) => {
 							<h6>Forecast for ripe</h6>
 							<div className={style.chartElm}>
 								<LineChart
-									data={dataConvert(forecast, selectedDate)}
+									data={forecast}
 									width={
 										windowWidth < 992
 											? windowWidth - 120
@@ -479,8 +474,11 @@ const Chart = ({ authKey, date }) => {
 								>
 									<CartesianGrid strokeDasharray="3 3" />
 									<XAxis
-										dataKey="date"
-										interval={7}
+										dataKey={(d) =>
+											moment(parseInt(Object.keys(d)[0]) * 1000).format(
+												"DD MMM"
+											)
+										}
 										fontSize={12}
 										stroke="#AFAAAA"
 									/>
@@ -488,7 +486,7 @@ const Chart = ({ authKey, date }) => {
 									<Line
 										dot={false}
 										type="monotone"
-										dataKey="value"
+										dataKey={(d) => Object.values(d)[0]}
 										stroke={BarColors.ripe}
 										strokeWidth={3}
 									/>
@@ -620,7 +618,7 @@ export const BarColors = {
 
 export const dataConvert = (data, selectedDate) => {
 	return data.map((d, i) => {
-		const date = moment(Object.entries(d)[0][0])
+		const date = moment(parseInt(Object.entries(d)[0][0]))
 			.add(i, "days")
 			.format("DD MMM");
 		const value = Object.entries(d)[0][1];

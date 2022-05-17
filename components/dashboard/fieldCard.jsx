@@ -23,7 +23,7 @@ const FieldCard = ({ data }) => {
 			>
 				<h4>{data.field}</h4>
 				<h5>
-					{data.area} acres
+					{data.area === 0 ? "_" : data.area} acres
 					<span className={style.time}>
 						{moment.unix(data.date).local().format("hh:mm a")}
 					</span>

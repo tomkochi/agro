@@ -1,8 +1,12 @@
 .gallery {
-  padding: 20px 55px;
+  padding: 20px;
   height: calc(100vh - 95px);
   overflow-y: hidden;
   padding-bottom: 30px;
+
+  @media (min-width: 992px) {
+    padding: 20px 55px;
+  }
 
   .views {
     display: flex;
@@ -17,6 +21,11 @@
       border: none;
       background: #fff;
       padding: 0 40px;
+      flex-grow: 1;
+
+      @media (min-width: 992px) {
+        flex-grow: 0;
+      }
 
       &.active {
         color: #fff;
@@ -42,11 +51,15 @@
 
   .images {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
     gap: 18px;
+    grid-template-columns: 1fr;
     height: calc(100% - 95px);
     padding: 0 6px 30px 0;
     overflow-y: auto;
+
+    @media (min-width: 992px) {
+      grid-template-columns: repeat(3, 1fr);
+    }
 
     @media (min-width: 1441px) {
       grid-template-columns: repeat(4, 1fr);
@@ -82,29 +95,34 @@
   top: 0;
   width: 100%;
   height: 100%;
-  background: rgba(255, 255, 255, 0.85);
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   backdrop-filter: blur(8px);
+
+  background: #000000;
+
+  @media (min-width: 992px) {
+    background: rgba(255, 255, 255, 0.85);
+    flex-direction: row;
+    justify-content: space-between;
+  }
 
   .image {
     img {
+      width: 100%;
       max-width: 800px;
     }
   }
 }
-
-.navleft {}
-
-.navRight {}
 
 .navLeft,
 .navRight {
   border: none;
   width: 60px;
   height: 60px;
-  display: flex;
+  display: none;
   align-items: center;
   justify-content: center;
   background: rgba(255, 255, 255, 0.6);
@@ -114,12 +132,36 @@
   box-shadow: 0px 4px 8px rgba(217, 220, 231, 1);
   transition: 0.2s;
 
+  @media (min-width: 992px) {
+    display: flex;
+  }
+
   &:hover {
     background: rgba(255, 255, 255, 1);
   }
 
   svg {
     transform: scale(2);
+  }
+}
+
+.mobileNavs {
+  display: flex;
+
+  @media (min-width: 992px) {
+    display: none;
+  }
+
+  button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    box-shadow: none;
+
+    &:hover {
+      background: none;
+    }
   }
 }
 

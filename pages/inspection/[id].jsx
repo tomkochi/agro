@@ -69,24 +69,10 @@ const Inspection = ({ authKey, images, data }) => {
 							>
 								<path
 									d="M7 1L1 7L7 13"
-									stroke="url(#paint0_linear_1276_263)"
-									strokeWidth="2"
+									stroke="#69AA72"
 									strokeLinecap="round"
 									strokeLinejoin="round"
 								/>
-								<defs>
-									<linearGradient
-										id="paint0_linear_1276_263"
-										x1="8.54054"
-										y1="5.32"
-										x2="-0.918024"
-										y2="5.97776"
-										gradientUnits="userSpaceOnUse"
-									>
-										<stop stopColor="#69AA72" />
-										<stop offset="1" stopColor="#69AA72" />
-									</linearGradient>
-								</defs>
 							</svg>
 						</button>
 						{/* .navLeft */}
@@ -106,27 +92,50 @@ const Inspection = ({ authKey, images, data }) => {
 							>
 								<path
 									d="M1 13L7 7L0.999999 1"
-									stroke="url(#paint0_linear_1276_262)"
-									strokWidth="2"
+									stroke="#69AA72"
 									strokLinecap="round"
 									strokLinejoin="round"
 								/>
-								<defs>
-									<linearGradient
-										id="paint0_linear_1276_262"
-										x1="-0.540541"
-										y1="8.68"
-										x2="8.91802"
-										y2="8.02224"
-										gradientUnits="userSpaceOnUse"
-									>
-										<stop stopColor="#69AA72" />
-										<stop offset="1" stopColor="#69AA72" />
-									</linearGradient>
-								</defs>
 							</svg>
 						</button>
 						{/* .navRight */}
+						<div className={style.mobileNavs}>
+							<button onClick={previousImage} className={style.navLeft}>
+								<svg
+									width="8"
+									height="14"
+									viewBox="0 0 8 14"
+									fill="none"
+									xmlns="http://www.w3.org/2000/svg"
+								>
+									<path
+										d="M7 1L1 7L7 13"
+										stroke="#69AA72"
+										strokeLinecap="round"
+										strokeLinejoin="round"
+									/>
+								</svg>
+							</button>
+							{/* .navLeft */}
+							<button onClick={nextImage} className={style.navRight}>
+								<svg
+									width="8"
+									height="14"
+									viewBox="0 0 8 14"
+									fill="none"
+									xmlns="http://www.w3.org/2000/svg"
+								>
+									<path
+										d="M1 13L7 7L0.999999 1"
+										stroke="#69AA72"
+										strokLinecap="round"
+										strokLinejoin="round"
+									/>
+								</svg>
+							</button>
+							{/* .navRight */}
+						</div>
+						{/* .mobileNavs */}
 					</div>
 				)}
 			</div>
@@ -150,6 +159,7 @@ export async function getServerSideProps(ctx) {
 				inspectionid: ctx.params.id,
 			},
 		});
+		console.log(r.data.data);
 		if (!r.data.data.status) {
 			return {
 				redirect: {

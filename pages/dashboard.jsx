@@ -55,9 +55,7 @@ const Dashboard = ({ authKey }) => {
 	const uploadWindow = useRef(null);
 
 	const [selectedDate, setSelectedDate] = useState(() => {
-		return (
-			parseInt(router.query.d) || moment().startOf("day").utc().unix() * 1000
-		);
+		return parseInt(router.query.d) || moment().startOf("day").unix() * 1000;
 	});
 
 	const closeUploadOverlay = () => {
@@ -119,6 +117,10 @@ const Dashboard = ({ authKey }) => {
 	};
 
 	const upload = (e) => {
+		if (moment(uploadDate).isAfter(moment())) {
+			alert("Future date selected");
+			return;
+		}
 		let formData = new FormData();
 		formData.append("file", file);
 		formData.append("cropid", selectedCrop._id);
@@ -208,7 +210,13 @@ const Dashboard = ({ authKey }) => {
 			},
 		})
 			.then((r) => {
-				setMonthData(r.data.data);
+				// truncate time from response
+				let tmp = [];
+				r.data.data.map((d) => {
+					const localTime = moment.utc(d).local().format("YYYY/MM/DD");
+					tmp.push(localTime);
+				});
+				setMonthData(tmp);
 			})
 			.catch((e) => alert(e));
 	};
@@ -236,26 +244,25 @@ const Dashboard = ({ authKey }) => {
 		}
 	};
 
+	const uploadingTime = () => {
+		if (moment(selectedDate).isSame(moment(), "day")) {
+			return moment().format("YYYY-MM-DD[T]HH:mm");
+		} else {
+			return moment(selectedDate).format("YYYY-MM-DD[T]09:00");
+		}
+	};
+
 	// [router.query]
 	useEffect(() => {
 		const newDate =
 			router.query.d === undefined
-				? moment().startOf("day").utc().unix() * 1000
+				? moment().startOf("day").unix() * 1000
 				: parseInt(router.query.d);
 
 		setSelectedDate(newDate);
 		// getMonthData(newDate);
 		fetchDateData(newDate, true);
 	}, [router.query]);
-
-	// selectedFieldFilter
-	// useEffect(() => {
-	// 	if (router.query.d) {
-	// 		fetchDateData(parseInt(router.query.d), true);
-	// 	} else {
-	// 		fetchDateData(selectedDate, true);
-	// 	}
-	// }, [selectedFieldFilter]);
 
 	// [user]
 	useEffect(() => {
@@ -386,9 +393,7 @@ const Dashboard = ({ authKey }) => {
 										href={{
 											pathname: "/chart",
 											query: {
-												d:
-													moment(selectedDate).startOf("day").utc().unix() *
-													1000,
+												d: moment(selectedDate).startOf("day").unix() * 1000,
 											},
 										}}
 										passHref
@@ -469,9 +474,8 @@ const Dashboard = ({ authKey }) => {
 									type="datetime-local"
 									name="date"
 									className={style.datetime}
-									defaultValue={moment(selectedDate).format(
-										"YYYY-MM-DD[T]HH:mm"
-									)}
+									defaultValue={uploadingTime()}
+									max={moment().format("YYYY-MM-DD[T]HH:mm")}
 									onChange={uploadDateChange}
 								/>
 							</div>

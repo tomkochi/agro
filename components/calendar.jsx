@@ -50,8 +50,6 @@ const Calendar = ({
 		return moment.months();
 	};
 
-	console.log({ monthData });
-
 	const changeMonth = (action) => {
 		let newMonth;
 		if (action === monthAction.NEXT) {
@@ -73,15 +71,11 @@ const Calendar = ({
 			month,
 		});
 		displayCalendar(year, month);
-		getMonthData(
-			moment(`${year}/${month + 1}/01`, "YYYY/MM/DD")
-				.utc()
-				.startOf("month")
-				.unix() * 1000
-		);
+		getMonthData(moment(`${year}/${month + 1}/01`, "YYYY/MM/DD").unix() * 1000);
 	};
 
 	const hasData = (d) => {
+		if (monthData.length === 0) return false;
 		const date = moment({ year: d.year, month: d.month, day: d.date }).format(
 			"YYYY/MM/DD"
 		);
@@ -102,7 +96,8 @@ const Calendar = ({
 		if (moment(date).isAfter(new Date(), "day")) return false;
 
 		const dateString = `${date.date}/${date.month + 1}/${date.year}`;
-		const dateNumber = moment(dateString, "D/M/YYYY").utc().unix() * 1000;
+		const dateNumber = moment(dateString, "D/M/YYYY").unix() * 1000;
+		console.log({ dateNumber });
 		setSelectedDate(dateNumber);
 		const newDate = moment(dateNumber).format("YYYY/MM/DD");
 		router.push(
@@ -120,7 +115,6 @@ const Calendar = ({
 		setDisplay((d) => {
 			getMonthData(
 				moment(`${y}/${d.month + 1}/01`, "YYYY/MM/DD")
-					.utc()
 					.startOf("month")
 					.unix() * 1000
 			);
@@ -135,7 +129,6 @@ const Calendar = ({
 		setDisplay((d) => {
 			getMonthData(
 				moment(`${d.year}/${m + 2}/01`, "YYYY/MM/DD")
-					.utc()
 					.startOf("month")
 					.unix() * 1000
 			);
@@ -247,16 +240,15 @@ const Calendar = ({
 											<button
 												onClick={() => selectNewDate(d)}
 												className={`${
-													d.date ===
-														parseInt(moment(selectedDate).format("DD")) &&
-													d.month ===
-														parseInt(moment(selectedDate).format("MM")) - 1 &&
-													d.year ===
-														parseInt(moment(selectedDate).format("YYYY"))
+													d.jsDate ===
+													moment(selectedDate).format("DD/MM/YYYY, 00:00:00")
 														? style.selected
 														: ""
 												} ${hasData(d) ? style.hasData : ""}`}
-												disabled={busy}
+												disabled={moment(
+													d.jsDate,
+													"DD/MM/YYYY, HH:mm:ss"
+												).isAfter(moment())}
 											>
 												{d.date}
 											</button>
