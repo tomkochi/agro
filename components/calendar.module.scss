@@ -124,7 +124,7 @@ button.nextMonth {
       button {
         font-weight: 300;
         font-size: 14px;
-        color: #000000;
+        color: #193550;
         width: 32px;
         height: 32px;
         border-radius: 50%;
@@ -135,10 +135,10 @@ button.nextMonth {
         position: relative;
 
         &:disabled {
-          opacity: 0.2;
+          opacity: 0.4;
         }
 
-        &:hover {
+        &:not(:disabled):hover {
           background: rgba(0, 0, 0, 0.05);
           border: 1px solid rgba(0, 0, 0, 0.3);
         }
@@ -148,6 +148,11 @@ button.nextMonth {
           font-size: 14px;
           color: #f2f2f2;
           background: #6aab72;
+
+          &:hover {
+            color: #fff;
+            background: #6aab72;
+          }
         }
 
         &.hasData {

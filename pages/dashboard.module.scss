@@ -19,11 +19,12 @@
     flex-grow: 1;
   }
 
-  header {
+  .statusWrapper {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 32px;
+    padding-top: 20px;
   }
 
   main {
@@ -243,6 +244,10 @@
   justify-content: space-between;
   margin-bottom: 17px;
 
+  img {
+    margin-right: 16px;
+  }
+
   h4 {
     font-weight: 500;
     font-size: 14px;
@@ -257,21 +262,29 @@
     background: #f0b734;
   }
 
+  h3,
   h5 {
     font-weight: 500;
     font-size: 14px;
     color: #78828c;
   }
 
+  h3 {
+    margin-right: 16px;
+    padding-right: 16px;
+    line-height: 20px;
+    border-right: 1px solid #E0E0E0;
+  }
+
   .headerRight {
     a {
       display: flex;
       align-items: center;
-      font-weight: 300;
-      font-size: 14px;
-      color: #78828c;
+      font-weight: 500;
+      font-size: 16px;
+      color: #69AA72;
       height: 37px;
-      padding: 0 13px;
+      padding: 0 18px;
       box-shadow: 2px 2px 4px rgba(195, 232, 203, 0.41);
       border-radius: 4px;
       background: #fff;

@@ -10,7 +10,7 @@ import { useState, useEffect, useRef } from "react";
 import { userStore } from "../../store";
 import { useRouter } from "next/router";
 import Link from "next/link";
-// import { useWindowDimensions } from "../../components/useWindowDimension";
+
 //chart
 import {
 	BarChart,
@@ -20,8 +20,8 @@ import {
 	Tooltip,
 	Legend,
 	Bar,
-	LineChart,
-	Line,
+	ScatterChart,
+	Scatter,
 } from "recharts";
 
 const Chart = ({ authKey, date }) => {
@@ -105,7 +105,12 @@ const Chart = ({ authKey, date }) => {
 			},
 		})
 			.then((r) => {
-				setMonthData(r.data.data);
+				let tmp = [];
+				r.data.data.map((d) => {
+					const localTime = moment.utc(d).local().format("YYYY/MM/DD");
+					tmp.push(localTime);
+				});
+				setMonthData(tmp);
 			})
 			.catch((e) => alert(e));
 	};
@@ -159,6 +164,7 @@ const Chart = ({ authKey, date }) => {
 	};
 
 	const selectDateFromGraph = (d) => {
+		console.log(d);
 		if (d) {
 			// if yrar view selected
 			if (selectedPeriod === "year") {
@@ -175,19 +181,18 @@ const Chart = ({ authKey, date }) => {
 					},
 				})
 					.then((r) => {
-						const firstDay =
-							moment(r.data.data.sort()[0]).startOf("day").unix() * 1000;
+						let tmp = [];
+						r.data.data.map((d) => {
+							const localTime = moment.utc(d).local().format("YYYY/MM/DD");
+							tmp.push(localTime);
+						});
+						console.log(tmp);
+						const firstDay = moment(tmp.sort()[0]).unix() * 1000;
 						// set date to the first day of the month
 						setSelectedDate(firstDay);
+						// getGraphData("month", firstDay);
 						setOtherGraphDate(firstDay);
-						getGraphData("month", firstDay);
 						setSelectedPeriod("month");
-						// setSelectedDate(
-						// 	moment(d.activePayload[0].payload.date * 1000)
-						// 		.startOf("month")
-						// 		.unix() * 1000
-						// );
-						// setSelectedPeriod("month");
 					})
 					.catch((e) => alert(e));
 			} else {
@@ -256,9 +261,6 @@ const Chart = ({ authKey, date }) => {
 			month: parseInt(moment(selectedDate).format("M")),
 		});
 	}, [selectedDate]);
-
-	// [otherGraphDate]
-	useEffect(() => {}, [otherGraphDate]);
 
 	// [router.query]
 	useEffect(() => {
@@ -370,7 +372,7 @@ const Chart = ({ authKey, date }) => {
 								</button>
 							</div>
 							{/* .yAxisTypes */}
-							<div className={style.calendarSelector}>
+							<div ref={calendarWrapper} className={style.calendarSelector}>
 								<button
 									className={style.selectedDate}
 									onClick={() => setCalendar(true)}
@@ -383,7 +385,7 @@ const Chart = ({ authKey, date }) => {
 									</span>
 								</button>
 								{calendar && (
-									<div ref={calendarWrapper} className={style.calendarWrapper}>
+									<div className={style.calendarWrapper}>
 										<Calendar
 											selectedDate={selectedDate}
 											setSelectedDate={dateSelected}
@@ -463,8 +465,8 @@ const Chart = ({ authKey, date }) => {
 							{/* .chartHeader */}
 							<h6>Forecast for ripe</h6>
 							<div className={style.chartElm}>
-								<LineChart
-									data={forecast}
+								<ScatterChart
+									// data={forecast}
 									width={
 										windowWidth < 992
 											? windowWidth - 120
@@ -482,15 +484,27 @@ const Chart = ({ authKey, date }) => {
 										fontSize={12}
 										stroke="#AFAAAA"
 									/>
-									<YAxis fontSize={12} stroke="#AFAAAA" />
-									<Line
+									<YAxis
+										dataKey={(d) => Object.values(d)[0]}
+										fontSize={12}
+										stroke="#AFAAAA"
+									/>
+									{/* <Line
 										dot={false}
 										type="monotone"
 										dataKey={(d) => Object.values(d)[0]}
 										stroke={BarColors.ripe}
 										strokeWidth={3}
+									/> */}
+									<Tooltip cursor={{ strokeDasharray: "3 3" }} />
+									<Scatter
+										data={forecast}
+										fill="#193550"
+										stroke="#193550"
+										strokeWidth={8}
+										line={{ stroke: "#193550", strokeWidth: 1 }}
 									/>
-								</LineChart>
+								</ScatterChart>
 							</div>
 							{/* .chartElm */}
 						</div>

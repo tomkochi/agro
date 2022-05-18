@@ -22,15 +22,31 @@ const Inspection = ({ authKey, images, data }) => {
 		<Layout title="Gallery" bg="#F3F3F3">
 			<PageHeader title="Gallery" />
 			<div className={style.gallery}>
-				<div className={style.views}>
-					<button className={style.active}>Gallery</button>
-					<button>Map view</button>
+				<div className={style.header}>
+					<div className={style.meta}>
+						<div className={style.dateTime}>
+							<img src="/images/calendar-grey.svg" alt="" />
+							<h4>{moment.unix(data.date).format("DD MMMM YYYY")}</h4>
+							<img src="/images/clock.svg" alt="" />
+							<h4>{moment.unix(data.date).format("H:mm a")}</h4>
+						</div>
+						{/* .dateTime */}
+						<div className={style.cropField}>
+							<img src="/images/crop.svg" alt="" />
+							<h4>{data.croptype}</h4>
+							<img src="/images/field.svg" alt="" />
+							<h4>{data.field}</h4>
+						</div>
+						{/* .cropField */}
+					</div>
+					{/* .meta */}
+					<div className={style.views}>
+						<button className={style.active}>Gallery</button>
+						<button>Map view</button>
+					</div>
+					{/* .views */}
 				</div>
-				{/* .views */}
-				<h4>
-					{moment.unix(data.date).format("MMMM Do YYYY, h:mm a")} | Croptype :{" "}
-					{data.croptype} | Field : {data.field}
-				</h4>
+				{/* .header */}
 				<div className={style.images}>
 					{images.map((i, ii) => {
 						return (
@@ -159,7 +175,6 @@ export async function getServerSideProps(ctx) {
 				inspectionid: ctx.params.id,
 			},
 		});
-		console.log(r.data.data);
 		if (!r.data.data.status) {
 			return {
 				redirect: {

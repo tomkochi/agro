@@ -13,7 +13,6 @@ const Calendar = ({
 	fetchDateData,
 	calendarDisplay = null,
 	gap = 18,
-	inDashboard = false,
 }) => {
 	const router = useRouter();
 
@@ -97,7 +96,6 @@ const Calendar = ({
 
 		const dateString = `${date.date}/${date.month + 1}/${date.year}`;
 		const dateNumber = moment(dateString, "D/M/YYYY").unix() * 1000;
-		console.log({ dateNumber });
 		setSelectedDate(dateNumber);
 		const newDate = moment(dateNumber).format("YYYY/MM/DD");
 		router.push(
@@ -108,7 +106,6 @@ const Calendar = ({
 			undefined,
 			{ shallow: true }
 		);
-		if (inDashboard) fetchDateData(dateNumber, monthData.includes(newDate));
 	};
 
 	const selectYear = (y) => {
@@ -159,10 +156,7 @@ const Calendar = ({
 	}, [display]);
 
 	useEffect(() => {
-		const y = moment(selectedDate).format("YYYY");
-		const m = moment(selectedDate).format("M");
-		const newDate = moment(`${y}/${m}/1 14:00:00`, "YYYY/M/D HH:mm:ss").unix();
-		getMonthData(newDate);
+		getMonthData(selectedDate);
 	}, []);
 
 	return (

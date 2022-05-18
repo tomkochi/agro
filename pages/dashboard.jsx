@@ -12,22 +12,30 @@ import Link from "next/link";
 import { useRef, useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import Loading from "../components/loading";
-import { userStore } from "../store";
+import { userStore, globalStore } from "../store";
 
 const Dashboard = ({ authKey }) => {
 	const router = useRouter();
 
-	const controller = useRef(null);
+	const controller = useRef(null); // for aborting upload
 
-	const inspectionInterval = useRef(null);
+	const inspectionInterval = useRef(null); // check for inspection data
 
-	const allFields = { _id: 0, name: "All" };
+	const all = { _id: 0, name: "All" };
 
+	// store
 	const user = userStore((state) => state.user);
+	const selectedField = globalStore((state) => state.selectedField);
+	const setSelectedField = globalStore((state) => state.setSelectedField);
+	const selectedCrop = globalStore((state) => state.selectedCrop);
+	const setSelectedCrop = globalStore((state) => state.setSelectedCrop);
 
 	const [busy, setBusy] = useState(false);
 
 	const [inspectionData, setInspectionData] = useState({});
+
+	const [selectedUploadField, setSelectedUploadField] = useState(null);
+	const [selectedUploadCrop, setSelectedUploadCrop] = useState(null);
 
 	const [monthData, setMonthData] = useState([]); // which all dates of this month has data
 	const [dateData, setDateData] = useState([]); // selected day's data
@@ -35,19 +43,16 @@ const Dashboard = ({ authKey }) => {
 	const [file, setFile] = useState(null); // selected file stored in here
 	const [uploadOverlay, setUploadOverlay] = useState(false); // whether to show upload overlay box after choosing the file
 
-	const [selectedField, setSelectedField] = useState(null);
-	const [selectedCrop, setSelectedCrop] = useState(null);
-	const [selectedFieldFilter, setSelectedFieldFilter] = useState(allFields);
-
-	const [fields, setFields] = useState([]); // got while logging in
-	const [crops, setCrops] = useState([]); // got while logging in
+	const [selectedFieldFilter, setSelectedFieldFilter] = useState(all);
 
 	const [uploadArea, setUploadArea] = useState("");
-	const [uploadDate, setUploadDate] = useState(moment().unix() * 1000);
+	const [uploadDate, setUploadDate] = useState(null);
 
 	const [uploading, setUploading] = useState(false); // decides whether to show upload status indicator
 	const [upSize, setUpSize] = useState(0); // uploaded size - from upload progress
 	const [totalSize, setTotalSize] = useState(0); // size of the file from upload progress
+
+	const [loaded, setLoaded] = useState(false);
 
 	const fileInput = useRef(null);
 	const fieldWrapper = useRef(null);
@@ -123,9 +128,9 @@ const Dashboard = ({ authKey }) => {
 		}
 		let formData = new FormData();
 		formData.append("file", file);
-		formData.append("cropid", selectedCrop._id);
-		formData.append("cropname", selectedCrop.name);
-		formData.append("fieldid", selectedField._id);
+		formData.append("cropid", selectedUploadCrop._id);
+		formData.append("cropname", selectedUploadCrop.name);
+		formData.append("fieldid", selectedUploadField._id);
 		formData.append("acres", uploadArea);
 		formData.append("date", uploadDate);
 
@@ -184,7 +189,8 @@ const Dashboard = ({ authKey }) => {
 			},
 			data: {
 				date,
-				field: selectedFieldFilter._id === 0 ? [] : [selectedFieldFilter._id],
+				field: selectedField._id === 0 ? [] : [selectedField._id],
+				cropid: selectedCrop._id === 0 ? null : selectedCrop._id,
 			},
 		})
 			.then((r) => {
@@ -252,13 +258,20 @@ const Dashboard = ({ authKey }) => {
 		}
 	};
 
+	const fieldChange = (f) => {
+		setSelectedField(f);
+	};
+
+	const cropChange = (c) => {
+		setSelectedCrop(c);
+	};
+
 	// [router.query]
 	useEffect(() => {
 		const newDate =
 			router.query.d === undefined
 				? moment().startOf("day").unix() * 1000
 				: parseInt(router.query.d);
-
 		setSelectedDate(newDate);
 		// getMonthData(newDate);
 		fetchDateData(newDate, true);
@@ -267,22 +280,30 @@ const Dashboard = ({ authKey }) => {
 	// [user]
 	useEffect(() => {
 		if (user) {
-			setFields(user.fields);
-			setCrops(user.croptype);
-			setSelectedField(user.fields[0]);
-			setSelectedCrop(user.croptype[0]);
+			setSelectedUploadField(user.fields[0]);
+			setSelectedUploadCrop(user.croptype[0]);
 		}
 	}, [user]);
 
+	// [uploadOverlay]
 	useEffect(() => {
+		setUploadDate(selectedDate);
 		if (!uploadOverlay) {
 			fileInput.current.value = "";
 		}
 	}, [uploadOverlay]);
 
+	useEffect(() => {
+		if (loaded) {
+			fetchDateData(selectedDate, true);
+		}
+	}, [selectedCrop, selectedField]);
+
 	// []
 	useEffect(() => {
 		checkInspections();
+
+		setLoaded(true);
 
 		document.addEventListener("click", documentClick);
 
@@ -318,11 +339,11 @@ const Dashboard = ({ authKey }) => {
 				</PageHeader>
 				<div className={style.dashboard}>
 					{uploading && (
-						<header>
+						<div className={style.statusWrapper}>
 							<div className={style.status}>
 								<Progress size={totalSize} done={upSize} />
 							</div>
-						</header>
+						</div>
 					)}
 					<input ref={fileInput} type="file" hidden onChange={handleFile} />
 					<main>
@@ -330,13 +351,20 @@ const Dashboard = ({ authKey }) => {
 							<div className={style.dataControls}>
 								<div className={style.fieldFilter}>
 									<Dropdown
-										data={[allFields, ...fields]}
-										value={selectedFieldFilter}
-										onSelection={setSelectedFieldFilter}
+										data={user ? [all, ...user.croptype] : [all]}
+										value={selectedCrop}
+										onSelection={cropChange}
+										label="Crops"
+									/>
+								</div>
+								<div className={style.fieldFilter}>
+									<Dropdown
+										data={user ? [all, ...user.fields] : [all]}
+										value={selectedField}
+										onSelection={fieldChange}
 										label="Fields"
 									/>
 								</div>
-								{/* .inputGroup */}
 								<Calendar
 									selectedDate={selectedDate}
 									setSelectedDate={setSelectedDate}
@@ -347,7 +375,6 @@ const Dashboard = ({ authKey }) => {
 										year: parseInt(moment(selectedDate).format("YYYY")),
 										month: parseInt(moment(selectedDate).format("M")),
 									}}
-									inDashboard={true}
 								/>
 							</div>
 							{/* .dataControls */}
@@ -384,6 +411,8 @@ const Dashboard = ({ authKey }) => {
 						<div className={style.reports}>
 							<div className={style.header}>
 								<div className={style.headerLeft}>
+									<img src="/images/calendar-grey.svg" alt="" />
+									<h3>{moment(selectedDate).format("DD MMM, YYYY")}</h3>
 									<h4>{dateData.length}</h4>
 									<h5>Reports found</h5>
 								</div>
@@ -398,7 +427,7 @@ const Dashboard = ({ authKey }) => {
 										}}
 										passHref
 									>
-										<a>{moment(selectedDate).format("DD MMMM YYYY")}</a>
+										<a>Reports</a>
 									</Link>
 								</div>
 								{/* .right */}
@@ -439,9 +468,9 @@ const Dashboard = ({ authKey }) => {
 							<div className={style.inputGroup}>
 								<label>Field Name</label>
 								<Dropdown
-									data={fields}
-									value={selectedField}
-									onSelection={setSelectedField}
+									data={user.fields}
+									value={selectedUploadField}
+									onSelection={setSelectedUploadField}
 								/>
 							</div>
 							{/* .inputGroup */}
@@ -449,9 +478,9 @@ const Dashboard = ({ authKey }) => {
 							<div className={style.inputGroup}>
 								<label>Crop Type</label>
 								<Dropdown
-									data={crops}
-									value={selectedCrop}
-									onSelection={setSelectedCrop}
+									data={user.croptype}
+									value={selectedUploadCrop}
+									onSelection={setSelectedUploadCrop}
 								/>
 							</div>
 							{/* .inputGroup */}
