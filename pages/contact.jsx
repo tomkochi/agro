@@ -75,7 +75,7 @@ const Contact = () => {
 	};
 	return (
 		<div className={style.contact}>
-			<Header authKey={authKey}>
+			<Header>
 				<Link href="/" passHref>
 					<a>
 						<img src="/images/logo.svg" alt="" />

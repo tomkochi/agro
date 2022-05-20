@@ -3,12 +3,12 @@ import Layout from "../components/layout";
 import Header from "../components/guestHeader";
 import Link from "next/link";
 
-const Home = ({ authKey }) => {
+const Home = () => {
 	return (
 		<Layout title="Welcome">
 			<div className={style.home}>
 				<section className={style.hero}>
-					<Header authKey={authKey} />
+					<Header />
 					<div className={style.contents}>
 						<div className={style.logo}>
 							<img src="/images/logo.svg" alt="" />
