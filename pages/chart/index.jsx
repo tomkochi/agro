@@ -11,6 +11,8 @@ import { userStore } from "../../store";
 import { useRouter } from "next/router";
 import Link from "next/link";
 
+import { serversideValidation } from "../../utils/functions";
+
 //chart
 import {
 	BarChart,
@@ -24,12 +26,12 @@ import {
 	Scatter,
 } from "recharts";
 
-const Chart = ({ authKey, date }) => {
+const Chart = ({ authKey, date, userObject }) => {
 	const router = useRouter();
 
 	const CHART_HEIGHT = 270;
 
-	const user = userStore((state) => state.user); // user from store
+	const setUser = userStore((state) => state.setUser); // user from store
 	const allFields = { _id: 0, name: "All" }; // for default selection
 	const [fields, setFields] = useState([]); // this will be populated in useEffect[user]
 	const [selectedFieldFilter, setSelectedFieldFilter] = useState(allFields); // defaultly set to all fields
@@ -84,8 +86,12 @@ const Chart = ({ authKey, date }) => {
 	};
 
 	const forecastRange = () => {
-		const s = moment(selectedDate).format("DD MMM YYYY");
-		const e = moment(selectedDate)
+		if (forecast.length === 0) return "";
+		const startDate = parseInt(Object.keys(forecast[0])[0]) * 1000;
+		const endDate =
+			parseInt(Object.keys(forecast[forecast.length - 1])[0]) * 1000;
+		const s = moment(startDate).format("DD MMM YYYY");
+		const e = moment(endDate)
 			.add(forecast.length, "days")
 			.format("DD MMM YYYY");
 		return `${s} to ${e}`;
@@ -164,7 +170,6 @@ const Chart = ({ authKey, date }) => {
 	};
 
 	const selectDateFromGraph = (d) => {
-		console.log(d);
 		if (d) {
 			// if yrar view selected
 			if (selectedPeriod === "year") {
@@ -186,7 +191,6 @@ const Chart = ({ authKey, date }) => {
 							const localTime = moment.utc(d).local().format("YYYY/MM/DD");
 							tmp.push(localTime);
 						});
-						console.log(tmp);
 						const firstDay = moment(tmp.sort()[0]).unix() * 1000;
 						// set date to the first day of the month
 						setSelectedDate(firstDay);
@@ -202,14 +206,6 @@ const Chart = ({ authKey, date }) => {
 			}
 		}
 	};
-
-	// [user]
-	useEffect(() => {
-		// set fields on user change (ie, initially)
-		if (user) {
-			setFields(user.fields);
-		}
-	}, [user]);
 
 	// [calendar]
 	useEffect(() => {
@@ -274,6 +270,10 @@ const Chart = ({ authKey, date }) => {
 
 	// []
 	useEffect(() => {
+		setUser(userObject);
+
+		setFields(userObject.fields);
+
 		windowResized(); // runs initially to get the windowWidth
 
 		window.addEventListener("resize", windowResized); // track window resize
@@ -647,24 +647,6 @@ export function hasDecimal(num) {
 export default Chart;
 
 export async function getServerSideProps(ctx) {
-	const { authKey } = ctx.req.cookies;
-	if (authKey) {
-		let { d } = ctx.query;
-
-		return {
-			props: {
-				authKey: authKey || null,
-				date:
-					d === undefined ? moment().startOf("day").unix() * 1000 : parseInt(d),
-			},
-		};
-	} else {
-		return {
-			redirect: {
-				permanent: false,
-				destination: "/login",
-			},
-			props: {},
-		};
-	}
+	const res = await serversideValidation(ctx);
+	return res;
 }

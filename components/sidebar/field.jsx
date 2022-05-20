@@ -2,12 +2,21 @@ import style from "./field.module.scss";
 import { useState, useEffect } from "react";
 import axios from "axios";
 
-const Field = ({ editId, setEditId, field, authKey }) => {
+const Field = ({ editId, setEditId, field, authKey, resetUser }) => {
 	const edit = editId === field._id;
 	const [fieldName, setFieldName] = useState(field.name);
 	const [busy, setbusy] = useState(false);
 
-	const saveField = (e) => {
+	const [errorMessage, setErrorMessage] = useState(null);
+
+	const displayError = (err) => {
+		setErrorMessage(err);
+		setTimeout(() => {
+			setErrorMessage(null);
+		}, 3000);
+	};
+
+	const updateField = (e) => {
 		e.preventDefault();
 		setbusy(true);
 		axios({
@@ -23,7 +32,11 @@ const Field = ({ editId, setEditId, field, authKey }) => {
 			},
 		})
 			.then((r) => {
-				console.log(r);
+				if (r.data.success) {
+					resetUser();
+				} else {
+					displayError(r.data.msg.msg);
+				}
 			})
 			.catch((e) => {
 				console.log(e);
@@ -48,11 +61,10 @@ const Field = ({ editId, setEditId, field, authKey }) => {
 			},
 		})
 			.then((r) => {
-				console.log(r);
 				if (r.data.success) {
-					alert("Field deleted.");
+					resetUser();
 				} else {
-					alert(r.data.msg.msg);
+					displayError(r.data.msg.msg);
 				}
 			})
 			.catch((e) => {
@@ -70,28 +82,35 @@ const Field = ({ editId, setEditId, field, authKey }) => {
 	return (
 		<>
 			{!edit ? (
-				<div className={style.field}>
-					<div className={style.fieldInfo}>
-						<h4>{field.name}</h4>
-						<h5>{field.acres} acres</h5>
+				<>
+					<div className={style.field}>
+						<div className={style.fieldInfo}>
+							<h4>{field.name}</h4>
+							<h5>{field.acres > 0 ? field.acres : "_"} acres</h5>
+						</div>
+						{/* .fieldInfo */}
+						<div className={style.fieldAction}>
+							<button
+								onClick={() => setEditId(field._id)}
+								disabled={busy || editId}
+							>
+								<img src="/images/edit.svg" alt="" />
+							</button>
+							<button
+								disabled={busy || editId}
+								onClick={() => deleteField(field._id)}
+							>
+								<img src="/images/trash.svg" alt="" />
+							</button>
+						</div>
+						{/* .fieldAction */}
 					</div>
-					{/* .fieldInfo */}
-					<div className={style.fieldAction}>
-						<button
-							onClick={() => setEditId(field._id)}
-							disabled={busy || editId}
-						>
-							<img src="/images/edit.svg" alt="" />
-						</button>
-						<button
-							disabled={busy || editId}
-							onClick={() => deleteField(field._id)}
-						>
-							<img src="/images/trash.svg" alt="" />
-						</button>
-					</div>
-					{/* .fieldAction */}
-				</div>
+					{errorMessage && (
+						<div className={`${style.message} ${style.error}`}>
+							{errorMessage}
+						</div>
+					)}
+				</>
 			) : (
 				<div className={style.editField}>
 					<div className={style.header}>
@@ -101,7 +120,7 @@ const Field = ({ editId, setEditId, field, authKey }) => {
 						</button>
 					</div>
 					{/* .header */}
-					<form onSubmit={saveField}>
+					<form onSubmit={updateField}>
 						<input
 							type="text"
 							placeholder="Name"

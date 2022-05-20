@@ -97,13 +97,13 @@ const Home = ({ authKey }) => {
 
 export default Home;
 
-export function getServerSideProps(ctx) {
-	const { authKey } = ctx.req.cookies;
-	if (authKey) {
-		return {
-			props: { authKey: ctx.req.cookies.authKey || null },
-		};
-	} else {
-		return { props: {} };
-	}
-}
+// export function getServerSideProps(ctx) {
+// 	const { authKey } = ctx.req.cookies;
+// 	if (authKey) {
+// 		return {
+// 			props: { authKey: ctx.req.cookies.authKey || null },
+// 		};
+// 	} else {
+// 		return { props: {} };
+// 	}
+// }

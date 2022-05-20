@@ -5,7 +5,7 @@ import axios from "axios";
 import { useState } from "react";
 import Loading from "../components/loading";
 
-const Contact = ({ authKey }) => {
+const Contact = () => {
 	const [submitMessage, setSubmitMessage] = useState(null);
 	const [busy, setBusy] = useState(false);
 
@@ -51,12 +51,10 @@ const Contact = ({ authKey }) => {
 			method: "post",
 			headers: {
 				"Content-Type": "application/json",
-				authKey,
 			},
 			data: formData,
 		})
 			.then((r) => {
-				console.log(r.data.success);
 				if (r.data.success) {
 					displayMessage("success", "Your message has been sent");
 					Array.from(document.querySelectorAll("form")[0].elements).forEach(
@@ -184,14 +182,3 @@ const Contact = ({ authKey }) => {
 };
 
 export default Contact;
-
-export function getServerSideProps(ctx) {
-	const { authKey } = ctx.req.cookies;
-	if (authKey) {
-		return {
-			props: { authKey: ctx.req.cookies.authKey || null },
-		};
-	} else {
-		return { props: {} };
-	}
-}

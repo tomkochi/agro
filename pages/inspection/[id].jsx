@@ -4,9 +4,14 @@ import { useState, useEffect } from "react";
 import moment from "moment";
 import PageHeader from "../../components/header";
 import axios from "axios";
+import { serversideValidation } from "../../utils/functions";
+import { userStore, globalStore } from "../../store";
 
-const Inspection = ({ authKey, images, data }) => {
+const Inspection = ({ authKey, images, data, userObject }) => {
 	const [popupImage, setPopupImage] = useState(null);
+
+	// store
+	const setUser = userStore((state) => state.setUser);
 
 	const nextImage = () => {
 		const newIndex =
@@ -17,6 +22,10 @@ const Inspection = ({ authKey, images, data }) => {
 		const newIndex = popupImage === 0 ? 0 : popupImage - 1;
 		setPopupImage(newIndex);
 	};
+
+	useEffect(() => {
+		setUser(userObject);
+	}, []);
 
 	return (
 		<Layout title="Gallery" bg="#F3F3F3">
@@ -162,8 +171,8 @@ const Inspection = ({ authKey, images, data }) => {
 export default Inspection;
 
 export async function getServerSideProps(ctx) {
-	const { authKey } = ctx.req.cookies;
-	if (authKey) {
+	const res = await serversideValidation(ctx);
+	if (res.props.proceed) {
 		const r = await axios({
 			url: `${process.env.NEXT_PUBLIC_BASE_URL}/data/inspection`,
 			method: "post",
@@ -175,7 +184,7 @@ export async function getServerSideProps(ctx) {
 				inspectionid: ctx.params.id,
 			},
 		});
-		if (!r.data.data.status) {
+		if (!r.data.success) {
 			return {
 				redirect: {
 					permanent: false,
@@ -184,21 +193,9 @@ export async function getServerSideProps(ctx) {
 				props: {},
 			};
 		} else {
-			return {
-				props: {
-					authKey: ctx.req.cookies.authKey || null,
-					images: r.data.data.result.images,
-					data: r.data.data,
-				},
-			};
+			res.props.images = r.data.data.result.images;
+			res.props.data = r.data.data;
 		}
-	} else {
-		return {
-			redirect: {
-				permanent: false,
-				destination: "/",
-			},
-			props: {},
-		};
 	}
+	return res;
 }

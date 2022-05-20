@@ -5,9 +5,6 @@ import { userStore } from "../store";
 import Sidebar from "../components/sidebar";
 
 const Header = ({ title, authKey, children }) => {
-	const user = userStore((state) => state.user);
-	const setUser = userStore((state) => state.setUser);
-
 	const [userSideBar, setUserSideBar] = useState(false);
 
 	return (
@@ -34,12 +31,7 @@ const Header = ({ title, authKey, children }) => {
 			</div>
 			{/* .right */}
 			{userSideBar && (
-				<Sidebar
-					user={user}
-					setUserSideBar={setUserSideBar}
-					authKey={authKey}
-					setUser={setUser}
-				/>
+				<Sidebar setUserSideBar={setUserSideBar} authKey={authKey} />
 			)}
 		</div>
 	);

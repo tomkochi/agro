@@ -14,7 +14,9 @@ import { useRouter } from "next/router";
 import Loading from "../components/loading";
 import { userStore, globalStore } from "../store";
 
-const Dashboard = ({ authKey }) => {
+import { serversideValidation } from "../utils/functions";
+
+const Dashboard = ({ authKey, userObject, date }) => {
 	const router = useRouter();
 
 	const controller = useRef(null); // for aborting upload
@@ -25,6 +27,8 @@ const Dashboard = ({ authKey }) => {
 
 	// store
 	const user = userStore((state) => state.user);
+	const setUser = userStore((state) => state.setUser);
+
 	const selectedField = globalStore((state) => state.selectedField);
 	const setSelectedField = globalStore((state) => state.setSelectedField);
 	const selectedCrop = globalStore((state) => state.selectedCrop);
@@ -59,9 +63,7 @@ const Dashboard = ({ authKey }) => {
 	const cropWrapper = useRef(null);
 	const uploadWindow = useRef(null);
 
-	const [selectedDate, setSelectedDate] = useState(() => {
-		return parseInt(router.query.d) || moment().startOf("day").unix() * 1000;
-	});
+	const [selectedDate, setSelectedDate] = useState(date);
 
 	const closeUploadOverlay = () => {
 		setUploadOverlay(false);
@@ -197,7 +199,7 @@ const Dashboard = ({ authKey }) => {
 				setDateData(r.data.data);
 			})
 			.catch((e) => {
-				// console.log(e);
+				console.log(e);
 			})
 			.finally(() => {
 				setBusy(false);
@@ -304,6 +306,8 @@ const Dashboard = ({ authKey }) => {
 		checkInspections();
 
 		setLoaded(true);
+
+		setUser(userObject);
 
 		document.addEventListener("click", documentClick);
 
@@ -543,17 +547,7 @@ const Dashboard = ({ authKey }) => {
 
 export default Dashboard;
 
-export function getServerSideProps(ctx) {
-	const { authKey } = ctx.req.cookies;
-	if (authKey) {
-		return { props: { authKey: ctx.req.cookies.authKey || null } };
-	} else {
-		return {
-			redirect: {
-				permanent: false,
-				destination: "/login",
-			},
-			props: {},
-		};
-	}
+export async function getServerSideProps(ctx) {
+	const res = await serversideValidation(ctx);
+	return res;
 }
