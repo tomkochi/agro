@@ -418,7 +418,7 @@ const Dashboard = ({ authKey, userObject, date }) => {
 									<img src="/images/calendar-grey.svg" alt="" />
 									<h3>{moment(selectedDate).format("DD MMM, YYYY")}</h3>
 									<h4>{dateData.length}</h4>
-									<h5>Reports found</h5>
+									<h5>inspections found</h5>
 								</div>
 								{/* .left */}
 								<div className={style.headerRight}>
@@ -548,6 +548,12 @@ const Dashboard = ({ authKey, userObject, date }) => {
 export default Dashboard;
 
 export async function getServerSideProps(ctx) {
+	// disable caching
+	ctx.res.setHeader(
+		"Cache-Control",
+		"public, s-maxage=10, stale-while-revalidate=59"
+	);
+
 	const res = await serversideValidation(ctx);
 	return res;
 }

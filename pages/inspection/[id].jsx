@@ -171,6 +171,12 @@ const Inspection = ({ authKey, images, data, userObject }) => {
 export default Inspection;
 
 export async function getServerSideProps(ctx) {
+	// disable caching
+	ctx.res.setHeader(
+		"Cache-Control",
+		"public, s-maxage=10, stale-while-revalidate=59"
+	);
+
 	const res = await serversideValidation(ctx);
 	if (res.props.proceed) {
 		const r = await axios({

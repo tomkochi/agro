@@ -278,6 +278,13 @@ export default ResetPassword;
 
 export function getServerSideProps(ctx) {
 	const { authKey } = ctx.req.cookies;
+
+	// disable caching
+	ctx.res.setHeader(
+		"Cache-Control",
+		"public, s-maxage=10, stale-while-revalidate=59"
+	);
+
 	if (authKey) {
 		return {
 			redirect: {

@@ -234,15 +234,17 @@ const Calendar = ({
 											<button
 												onClick={() => selectNewDate(d)}
 												className={`${
-													d.jsDate ===
-													moment(selectedDate).format("DD/MM/YYYY, 00:00:00")
+													moment(
+														`${d.date}/${d.month + 1}/${d.year}`,
+														"D/M/YYYY"
+													).isSame(moment(selectedDate), "day")
 														? style.selected
 														: ""
 												} ${hasData(d) ? style.hasData : ""}`}
 												disabled={moment(
-													d.jsDate,
-													"DD/MM/YYYY, HH:mm:ss"
-												).isAfter(moment())}
+													`${d.date}/${d.month + 1}/${d.year}`,
+													"D/M/YYYY"
+												).isAfter(moment(), "day")}
 											>
 												{d.date}
 											</button>

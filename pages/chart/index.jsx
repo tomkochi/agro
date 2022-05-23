@@ -647,6 +647,12 @@ export function hasDecimal(num) {
 export default Chart;
 
 export async function getServerSideProps(ctx) {
+  // disable caching
+  ctx.res.setHeader(
+		"Cache-Control",
+		"public, s-maxage=10, stale-while-revalidate=59"
+	);
+  
 	const res = await serversideValidation(ctx);
 	return res;
 }

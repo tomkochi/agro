@@ -1,6 +1,9 @@
 body {
   background: #F3F3F3;
 }
+html, body {
+  scroll-behavior: smooth;
+}
 * {
   font-family: "Poppins", sans-serif;
   box-sizing: border-box;
