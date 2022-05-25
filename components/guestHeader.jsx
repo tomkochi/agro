@@ -1,21 +1,15 @@
 import style from "./guestHeader.module.scss";
 import Link from "next/link";
 
-const GuestHeader = ({ authKey, children }) => {
+const GuestHeader = ({ children }) => {
 	return (
 		<div className={style.guestHeader}>
 			<div className={style.left}>{children}</div>
 			{/* .left */}
 			<div className={style.right}>
-				{authKey ? (
-					<Link href="/dashboard" passHref>
-						<a className={style.login}>Dashboard</a>
-					</Link>
-				) : (
-					<Link href="/login" passHref>
-						<a className={style.login}>Login</a>
-					</Link>
-				)}
+				<a href="http://app.agrofocal.ai" className={style.login}>
+					Login
+				</a>
 			</div>
 			{/* .right */}
 		</div>

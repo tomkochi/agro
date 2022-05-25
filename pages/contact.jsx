@@ -1,9 +1,7 @@
 import style from "./contact.module.scss";
 import Header from "../components/guestHeader";
 import Link from "next/link";
-import axios from "axios";
 import { useState } from "react";
-import Loading from "../components/loading";
 
 const Contact = () => {
 	const [submitMessage, setSubmitMessage] = useState(null);
@@ -19,60 +17,6 @@ const Contact = () => {
 		}, 3000);
 	};
 
-	const submit = (e) => {
-		e.preventDefault();
-		const fd = document.getElementById("fd").value;
-		if (fd.length > 0) {
-			displayMessage("error", "Suspectful activity detected.");
-			return;
-		}
-		const formData = {};
-		Object.entries(e.target).map((o) => {
-			if (o[1].name) {
-				formData[o[1].name] = o[1].value;
-			}
-		});
-
-		if (
-			!formData.name.trim() ||
-			!formData.email.trim() ||
-			!formData.organisation.trim() ||
-			!formData.title.trim() ||
-			!formData.message.trim()
-		) {
-			displayMessage("error", "All fields are required.");
-			return;
-		}
-
-		setBusy(true);
-
-		axios({
-			url: `${process.env.NEXT_PUBLIC_BASE_URL}/contact/form`,
-			method: "post",
-			headers: {
-				"Content-Type": "application/json",
-			},
-			data: formData,
-		})
-			.then((r) => {
-				if (r.data.success) {
-					displayMessage("success", "Your message has been sent");
-					Array.from(document.querySelectorAll("form")[0].elements).forEach(
-						(input) => {
-							input.value = "";
-						}
-					);
-				} else {
-					displayMessage("error", r.data.msg);
-				}
-			})
-			.catch((r) => {
-				displayMessage("error", "Something went wrong; try later.");
-			})
-			.finally(() => {
-				setBusy(false);
-			});
-	};
 	return (
 		<div className={style.contact}>
 			<Header>
@@ -85,7 +29,7 @@ const Contact = () => {
 			<div className={style.contents}>
 				<div className={style.contentWrapper}>
 					<h1>Contact us</h1>
-					<form onSubmit={submit}>
+					<form>
 						<div className={style.row}>
 							<div className={style.inputGroup}>
 								<label htmlFor="name">Name</label>
@@ -159,9 +103,7 @@ const Contact = () => {
 							>
 								{submitMessage ? submitMessage.message : "Message"}
 							</div>
-							<button disabled={busy}>
-								{busy ? <Loading height={10} /> : "Submit"}
-							</button>
+							<button>Submit</button>
 						</div>
 						{/* .bottom */}
 						<input

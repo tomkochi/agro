@@ -1,7 +1,7 @@
 import "../styles/globals.css";
 import "../styles/reset.scss";
 
-function MyApp({ Component, pageProps, user, authKey }) {
+function MyApp({ Component, pageProps }) {
 	return <Component {...pageProps} />;
 }
 
