@@ -29,7 +29,8 @@ const Contact = () => {
       <div className={style.contents}>
         <div className={style.contentWrapper}>
           <h1>Contact us</h1>
-          <form data-netlify="true">
+          <form name="contact" method="POST" data-netlify="true">
+            <input type="hidden" name="form-name" value="contact" />
             <div className={style.row}>
               <div className={style.inputGroup}>
                 <label htmlFor="name">Name</label>
@@ -95,17 +96,9 @@ const Contact = () => {
             </div>
             {/* .inputGroup */}
             <div className={style.bottom}>
-              <button>Submit</button>
+              <button type="submit">Submit</button>
             </div>
             {/* .bottom */}
-            <input
-              type="text"
-              id="fd"
-              className={style.fraud}
-              tabIndex="-1"
-              name="frauddetectioninputtobefilledbybots"
-              autoComplete="off"
-            />
           </form>
         </div>
         {/* .contentWrapper */}
