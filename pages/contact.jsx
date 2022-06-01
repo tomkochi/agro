@@ -33,7 +33,7 @@ const Contact = () => {
 						<input
 							type="hidden"
 							name="subject"
-							value="Enquery from Agrofocal website"
+							value="Message from Agrofocal Website"
 						/>
 						<input type="hidden" name="form-name" value="contact" />
 						<div className={style.row}>
