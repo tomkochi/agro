@@ -30,6 +30,11 @@ const Contact = () => {
 				<div className={style.contentWrapper}>
 					<h1>Contact us</h1>
 					<form name="contact" method="POST" data-netlify="true">
+						<input
+							type="hidden"
+							name="subject"
+							value="Enquery from Agrofocal website"
+						/>
 						<input type="hidden" name="form-name" value="contact" />
 						<div className={style.row}>
 							<div className={style.inputGroup}>
@@ -45,11 +50,11 @@ const Contact = () => {
 							</div>
 							{/* .inputGroup */}
 							<div className={style.inputGroup}>
-								<label htmlFor="title">Title</label>
+								<label htmlFor="designation">Designation</label>
 								<input
 									type="text"
-									name="title"
-									id="title"
+									name="designation"
+									id="designation"
 									placeholder="e.g. Manager"
 									required
 									disabled={busy}
@@ -96,11 +101,7 @@ const Contact = () => {
 							></textarea>
 						</div>
 						{/* .inputGroup */}
-						<input
-							type="hidden"
-							name="subject"
-							value="Enquery from Agrofocal website"
-						/>
+
 						<div className={style.bottom}>
 							<button type="submit">Submit</button>
 						</div>
