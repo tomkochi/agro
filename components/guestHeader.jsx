@@ -7,7 +7,7 @@ const GuestHeader = ({ children }) => {
 			<div className={style.left}>{children}</div>
 			{/* .left */}
 			<div className={style.right}>
-				<a href="http://app.agrofocal.ai" className={style.login}>
+				<a href="http://app.agrofocal.ai/login" className={style.login}>
 					Login
 				</a>
 			</div>
