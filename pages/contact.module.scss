@@ -175,3 +175,24 @@
   opacity: 0;
   z-index: -1;
 }
+
+.container {
+  position: relative;
+width: 90%;
+max-width: 1024px;
+margin: 0 auto;
+font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+color: #000;
+font-size: 16px;
+line-height: 28px;
+h1 {
+  font-size: 2em;
+  font-weight: 700;
+  line-height: 60px;
+}
+h2 {
+  font-size: 32px;
+line-height: 48px;
+font-weight: 700;
+}
+}
