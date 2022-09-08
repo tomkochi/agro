@@ -87,7 +87,12 @@ const Home = () => {
 					<div className={style.image}>
 						<img src="/images/logo.svg" alt="" />
 					</div>
-					<p>&copy; Agrofocal 2022. All Rights Reserved. </p>
+					<p>&copy; Agrofocal 2022. All Rights Reserved. 
+					<Link href="/privacy" passHref>
+						<a>Privacy Policy</a>
+					</Link>
+					</p>
+					
 				</footer>
 			</div>
 			{/* .home */}
