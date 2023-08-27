@@ -42,7 +42,7 @@ const JobPage = ({ jobData }) => {
       {apply && (
         <div className={style.applyOverlay}>
           <div className={style.applyContainer}>
-            <form name="apply" netlify>
+            <form name="apply" data-netlify="true">
               <input
                 type="text"
                 name="rec"

@@ -29,7 +29,7 @@ const Contact = () => {
       <div className={style.contents}>
         <div className={style.contentWrapper}>
           <h1>Contact us</h1>
-          <form name="contact" netlify>
+          <form name="contact" data-netlify="true">
             <input
               type="hidden"
               name="subject"
