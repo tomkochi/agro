@@ -23,7 +23,9 @@ const JobsPage = ({ jobsData }) => {
                 <p>{job.frontMatter.excerpt}</p>
               </div>
               <div className={style.bottomLine}>
-                <h2>{job.frontMatter.type}</h2>
+                <h2>
+                  {job.frontMatter.type} | {job.frontMatter.location}
+                </h2>
                 <h2>{job.frontMatter.date}</h2>
               </div>
             </a>
