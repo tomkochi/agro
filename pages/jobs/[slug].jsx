@@ -12,7 +12,7 @@ const JobPage = ({ jobData }) => {
       <Header>
         <Link href="/" passHref>
           <a>
-            <img src="/images/logo.svg" alt="" />
+            <img src="/images/logo.svg" alt="logo" />
           </a>
         </Link>
       </Header>
