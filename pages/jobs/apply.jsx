@@ -73,18 +73,12 @@ const Apply = () => {
               />
             </div>
           </div>
-          {/* <div className={style.rowFull}>
+          <div className={style.rowFull}>
             <div className={style.inputGroup}>
-              <label htmlFor="resume">Upload resume</label>
-              <input
-                type="file"
-                name="resume"
-                id="resume"
-                accept=".pdf,.doc,.docx"
-                required
-              />
+              <label htmlFor="document">Upload resume</label>
+              <input type="file" name="document" id="document" required />
             </div>
-          </div> */}
+          </div>
           <button type="submit" className={style.submit}>
             Submit
           </button>
