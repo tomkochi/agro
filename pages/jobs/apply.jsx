@@ -17,90 +17,78 @@ const Apply = () => {
         </Link>
       </Header>
       <div className={style.apply}>
-        <form name="apply" method="POST" data-netlify="true">
+        <form
+          name="apply"
+          method="POST"
+          data-netlify="true"
+          enctype="multipart/form-data"
+        >
           <input
             type="hidden"
             name="subject"
             value="Message from Agrofocal Website"
           />
           <input type="hidden" name="form-name" value="apply" />
-          <div className={style.row}>
-            <div className={style.inputGroup}>
-              <label htmlFor="name">Name</label>
-              <input
-                type="text"
-                name="name"
-                id="name"
-                placeholder="Name"
-                required
-              />
-            </div>
-            {/* .inputGroup */}
-            <div className={style.inputGroup}>
-              <label htmlFor="designation">Designation</label>
-              <input
-                type="text"
-                name="designation"
-                id="designation"
-                placeholder="e.g. Manager"
-                required
-              />
-            </div>
-            {/* .inputGroup */}
+          <input type="text" name="rec" hidden value={router.query.rec} />
+          <input
+            type="text"
+            name="position"
+            hidden
+            value={router.query.position}
+          />
+          <div className={style.formHeader}>
+            <h2>Apply for - {router.query.position}</h2>
           </div>
-          {/* .row */}
           <div className={style.row}>
+            <div className={style.inputGroup}>
+              <label htmlFor="firstname">First name</label>
+              <input
+                type="text"
+                name="firstname"
+                id="firstname"
+                placeholder="First name"
+                required
+              />
+            </div>
+            <div className={style.inputGroup}>
+              <label htmlFor="lastname">Last name</label>
+              <input
+                type="text"
+                name="lastname"
+                id="lastname"
+                placeholder="Last name"
+                required
+              />
+            </div>
+          </div>
+          <div className={style.rowFull}>
             <div className={style.inputGroup}>
               <label htmlFor="email">Email</label>
               <input
                 type="text"
                 name="email"
                 id="email"
-                placeholder="hello@mycompany.com"
+                placeholder="hello@myid.com"
                 required
               />
             </div>
-            {/* .inputGroup */}
+          </div>
+          <div className={style.rowFull}>
             <div className={style.inputGroup}>
-              <label htmlFor="organisation">Organisation</label>
+              <label htmlFor="resume">Upload resume</label>
               <input
-                type="text"
-                name="organisation"
-                id="organisation"
-                placeholder="Organisation"
+                type="file"
+                enctype="multipart/form-data"
+                name="resume"
+                id="resume"
+                accept=".pdf,.doc,.docx"
                 required
               />
             </div>
-            {/* .inputGroup */}
           </div>
-          {/* .row */}
-          <div className={style.inputGroup}>
-            <label htmlFor="message">Message</label>
-            <textarea
-              name="message"
-              id="message"
-              placeholder="How can we help?"
-              required
-            ></textarea>
-          </div>
-          {/* .inputGroup */}
-
-          <div className={style.inputGroup}>
-            <label htmlFor="resume">Upload resume</label>
-            <input
-              type="file"
-              enctype="multipart/form-data"
-              name="resume"
-              id="resume"
-              accept=".pdf,.doc,.docx"
-              required
-            />
-          </div>
-
-          <div className={style.bottom}>
-            <button type="submit">Submit</button>
-          </div>
-          {/* .bottom */}
+          <button type="submit" className={style.submit}>
+            Submit
+          </button>
         </form>
       </div>
     </div>
