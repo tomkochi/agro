@@ -85,6 +85,17 @@ const Apply = () => {
           </div>
           {/* .inputGroup */}
 
+          <div className={style.inputGroup}>
+            <label htmlFor="resume">Upload resume</label>
+            <input
+              type="file"
+              name="resume"
+              id="resume"
+              accept=".pdf,.doc,.docx"
+              required
+            />
+          </div>
+
           <div className={style.bottom}>
             <button type="submit">Submit</button>
           </div>
