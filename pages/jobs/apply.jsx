@@ -23,12 +23,12 @@ const Apply = () => {
           data-netlify="true"
           enctype="multipart/form-data"
         >
-          <input
+          {/* <input
             type="hidden"
             name="subject"
             value="Message from Agrofocal Website"
           />
-          <input type="hidden" name="form-name" value="apply" />
+          <input type="hidden" name="form-name" value="apply" /> */}
           <input type="text" name="rec" hidden value={router.query.rec} />
           <input
             type="text"
