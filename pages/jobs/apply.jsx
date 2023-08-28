@@ -6,6 +6,38 @@ import { useRouter } from "next/router";
 
 const Apply = () => {
   const router = useRouter();
+  const [file, setFile] = useState(null);
+
+  const handleFileChange = (event) => {
+    setFile(event.target.files[0]);
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    const formData = new FormData();
+    formData.append("rec", router.query.rec);
+    formData.append("position", router.query.position);
+    formData.append("firstname", document.getElementById("firstname").value);
+    formData.append("lastname", document.getElementById("lastname").value);
+    formData.append("email", document.getElementById("email").value);
+    formData.append("file", file);
+
+    try {
+      const response = await fetch("/netlify/functions/upload.js", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (response.ok) {
+        console.log("File uploaded successfully");
+      } else {
+        console.error("Upload failed");
+      }
+    } catch (error) {
+      console.error("Error uploading file", error);
+    }
+  };
 
   return (
     <div className={style.jobPage}>
@@ -17,25 +49,13 @@ const Apply = () => {
         </Link>
       </Header>
       <div className={style.apply}>
-        <form
-          name="apply"
-          method="POST"
-          data-netlify="true"
-          enctype="multipart/form-data"
-        >
+        <form onSubmit={handleSubmit}>
           {/* <input
             type="hidden"
             name="subject"
             value="Message from Agrofocal Website"
           />
           <input type="hidden" name="form-name" value="apply" /> */}
-          <input type="text" name="rec" hidden value={router.query.rec} />
-          <input
-            type="text"
-            name="position"
-            hidden
-            value={router.query.position}
-          />
           <div className={style.formHeader}>
             <h2>Apply for - {router.query.position}</h2>
           </div>
