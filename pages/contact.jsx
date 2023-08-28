@@ -30,7 +30,7 @@ const Contact = () => {
         <div className={style.contentWrapper}>
           <h1>Contact us</h1>
           <form
-            name="apply"
+            name="application"
             enctype="multipart/form-data"
             method="POST"
             data-netlify="true"
