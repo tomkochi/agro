@@ -28,7 +28,7 @@ const Apply = () => {
             name="subject"
             value="Message from Agrofocal Website"
           />
-          <input type="hidden" name="form-name" value="apply" />
+          <input type="hidden" name="form-name" value="resume" />
           <div className={style.row}>
             <div className={style.inputGroup}>
               <label htmlFor="name">Name</label>
