@@ -91,7 +91,7 @@ const Apply = () => {
               />
             </div>
           </div>
-          <div className={style.rowFull}>
+          {/* <div className={style.rowFull}>
             <div className={style.inputGroup}>
               <label htmlFor="resume">Upload resume</label>
               <input
@@ -102,7 +102,7 @@ const Apply = () => {
                 required
               />
             </div>
-          </div>
+          </div> */}
           <button type="submit" className={style.submit}>
             Submit
           </button>
