@@ -5,7 +5,6 @@ import { useState } from "react";
 import { useRouter } from "next/router";
 
 const Apply = () => {
-  const [apply, setApply] = useState(false);
   const router = useRouter();
 
   return (
@@ -28,34 +27,6 @@ const Apply = () => {
           />
           <div className={style.formHeader}>
             <h2>Apply for - {router.query.position}</h2>
-            <button
-              type="button"
-              className={style.close}
-              onClick={() => setApply(false)}
-            >
-              <svg
-                width="14"
-                height="15"
-                viewBox="0 0 14 15"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M13 1L1 13.6076"
-                  stroke="#343A40"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-                <path
-                  d="M1 1L13 13.6076"
-                  stroke="#343A40"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-              </svg>
-            </button>
           </div>
           <div className={style.row}>
             <div className={style.inputGroup}>
