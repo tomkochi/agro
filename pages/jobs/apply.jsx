@@ -18,65 +18,77 @@ const Apply = () => {
       </Header>
       <div className={style.apply}>
         <form name="apply" data-netlify="true">
-          <input type="text" name="rec" hidden value={router.query.rec} />
           <input
-            type="text"
-            name="position"
-            hidden
-            value={router.query.position}
+            type="hidden"
+            name="subject"
+            value="Message from Agrofocal Website"
           />
-          <div className={style.formHeader}>
-            <h2>Apply for - {router.query.position}</h2>
-          </div>
+          <input type="hidden" name="form-name" value="contact" />
           <div className={style.row}>
             <div className={style.inputGroup}>
-              <label htmlFor="firstname">First name</label>
+              <label htmlFor="name">Name</label>
               <input
                 type="text"
-                name="firstname"
-                id="firstname"
-                placeholder="First name"
+                name="name"
+                id="name"
+                placeholder="Name"
                 required
               />
             </div>
+            {/* .inputGroup */}
             <div className={style.inputGroup}>
-              <label htmlFor="lastname">Last name</label>
+              <label htmlFor="designation">Designation</label>
               <input
                 type="text"
-                name="lastname"
-                id="lastname"
-                placeholder="Last name"
+                name="designation"
+                id="designation"
+                placeholder="e.g. Manager"
                 required
               />
             </div>
+            {/* .inputGroup */}
           </div>
-          <div className={style.rowFull}>
+          {/* .row */}
+          <div className={style.row}>
             <div className={style.inputGroup}>
               <label htmlFor="email">Email</label>
               <input
                 type="text"
                 name="email"
                 id="email"
-                placeholder="hello@myid.com"
+                placeholder="hello@mycompany.com"
                 required
               />
             </div>
-          </div>
-          {/* <div className={style.rowFull}>
+            {/* .inputGroup */}
             <div className={style.inputGroup}>
-              <label htmlFor="resume">Upload resume</label>
+              <label htmlFor="organisation">Organisation</label>
               <input
-                type="file"
-                name="resume"
-                id="resume"
-                accept=".pdf,.doc,.docx"
+                type="text"
+                name="organisation"
+                id="organisation"
+                placeholder="Organisation"
                 required
               />
             </div>
-          </div> */}
-          <button type="submit" className={style.submit}>
-            Submit
-          </button>
+            {/* .inputGroup */}
+          </div>
+          {/* .row */}
+          <div className={style.inputGroup}>
+            <label htmlFor="message">Message</label>
+            <textarea
+              name="message"
+              id="message"
+              placeholder="How can we help?"
+              required
+            ></textarea>
+          </div>
+          {/* .inputGroup */}
+
+          <div className={style.bottom}>
+            <button type="submit">Submit</button>
+          </div>
+          {/* .bottom */}
         </form>
       </div>
     </div>
