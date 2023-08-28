@@ -17,7 +17,7 @@ const Apply = () => {
         </Link>
       </Header>
       <div className={style.apply}>
-        <form name="apply" data-netlify="true">
+        <form name="apply" method="POST" data-netlify="true">
           <input
             type="hidden"
             name="subject"
@@ -89,6 +89,7 @@ const Apply = () => {
             <label htmlFor="resume">Upload resume</label>
             <input
               type="file"
+              enctype="multipart/form-data"
               name="resume"
               id="resume"
               accept=".pdf,.doc,.docx"
