@@ -6,38 +6,6 @@ import { useRouter } from "next/router";
 
 const Apply = () => {
   const router = useRouter();
-  const [file, setFile] = useState(null);
-
-  const handleFileChange = (event) => {
-    setFile(event.target.files[0]);
-  };
-
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-
-    const formData = new FormData();
-    formData.append("rec", router.query.rec);
-    formData.append("position", router.query.position);
-    formData.append("firstname", document.getElementById("firstname").value);
-    formData.append("lastname", document.getElementById("lastname").value);
-    formData.append("email", document.getElementById("email").value);
-    formData.append("file", file);
-
-    try {
-      const response = await fetch("/netlify/functions/upload.js", {
-        method: "POST",
-        body: formData,
-      });
-
-      if (response.ok) {
-        console.log("File uploaded successfully");
-      } else {
-        console.error("Upload failed");
-      }
-    } catch (error) {
-      console.error("Error uploading file", error);
-    }
-  };
 
   return (
     <div className={style.jobPage}>
@@ -49,66 +17,94 @@ const Apply = () => {
         </Link>
       </Header>
       <div className={style.apply}>
-        <form onSubmit={handleSubmit}>
-          {/* <input
+        <form
+          name="resume"
+          method="POST"
+          enctype="multipart/form-data"
+          data-netlify="true"
+        >
+          <input
             type="hidden"
             name="subject"
             value="Message from Agrofocal Website"
           />
-          <input type="hidden" name="form-name" value="apply" /> */}
-          <div className={style.formHeader}>
-            <h2>Apply for - {router.query.position}</h2>
-          </div>
+          <input type="hidden" name="form-name" value="apply" />
           <div className={style.row}>
             <div className={style.inputGroup}>
-              <label htmlFor="firstname">First name</label>
+              <label htmlFor="name">Name</label>
               <input
                 type="text"
-                name="firstname"
-                id="firstname"
-                placeholder="First name"
+                name="name"
+                id="name"
+                placeholder="Name"
                 required
               />
             </div>
+            {/* .inputGroup */}
             <div className={style.inputGroup}>
-              <label htmlFor="lastname">Last name</label>
+              <label htmlFor="designation">Designation</label>
               <input
                 type="text"
-                name="lastname"
-                id="lastname"
-                placeholder="Last name"
+                name="designation"
+                id="designation"
+                placeholder="e.g. Manager"
                 required
               />
             </div>
+            {/* .inputGroup */}
           </div>
-          <div className={style.rowFull}>
+          {/* .row */}
+          <div className={style.row}>
             <div className={style.inputGroup}>
               <label htmlFor="email">Email</label>
               <input
                 type="text"
                 name="email"
                 id="email"
-                placeholder="hello@myid.com"
+                placeholder="hello@mycompany.com"
                 required
               />
             </div>
-          </div>
-          <div className={style.rowFull}>
+            {/* .inputGroup */}
             <div className={style.inputGroup}>
-              <label htmlFor="resume">Upload resume</label>
+              <label htmlFor="organisation">Organisation</label>
               <input
-                type="file"
-                enctype="multipart/form-data"
-                name="resume"
-                id="resume"
-                accept=".pdf,.doc,.docx"
+                type="text"
+                name="organisation"
+                id="organisation"
+                placeholder="Organisation"
                 required
               />
             </div>
+            {/* .inputGroup */}
           </div>
-          <button type="submit" className={style.submit}>
-            Submit
-          </button>
+          {/* .row */}
+          <div className={style.inputGroup}>
+            <label htmlFor="message">Message</label>
+            <textarea
+              name="message"
+              id="message"
+              placeholder="How can we help?"
+              required
+            ></textarea>
+          </div>
+          {/* .inputGroup */}
+
+          {/* <div className={style.inputGroup}>
+            <label htmlFor="resume">Upload resume</label>
+            <input
+              type="file"
+              name="resume"
+              id="resume"
+              accept=".pdf,.doc,.docx"
+              required
+            />
+          </div> */}
+
+          <div className={style.bottom}>
+            <button type="submit">Submit</button>
+          </div>
+          {/* .bottom */}
         </form>
       </div>
     </div>
